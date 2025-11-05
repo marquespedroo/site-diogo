@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Argon Dashboard 2 - ImobiTools</title>
+    <title>Property Calculator - ImobiTools</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@700&display=swap" rel="stylesheet">
@@ -217,9 +217,9 @@
                         <path d="M7 1L1 7h2v5h3V9h2v3h3V7h2L7 1z"/>
                     </svg>
                     <span class="breadcrumb-text">/ Pages / </span>
-                    <span class="breadcrumb-current">Default</span>
+                    <span class="breadcrumb-current">Property Calculator</span>
                 </div>
-                <h2 class="page-title">Default</h2>
+                <h2 class="page-title">Property Calculator</h2>
                 <button class="menu-toggle" id="menu-toggle">
                     <svg width="21" height="16" viewBox="0 0 21 16" fill="currentColor">
                         <rect width="21" height="2" rx="1"/>
@@ -259,675 +259,238 @@
             </div>
         </header>
 
-        <!-- Statistics Cards -->
+        <!-- Calculator Statistics Cards -->
         <section class="stats-cards">
             <div class="stat-card">
                 <div class="stat-content">
                     <div class="stat-text">
-                        <p class="stat-label">TODAY'S MONEY</p>
-                        <h3 class="stat-value">$53,000</h3>
+                        <p class="stat-label">TOTAL CALCULATIONS</p>
+                        <h3 class="stat-value" id="totalCalculations">0</h3>
                     </div>
                     <div class="stat-icon money">
                         <svg width="22" height="23" viewBox="0 0 22 23" fill="white">
-                            <circle cx="11" cy="11.5" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
-                            <circle cx="5" cy="17.5" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
-                            <circle cx="17" cy="17.5" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <rect x="3" y="4" width="16" height="15" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M7 4V3a1 1 0 011-1h6a1 1 0 011 1v1" stroke="currentColor" stroke-width="2"/>
+                            <path d="M7 9h8M7 13h8" stroke="currentColor" stroke-width="2"/>
                         </svg>
                     </div>
                 </div>
                 <div class="stat-footer">
-                    <span class="stat-change positive">+55%</span>
-                    <span class="stat-period">since yesterday</span>
+                    <span class="stat-change positive" id="totalChange">+0%</span>
+                    <span class="stat-period">this month</span>
                 </div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-content">
                     <div class="stat-text">
-                        <p class="stat-label">TODAY'S USERS</p>
-                        <h3 class="stat-value">2,300</h3>
+                        <p class="stat-label">APPROVED</p>
+                        <h3 class="stat-value" id="approvedCalculations">0</h3>
                     </div>
                     <div class="stat-icon users">
                         <svg width="22" height="23" viewBox="0 0 22 23" fill="white">
-                            <circle cx="11" cy="8" r="3.5" stroke="currentColor" stroke-width="2" fill="none"/>
-                            <path d="M5 18c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <circle cx="11" cy="11.5" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M7 11.5l3 3 5-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
                 </div>
                 <div class="stat-footer">
-                    <span class="stat-change positive">+3%</span>
-                    <span class="stat-period">since last week</span>
+                    <span class="stat-change positive" id="approvalRate">0%</span>
+                    <span class="stat-period">approval rate</span>
                 </div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-content">
                     <div class="stat-text">
-                        <p class="stat-label">NEW CLIENTS</p>
-                        <h3 class="stat-value">+3,462</h3>
+                        <p class="stat-label">AVG PROPERTY VALUE</p>
+                        <h3 class="stat-value" id="avgPropertyValue">R$ 0</h3>
                     </div>
                     <div class="stat-icon clients">
                         <svg width="22" height="23" viewBox="0 0 22 23" fill="white">
-                            <rect x="3" y="6" width="16" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
-                            <path d="M7 6V5a4 4 0 018 0v1" stroke="currentColor" stroke-width="2"/>
+                            <path d="M11 2.5L3 8.5v10a2 2 0 002 2h12a2 2 0 002-2v-10l-8-6z" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M8 20.5v-8h6v8" stroke="currentColor" stroke-width="2" fill="none"/>
                         </svg>
                     </div>
                 </div>
                 <div class="stat-footer">
-                    <span class="stat-change negative">-2%</span>
-                    <span class="stat-period">since last quarter</span>
+                    <span class="stat-change positive" id="avgChange">+0%</span>
+                    <span class="stat-period">vs last month</span>
                 </div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-content">
                     <div class="stat-text">
-                        <p class="stat-label">SALES</p>
-                        <h3 class="stat-value">$103,430</h3>
+                        <p class="stat-label">SHARED LINKS</p>
+                        <h3 class="stat-value" id="sharedLinks">0</h3>
                     </div>
                     <div class="stat-icon sales">
                         <svg width="22" height="23" viewBox="0 0 22 23" fill="white">
-                            <rect x="3" y="4" width="5" height="15" rx="1" fill="currentColor"/>
-                            <rect x="9" y="7" width="5" height="12" rx="1" fill="currentColor"/>
-                            <rect x="15" y="2" width="5" height="17" rx="1" fill="currentColor"/>
+                            <path d="M15 8.5l-3-3-3 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+                            <path d="M12 5.5v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M5 15.5v3a2 2 0 002 2h8a2 2 0 002-2v-3" stroke="currentColor" stroke-width="2" fill="none"/>
                         </svg>
                     </div>
                 </div>
                 <div class="stat-footer">
-                    <span class="stat-change positive">+5%</span>
-                    <span class="stat-period">than last month</span>
+                    <span class="stat-change positive" id="shareRate">+0%</span>
+                    <span class="stat-period">engagement rate</span>
                 </div>
             </div>
         </section>
 
         <!-- Content Grid -->
         <div class="content-grid">
-            <!-- Sales Overview Chart -->
+            <!-- Calculator Form -->
             <div class="card chart-card">
                 <div class="card-header">
-                    <h3>Sales overview</h3>
+                    <h3>New Property Calculation</h3>
                     <p class="chart-subtitle">
-                        <svg class="trend-icon" width="18" height="18" viewBox="0 0 18 18" fill="#2DCE89">
-                            <path d="M9 3l6 6H3l6-6z"/>
-                        </svg>
-                        <span class="trend-text">(+5) more</span>
-                        <span class="trend-period">in 2021</span>
+                        <span class="trend-period">Calculate property financing approval status</span>
                     </p>
                 </div>
-                <div class="chart-container">
-                    <canvas id="salesChart"></canvas>
+                <div class="calculator-form">
+                    <form id="calculatorForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="propertyValue">Property Value (R$)</label>
+                                <input type="number" id="propertyValue" name="propertyValue" placeholder="500000" min="0" step="1000" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="captationPercentage">Captation Percentage (%)</label>
+                                <input type="number" id="captationPercentage" name="captationPercentage" placeholder="30" min="0" max="100" step="0.1" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="completionMonth">Completion Month</label>
+                                <select id="completionMonth" name="completionMonth" required>
+                                    <option value="">Select month</option>
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="completionYear">Completion Year</label>
+                                <input type="number" id="completionYear" name="completionYear" placeholder="2025" min="2024" max="2100" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="habiteSe">Habite-se Value (R$)</label>
+                            <input type="number" id="habiteSe" name="habiteSe" placeholder="0" min="0" step="100" required>
+                        </div>
+
+                        <div class="payment-phases-section">
+                            <h4>Payment Phases</h4>
+                            <p class="section-subtitle">Add installments for each payment phase</p>
+
+                            <div class="phase-tabs">
+                                <button type="button" class="phase-tab active" data-phase="entry">Entry</button>
+                                <button type="button" class="phase-tab" data-phase="during">During Construction</button>
+                                <button type="button" class="phase-tab" data-phase="post">Post-Construction</button>
+                            </div>
+
+                            <div class="phase-content active" id="entryPhase">
+                                <div class="installments-list" id="entryInstallments"></div>
+                                <button type="button" class="btn-add-installment" data-phase="entry">+ Add Entry Installment</button>
+                            </div>
+
+                            <div class="phase-content" id="duringPhase">
+                                <div class="installments-list" id="duringInstallments"></div>
+                                <button type="button" class="btn-add-installment" data-phase="during">+ Add During Construction Installment</button>
+                            </div>
+
+                            <div class="phase-content" id="postPhase">
+                                <div class="installments-list" id="postInstallments"></div>
+                                <button type="button" class="btn-add-installment" data-phase="post">+ Add Post-Construction Installment</button>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary-form">Calculate & Save</button>
+                            <button type="button" class="btn-secondary-form" id="btnReset">Reset Form</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
-            <!-- Get Started Card -->
-            <div class="card gradient-card">
+            <!-- Approval Status Display -->
+            <div class="card gradient-card" id="approvalStatusCard">
                 <div class="gradient-content">
                     <div class="gradient-icon">
-                        <svg width="48" height="48" viewBox="0 0 48 48" fill="white">
-                            <rect x="8" y="8" width="32" height="32" rx="4" stroke="currentColor" stroke-width="2" fill="none"/>
-                            <path d="M20 24l4 4 8-8" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <svg width="64" height="64" viewBox="0 0 64 64" fill="white" id="statusIcon">
+                            <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="3" fill="none"/>
+                            <path d="M20 32l8 8 16-16" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <h3 class="gradient-title">Get started with Argon</h3>
-                    <p class="gradient-description">There's nothing I really wanted to do in life that I wasn't able to get good at. That's my skill.</p>
+                    <h3 class="gradient-title" id="statusTitle">Waiting for Calculation</h3>
+                    <p class="gradient-description" id="statusDescription">Fill out the form and click "Calculate & Save" to see the approval status of your property financing.</p>
+                    <div id="statusDetails" class="status-details hidden">
+                        <div class="status-metric">
+                            <span class="metric-label">Required Captation</span>
+                            <span class="metric-value" id="requiredCaptation">R$ 0</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">Actual Captation</span>
+                            <span class="metric-value" id="actualCaptation">R$ 0</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">Difference</span>
+                            <span class="metric-value" id="difference">R$ 0</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">Percentage Paid</span>
+                            <span class="metric-value" id="percentagePaid">0%</span>
+                        </div>
+                    </div>
+                    <button class="btn-share hidden" id="btnShare">Generate Shareable Link</button>
                 </div>
             </div>
         </div>
 
-        <!-- Three Column Layout -->
-        <div class="three-columns">
-            <!-- Team Members -->
-            <div class="card team-card">
-                <h3 class="card-title">Team Members</h3>
-                <div class="team-list">
-                    <div class="team-member">
-                        <div class="member-info">
-                            <div class="member-avatar">
-                                <img src="https://api.ui-avatars.com/api/?name=John+Michael&background=667eea&color=fff&size=40" alt="John Michael" class="avatar-image" onerror="this.style.display='none'">
-                                <span class="avatar-initials">JM</span>
-                            </div>
-                            <div class="member-details">
-                                <p class="member-name">John Michael</p>
-                                <span class="member-badge online">ONLINE</span>
-                            </div>
-                        </div>
-                        <button class="btn-add">Add</button>
-                    </div>
-
-                    <div class="team-member">
-                        <div class="member-info">
-                            <div class="member-avatar">
-                                <img src="https://api.ui-avatars.com/api/?name=Alex+Smith&background=667eea&color=fff&size=40" alt="Alex Smith" class="avatar-image" onerror="this.style.display='none'">
-                                <span class="avatar-initials">AS</span>
-                            </div>
-                            <div class="member-details">
-                                <p class="member-name">Alex Smith</p>
-                                <span class="member-badge online">ONLINE</span>
-                            </div>
-                        </div>
-                        <button class="btn-add">Add</button>
-                    </div>
-
-                    <div class="team-member">
-                        <div class="member-info">
-                            <div class="member-avatar">
-                                <img src="https://api.ui-avatars.com/api/?name=Samantha+Joy&background=667eea&color=fff&size=40" alt="Samantha Joy" class="avatar-image" onerror="this.style.display='none'">
-                                <span class="avatar-initials">SJ</span>
-                            </div>
-                            <div class="member-details">
-                                <p class="member-name">Samantha Joy</p>
-                                <span class="member-badge online">ONLINE</span>
-                            </div>
-                        </div>
-                        <button class="btn-add">Add</button>
-                    </div>
-
-                    <div class="team-member">
-                        <div class="member-info">
-                            <div class="member-avatar">
-                                <img src="https://api.ui-avatars.com/api/?name=John+Michael&background=667eea&color=fff&size=40" alt="John Michael" class="avatar-image" onerror="this.style.display='none'">
-                                <span class="avatar-initials">JM</span>
-                            </div>
-                            <div class="member-details">
-                                <p class="member-name">John Michael</p>
-                                <span class="member-badge online">ONLINE</span>
-                            </div>
-                        </div>
-                        <button class="btn-add">Add</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- To Do List -->
-            <div class="card todo-card">
-                <h3 class="card-title">To Do List</h3>
-                <div class="todo-list">
-                    <label class="todo-item">
-                        <input type="checkbox">
-                        <span class="todo-text">Call with Dave</span>
-                        <span class="todo-time">09:30 AM</span>
-                    </label>
-
-                    <label class="todo-item">
-                        <input type="checkbox">
-                        <span class="todo-text">Brunch meeting</span>
-                        <span class="todo-time">11:00 AM</span>
-                    </label>
-
-                    <label class="todo-item">
-                        <input type="checkbox">
-                        <span class="todo-text">Argon Dashboard Launch</span>
-                        <span class="todo-time">02:00 PM</span>
-                    </label>
-
-                    <label class="todo-item checked">
-                        <input type="checkbox" checked>
-                        <span class="todo-text">Winter Hackaton</span>
-                        <span class="todo-time">10:00 AM</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Progress Track -->
-            <div class="card progress-card">
-                <h3 class="card-title">Progress Track</h3>
-                <div class="progress-list">
-                    <div class="progress-item">
-                        <div class="progress-header">
-                            <div class="progress-icon react"></div>
-                            <div class="progress-info">
-                                <p class="progress-name">React Material Dashboard</p>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 60%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="progress-item">
-                        <div class="progress-header">
-                            <div class="progress-icon vue"></div>
-                            <div class="progress-info">
-                                <p class="progress-name">Argon Design System</p>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 10%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="progress-item">
-                        <div class="progress-header">
-                            <div class="progress-icon next"></div>
-                            <div class="progress-info">
-                                <p class="progress-name">Vue3 New UI Kit PRO</p>
-                                <div class="progress-bar">
-                                    <div class="progress-fill complete" style="width: 100%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="progress-item">
-                        <div class="progress-header">
-                            <div class="progress-icon figma"></div>
-                            <div class="progress-info">
-                                <p class="progress-name">Soft UI Dashboard</p>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Posts and Reviews Section -->
-        <div class="posts-section">
-            <div class="card post-card">
-                <div class="post-header">
-                    <div class="post-author">
-                        <div class="author-avatar">JM</div>
-                        <div class="author-info">
-                            <p class="author-name">John Doe</p>
-                            <span class="author-subtitle">2 months ago</span>
-                        </div>
-                    </div>
-                    <button class="btn-follow">Follow</button>
-                </div>
-
-                <p class="post-content">Personal profiles are the perfect way for you to grab their attention and make a good first impression by telling them more about yourself.</p>
-
-                <img class="post-image" src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=300&fit=crop" alt="Post image">
-
-                <div class="post-footer">
-                    <div class="post-stats">
-                        <span><strong>320</strong> likes</span>
-                        <span><strong>12</strong> comments</span>
-                        <span><strong>64</strong> shares</span>
-                    </div>
-                </div>
-
-                <div class="comments-section">
-                    <div class="comment">
-                        <div class="comment-avatar">
-                            <img src="https://api.ui-avatars.com/api/?name=Michael+Lewis&background=11cdef&color=fff&size=36" alt="Michael Lewis" class="avatar-image" onerror="this.style.display='none'">
-                            <span class="avatar-initials">ML</span>
-                        </div>
-                        <div class="comment-content">
-                            <p class="comment-author">Michael Lewis</p>
-                            <p class="comment-text">3 hours ago</p>
-                            <p class="comment-body">The best of creative people are the least happy</p>
-                            <div class="comment-actions">
-                                <span>Reply</span>
-                                <span>123 likes</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="comment">
-                        <div class="comment-avatar">
-                            <img src="https://api.ui-avatars.com/api/?name=Laurent+Porter&background=11cdef&color=fff&size=36" alt="Laurent Porter" class="avatar-image" onerror="this.style.display='none'">
-                            <span class="avatar-initials">LP</span>
-                        </div>
-                        <div class="comment-content">
-                            <p class="comment-author">Laurent Porter</p>
-                            <p class="comment-text">3 hours ago</p>
-                            <p class="comment-body">It would be great to be able to write comments directly and not just a blog post</p>
-                            <div class="comment-actions">
-                                <span>Reply</span>
-                                <span>32 likes</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <textarea class="comment-input" placeholder="Write a comment..." rows="3"></textarea>
-            </div>
-        </div>
-
-        <!-- Tables Section -->
+        <!-- Calculator Tables Section -->
         <div class="tables-section">
-            <!-- Projects/Reviews Table -->
+            <!-- Recent Calculations Table -->
             <div class="card table-card">
                 <div class="card-header">
-                    <h3>Reviews/Projects Table</h3>
+                    <h3>Recent Calculations</h3>
                 </div>
                 <div class="table-wrapper">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Project</th>
-                                <th>Budget</th>
+                                <th>Property Value</th>
+                                <th>Captation</th>
                                 <th>Status</th>
-                                <th>Completion</th>
+                                <th>Approval %</th>
+                                <th>Date</th>
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="calculationsTableBody">
                             <tr>
-                                <td>
-                                    <div class="project-name">
-                                        <div class="project-icon spotify"></div>
-                                        <span>Spotify</span>
+                                <td colspan="6" class="empty-state">
+                                    <div class="empty-state-content">
+                                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                                            <circle cx="24" cy="24" r="20" stroke="#8392AB" stroke-width="2" opacity="0.3"/>
+                                            <path d="M16 24h16M24 16v16" stroke="#8392AB" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+                                        </svg>
+                                        <p>No calculations yet. Create your first calculation using the form above.</p>
                                     </div>
                                 </td>
-                                <td>$3,500</td>
-                                <td><span class="badge success">COMPLETED</span></td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 100%;"></div>
-                                    </div>
-                                </td>
-                                <td><button class="btn-menu">⋮</button></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="project-name">
-                                        <div class="project-icon invision"></div>
-                                        <span>Invision</span>
-                                    </div>
-                                </td>
-                                <td>$15,800</td>
-                                <td><span class="badge danger">DELAYED</span></td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 100%;"></div>
-                                    </div>
-                                </td>
-                                <td><button class="btn-menu">⋮</button></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="project-name">
-                                        <div class="project-icon jira"></div>
-                                        <span>Jira</span>
-                                    </div>
-                                </td>
-                                <td>$5,400</td>
-                                <td><span class="badge danger">DELAYED</span></td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 20%;"></div>
-                                    </div>
-                                </td>
-                                <td><button class="btn-menu">⋮</button></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="project-name">
-                                        <div class="project-icon slack"></div>
-                                        <span>Slack</span>
-                                    </div>
-                                </td>
-                                <td>$1,800</td>
-                                <td><span class="badge info">IN PROGRESS</span></td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 0%;"></div>
-                                    </div>
-                                </td>
-                                <td><button class="btn-menu">⋮</button></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="project-name">
-                                        <div class="project-icon webdev"></div>
-                                        <span>Webdev</span>
-                                    </div>
-                                </td>
-                                <td>$14,500</td>
-                                <td><span class="badge success">COMPLETED</span></td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 90%;"></div>
-                                    </div>
-                                </td>
-                                <td><button class="btn-menu">⋮</button></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="project-name">
-                                        <div class="project-icon adobe"></div>
-                                        <span>Adobe XD</span>
-                                    </div>
-                                </td>
-                                <td>$2,200</td>
-                                <td><span class="badge danger">DELAYED</span></td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 20%;"></div>
-                                    </div>
-                                </td>
-                                <td><button class="btn-menu">⋮</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Sales by Country Table -->
-            <div class="card table-card">
-                <div class="card-header">
-                    <h3>Sales by Country</h3>
-                </div>
-                <div class="table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Country</th>
-                                <th>Sales</th>
-                                <th>Value</th>
-                                <th>Bounce Rate</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="country-name">
-                                        <span class="flag">🇺🇸</span>
-                                        <span>United States</span>
-                                    </div>
-                                </td>
-                                <td>2,500</td>
-                                <td>$230,900</td>
-                                <td>
-                                    <div class="bounce-indicator positive">29.50%</div>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="country-name">
-                                        <span class="flag">🇩🇪</span>
-                                        <span>Germany</span>
-                                    </div>
-                                </td>
-                                <td>3,900</td>
-                                <td>$440,000</td>
-                                <td>
-                                    <div class="bounce-indicator negative">40.22%</div>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="country-name">
-                                        <span class="flag">🇬🇧</span>
-                                        <span>Great Britain</span>
-                                    </div>
-                                </td>
-                                <td>1,400</td>
-                                <td>$1,750,100</td>
-                                <td>
-                                    <div class="bounce-indicator positive">23.44%</div>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="country-name">
-                                        <span class="flag">🇧🇷</span>
-                                        <span>Brazil</span>
-                                    </div>
-                                </td>
-                                <td>562</td>
-                                <td>$143,500</td>
-                                <td>
-                                    <div class="bounce-indicator positive">32.14%</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bottom Tables -->
-        <div class="bottom-tables">
-            <!-- Categories Section -->
-            <div class="card categories-card">
-                <div class="card-header">
-                    <h3>Categories</h3>
-                </div>
-                <div class="categories-list">
-                    <div class="category-item">
-                        <div class="category-icon devices"></div>
-                        <div class="category-info">
-                            <p class="category-name">Devices</p>
-                            <span class="category-count">192 devices</span>
-                        </div>
-                        <span class="category-badge">90%</span>
-                    </div>
-
-                    <div class="category-item">
-                        <div class="category-icon devices"></div>
-                        <div class="category-info">
-                            <p class="category-name">Devices</p>
-                            <span class="category-count">192 devices</span>
-                        </div>
-                        <span class="category-badge">90%</span>
-                    </div>
-
-                    <div class="category-item">
-                        <div class="category-icon devices"></div>
-                        <div class="category-info">
-                            <p class="category-name">Devices</p>
-                            <span class="category-count">192 devices</span>
-                        </div>
-                        <span class="category-badge">90%</span>
-                    </div>
-
-                    <div class="category-item">
-                        <div class="category-icon devices"></div>
-                        <div class="category-info">
-                            <p class="category-name">Devices</p>
-                            <span class="category-count">192 devices</span>
-                        </div>
-                        <span class="category-badge">90%</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Authors/Team Table -->
-            <div class="card authors-card">
-                <div class="card-header">
-                    <h3>Authors</h3>
-                </div>
-                <div class="table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Author</th>
-                                <th>Position</th>
-                                <th>Status</th>
-                                <th>Employed</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="author-row">
-                                        <div class="author-avatar-small">JM</div>
-                                        <span>John Michael</span>
-                                    </div>
-                                </td>
-                                <td>Manager</td>
-                                <td><span class="badge success">ONLINE</span></td>
-                                <td>23/04/18</td>
-                                <td><button class="btn-menu">⋮</button></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="author-row">
-                                        <div class="author-avatar-small">AS</div>
-                                        <span>Alexa Liras</span>
-                                    </div>
-                                </td>
-                                <td>Programator</td>
-                                <td><span class="badge danger">OFFLINE</span></td>
-                                <td>11/04/18</td>
-                                <td><button class="btn-menu">⋮</button></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="author-row">
-                                        <div class="author-avatar-small">LP</div>
-                                        <span>Laurent Perrier</span>
-                                    </div>
-                                </td>
-                                <td>Executive</td>
-                                <td><span class="badge success">ONLINE</span></td>
-                                <td>25/03/18</td>
-                                <td><button class="btn-menu">⋮</button></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="author-row">
-                                        <div class="author-avatar-small">ML</div>
-                                        <span>Michael Levi</span>
-                                    </div>
-                                </td>
-                                <td>Programator</td>
-                                <td><span class="badge success">ONLINE</span></td>
-                                <td>22/01/18</td>
-                                <td><button class="btn-menu">⋮</button></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="author-row">
-                                        <div class="author-avatar-small">RC</div>
-                                        <span>Richard Gran</span>
-                                    </div>
-                                </td>
-                                <td>Manager</td>
-                                <td><span class="badge success">ONLINE</span></td>
-                                <td>21/12/17</td>
-                                <td><button class="btn-menu">⋮</button></td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="author-row">
-                                        <div class="author-avatar-small">RG</div>
-                                        <span>Raul Gomez</span>
-                                    </div>
-                                </td>
-                                <td>Designer</td>
-                                <td><span class="badge success">ONLINE</span></td>
-                                <td>10/12/17</td>
-                                <td><button class="btn-menu">⋮</button></td>
                             </tr>
                         </tbody>
                     </table>
