@@ -1345,11 +1345,22 @@
             const todosValores = [];
             
             rows.forEach((row, index) => {
-                const preco = parseFloat(row.querySelector('.preco').value);
-                const area = parseFloat(row.querySelector('.area').value);
-                const valorHomog = parseFloat(row.querySelector('.homog').textContent);
-                const numero = parseInt(row.querySelector('td:first-child').textContent);
-                
+                // FIXED: Added null checking before parsing
+                const precoElement = row.querySelector('.preco');
+                const areaElement = row.querySelector('.area');
+                const homogElement = row.querySelector('.homog');
+                const numeroElement = row.querySelector('td:first-child');
+
+                // Validate elements exist before parsing
+                if (!precoElement || !areaElement || !homogElement || !numeroElement) {
+                    return; // Skip this row if elements are missing
+                }
+
+                const preco = parseFloat(precoElement.value);
+                const area = parseFloat(areaElement.value);
+                const valorHomog = parseFloat(homogElement.textContent);
+                const numero = parseInt(numeroElement.textContent);
+
                 // Considera apenas linhas com preço, área e valor homogeneizado válidos
                 if (!isNaN(preco) && preco > 0 && !isNaN(area) && area > 0 && !isNaN(valorHomog) && valorHomog > 0) {
                     todosValores.push({valor: valorHomog, numero: numero, index: index});
@@ -1469,12 +1480,20 @@
         }
         
         function calcularEstatisticas(vals) {
+            // FIXED: Added zero-check to prevent division by zero
+            if (vals.length === 0) {
+                console.error('Cannot calculate statistics with zero values');
+                return;
+            }
+
             const media = vals.reduce((a, b) => a + b) / vals.length;
             const sorted = [...vals].sort((a, b) => a - b);
             const mediana = sorted.length % 2 === 0 ? (sorted[sorted.length/2-1] + sorted[sorted.length/2]) / 2 : sorted[Math.floor(sorted.length/2)];
             const variancia = vals.reduce((acc, val) => acc + Math.pow(val - media, 2), 0) / vals.length;
             const desvio = Math.sqrt(variancia);
-            const coef = (desvio / media) * 100;
+
+            // FIXED: Added zero-check for coefficient of variation
+            const coef = (media === 0) ? 0 : (desvio / media) * 100;
             
             document.getElementById('media').textContent = fmt(media);
             document.getElementById('mediana').textContent = fmt(mediana);
