@@ -2,10 +2,19 @@
 
 ## Document Control
 - **Feature**: Payment Flow Calculator with Shareable Links
-- **Version**: 1.0.0
+- **Version**: 2.0.0 (Updated to reflect current implementation)
 - **Priority**: P0 (Critical)
-- **Target Release**: Sprint 1
+- **Status**: PARTIALLY IMPLEMENTED - Core calculators exist, shareable links pending
+- **Last Updated**: 2025-11-05
 - **Owner**: Product Team
+- **Implementation Status**:
+  - ✅ Core calculator functionality (HTML/JS)
+  - ✅ PRICE and SAC amortization methods
+  - ✅ Construction payment flow tracking
+  - ✅ Financing capacity calculator
+  - ❌ Shareable links (not implemented)
+  - ❌ Backend integration (not implemented)
+  - ❌ Agent branding customization (not implemented)
 
 ---
 
@@ -67,9 +76,239 @@ Feature: Payment Flow Calculator
 
 ---
 
-## 2. Technical Architecture
+## 2. Current Implementation Overview
 
-### 2.1 Domain Model (OOP Design)
+### 2.1 Implemented Calculators
+
+The project currently has **two functional calculator implementations** built with vanilla HTML/CSS/JavaScript:
+
+#### **A. CalculadoraFluxoPriceAjustada.html** (Construction Payment Flow Calculator)
+
+**Location**: `/features-html/CalculadoraFluxoPriceAjustada.html` (2,494 lines)
+
+**Purpose**: Comprehensive real estate payment flow calculator designed for construction projects with multi-stage payment schedules.
+
+**Key Features**:
+
+1. **Construction Phase Management**:
+   - Construction completion date tracking (month/year)
+   - Captação percentage configuration (% of property value to collect until delivery)
+   - Automatic calculation of months until completion
+   - Real-time progress tracking
+
+2. **Multi-Stage Payment Structure**:
+   - **Entrada (Down Payment)**: Support for multiple parceled entry payments with add/remove functionality
+   - **Durante a Obra (During Construction)**:
+     - Recurring payments: Monthly, semi-annual, and annual options
+     - Unique payments: One-time payments during construction
+     - Quantity limits based on construction timeline
+   - **Habite-se (Occupancy Certificate Payment)**: Single payment at property delivery
+   - **Pós-Obra (Post-Construction)**: Monthly, semi-annual, and annual payment options
+
+3. **Real-Time Financial Calculations**:
+   - Total entered via all stages
+   - Total captação (entry + during construction + habite-se)
+   - Total paid (captação + post-construction)
+   - Remaining balance calculation
+   - Automatic approval/rejection status indicator
+
+4. **Dual Financing Simulation Modes**:
+
+   **Mode 1: Saldo Total (Total Balance)**
+   - Finances the complete remaining balance
+   - Age input validation (18-80 years)
+   - Automatic maximum term calculation (limited to 35 years or age 80.5)
+   - Quick-select term buttons (5, 10, 15, 20, 25, 30, 35 years)
+
+   **Mode 2: Pós-Obra (Post-Construction)**
+   - Uses values from post-construction section
+   - Reajusted payments for monthly/semi-annual/annual installments
+   - Applies compound interest to each payment frequency
+
+5. **Amortization Methods**:
+   - **PRICE (Fixed Installments)**: Constant payment throughout the loan term
+   - **SAC (Decreasing Installments)**: Fixed amortization with decreasing interest
+
+6. **Advanced Calculations**:
+   ```javascript
+   // PRICE Formula
+   parcela = valorFinanciar * (taxaMensal * (1 + taxaMensal)^n) / ((1 + taxaMensal)^n - 1)
+
+   // SAC Formula
+   amortizacaoFixa = valorFinanciar / n
+   parcela(i) = amortizacaoFixa + (saldoDevedor * taxaMensal)
+
+   // Interest Rate Conversion (Annual to Monthly)
+   taxaMensal = Math.pow(1 + taxaAnual/100, 1/12) - 1
+   ```
+
+7. **Results & Analytics**:
+   - Complete amortization table with payment number, installment, interest, amortization, balance
+   - First and last installment display (critical for SAC)
+   - Total interest and total paid calculations
+   - Color-coded payment types
+   - Status approval indicator (green = approved, red = rejected)
+
+8. **User Experience**:
+   - Responsive design (mobile-friendly)
+   - Tooltips for complex fields
+   - Brazilian Real (R$) currency formatting
+   - Smooth animations and transitions
+   - Glass-morphism card design
+   - Modal popups for mode selection
+
+---
+
+#### **B. Simulador de Financiamento.html** (Financing Simulator)
+
+**Location**: `/features-html/Simulador de Financiamento.html` (878 lines)
+
+**Purpose**: Streamlined financing simulator for individual homebuyers with two focused modes.
+
+**Key Features**:
+
+1. **Mode Selection Screen**:
+   - Visual choice cards for mode selection
+   - Clear iconography and descriptions
+
+2. **Calcular Capacidade (Calculate Borrowing Capacity)**:
+   - **Inputs**:
+     - Monthly income
+     - Financing term (5-35 years slider)
+     - Interest rate (5-15% slider)
+   - **Outputs**:
+     - Maximum monthly payment (30% of income rule)
+     - Maximum property value
+     - Required down payment (20% standard)
+     - Maximum financing amount
+   - **Logic**: Backward calculation from income to determine purchasing power
+
+3. **Simular Financiamento (Simulate Financing)**:
+   - **Financing Type Selection**:
+     - 🏠 **Residential**: Up to 35 years, 9-14% interest
+     - 🏢 **Commercial**: Up to 25 years, 10-15% interest
+     - 🌾 **Rural**: Up to 30 years, 8-13% interest
+   - **Inputs**:
+     - Client age (18-80 years)
+     - Property value
+     - Down payment amount (automatic % display)
+     - Financing term (dynamically adjusted by financing type)
+     - Interest rate (range adjusted by financing type)
+     - Amortization method (PRICE or SAC toggle)
+   - **Validations**:
+     - Age + term cannot exceed 80.5 years
+     - Down payment must be > 0 and < property value
+     - Minimum financing amounts
+
+4. **Results Display**:
+   - Main result card with gradient background
+   - Stats grid showing:
+     - First installment (or fixed installment for PRICE)
+     - Last installment (for SAC)
+     - Recommended minimum income (30% rule)
+     - Total to pay
+     - Total interest
+     - Amount financed
+     - Selected amortization type
+     - Selected financing type
+
+5. **Design System**:
+   - TailwindCSS-inspired styling
+   - Purple/blue gradient backgrounds
+   - Interactive choice cards
+   - Mode toggle buttons (PRICE vs SAC)
+   - Slider inputs with real-time value display
+   - Responsive breakpoints for mobile/tablet/desktop
+
+---
+
+### 2.2 Technical Stack (Current Implementation)
+
+```
+Frontend: Pure HTML5 + Vanilla JavaScript (ES6+)
+├── No frameworks (React, Vue, etc.)
+├── No TypeScript (pure JavaScript)
+├── No build process required
+└── No package.json dependencies
+
+Styling: Custom CSS + TailwindCSS (CDN)
+├── Glass-morphism effects
+├── Gradient backgrounds
+├── Custom animations (@keyframes)
+└── Responsive grid layouts
+
+Libraries:
+├── Chart.js (imported but not fully utilized)
+└── Intl.NumberFormat (for Brazilian Real formatting)
+
+Architecture:
+├── Client-side only (no backend)
+├── No API calls
+├── No database integration
+├── No authentication
+├── No state management
+└── All calculations performed in browser
+```
+
+---
+
+### 2.3 Key Differences vs. Proposed Architecture
+
+| Aspect | Current Implementation | Proposed (PRD Section 2.1) |
+|--------|------------------------|---------------------------|
+| **Language** | Vanilla JavaScript | TypeScript |
+| **Architecture** | Procedural | OOP (Classes, SOLID principles) |
+| **Backend** | None (client-side only) | Vercel Edge Functions + Supabase |
+| **State Management** | Direct DOM manipulation | Domain entities (PaymentCalculator, Money, etc.) |
+| **Persistence** | None (calculations lost on refresh) | Database with short codes |
+| **Shareable Links** | ❌ Not implemented | ✅ Proposed with short codes |
+| **Authentication** | ❌ Not required | ✅ JWT-based |
+| **Branding** | ❌ Fixed | ✅ Customizable per agent |
+| **Testing** | ❌ No tests | ✅ Unit/Integration/E2E |
+| **API Integration** | ❌ None | ✅ RESTful API |
+| **Code Organization** | Single HTML files | Repository pattern, use cases, domain models |
+
+---
+
+### 2.4 Implementation Gaps & Next Steps
+
+**Implemented** ✅:
+- Core calculator logic (PRICE & SAC)
+- Multi-stage payment tracking
+- Financing capacity calculator
+- Age-based term validation
+- Currency formatting (Brazilian Real)
+- Responsive UI
+- Interactive user experience
+
+**Not Implemented** ❌:
+1. **Shareable Links**: No URL encoding, no state serialization
+2. **Backend Integration**: No API, no database, no persistence
+3. **Authentication**: No user accounts, no sessions
+4. **Branding**: No custom logos, colors, or agent information
+5. **Repository Pattern**: No abstraction, no data layer
+6. **TypeScript**: No type safety, no interfaces
+7. **Testing**: No unit tests, no integration tests
+8. **Monitoring**: No analytics, no error tracking
+9. **PDF Export**: No report generation
+10. **Email Integration**: No sharing via email
+
+**Priority Enhancements** (Based on Architecture Document):
+1. Implement shareable links with short codes (P0)
+2. Add Supabase integration for persistence (P0)
+3. Implement user authentication (P1)
+4. Add agent branding customization (P1)
+5. Convert to TypeScript with OOP design (P2)
+6. Add comprehensive testing suite (P2)
+7. Implement PDF export functionality (P3)
+
+---
+
+## 3. Proposed Technical Architecture (Future Implementation)
+
+> **Note**: The following sections (3.1 - 3.4) describe the proposed TypeScript/OOP architecture from the original PRD. This represents the target state for a future refactoring to enable shareable links, persistence, and multi-user features.
+
+### 3.1 Domain Model (OOP Design)
 
 ```typescript
 /**
@@ -429,7 +668,7 @@ class PaymentCalculator {
 }
 ```
 
-### 2.2 Repository Pattern
+### 3.2 Repository Pattern
 
 ```typescript
 /**
@@ -566,7 +805,7 @@ class SupabaseCalculatorRepository implements ICalculatorRepository {
 }
 ```
 
-### 2.3 Use Cases (Application Layer)
+### 3.3 Use Cases (Application Layer)
 
 ```typescript
 /**
@@ -721,7 +960,7 @@ class LoadCalculatorByShortCodeUseCase {
 }
 ```
 
-### 2.4 API Endpoints
+### 3.4 API Endpoints
 
 ```typescript
 /**
@@ -848,9 +1087,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
 ---
 
-## 3. UI/UX Requirements
+## 4. UI/UX Requirements
 
-### 3.1 Responsive Design
+### 4.1 Responsive Design
 
 ```
 Breakpoint | Width | Layout
@@ -860,7 +1099,7 @@ Tablet     | 640-1024px | Two columns
 Desktop    | >1024px | Three columns with sidebar
 ```
 
-### 3.2 Loading States
+### 4.2 Loading States
 
 ```typescript
 // Progressive enhancement
@@ -875,7 +1114,7 @@ Desktop    | >1024px | Three columns with sidebar
 - Show loading spinner only for >1s operations
 ```
 
-### 3.3 Error Handling
+### 4.3 Error Handling
 
 ```typescript
 // User-friendly error messages
@@ -895,9 +1134,9 @@ const ERROR_MESSAGES = {
 
 ---
 
-## 4. Security Requirements
+## 5. Security Requirements
 
-### 4.1 Input Validation
+### 5.1 Input Validation
 
 ```typescript
 import { z } from 'zod';
@@ -943,7 +1182,7 @@ const CreateCalculatorSchema = z.object({
 });
 ```
 
-### 4.2 Rate Limiting
+### 5.2 Rate Limiting
 
 ```typescript
 // Per-user limits
@@ -961,9 +1200,9 @@ const IP_RATE_LIMITS = {
 
 ---
 
-## 5. Performance Requirements
+## 6. Performance Requirements
 
-### 5.1 Metrics
+### 6.1 Metrics
 
 ```
 Operation                | Target   | Measurement
@@ -975,7 +1214,7 @@ API Response (load)      | < 100ms  | p95 (cached)
 Calculation Speed        | < 50ms   | JavaScript profiler
 ```
 
-### 5.2 Optimization Strategies
+### 6.2 Optimization Strategies
 
 ```typescript
 // 1. Memoization for expensive calculations
@@ -1000,9 +1239,9 @@ const Calculator = lazy(() => import('./Calculator'));
 
 ---
 
-## 6. Testing Requirements
+## 7. Testing Requirements
 
-### 6.1 Unit Tests
+### 7.1 Unit Tests
 
 ```typescript
 describe('PaymentCalculator', () => {
@@ -1046,7 +1285,7 @@ describe('PaymentCalculator', () => {
 });
 ```
 
-### 6.2 Integration Tests
+### 7.2 Integration Tests
 
 ```typescript
 describe('Calculator API', () => {
@@ -1078,7 +1317,7 @@ describe('Calculator API', () => {
 });
 ```
 
-### 6.3 E2E Tests
+### 7.3 E2E Tests
 
 ```typescript
 describe('Calculator User Flow', () => {
@@ -1126,9 +1365,9 @@ describe('Calculator User Flow', () => {
 
 ---
 
-## 7. Acceptance Criteria
+## 8. Acceptance Criteria
 
-### 7.1 Definition of Done
+### 8.1 Definition of Done
 
 - [ ] Unit tests pass (≥80% coverage)
 - [ ] Integration tests pass
@@ -1141,7 +1380,7 @@ describe('Calculator User Flow', () => {
 - [ ] QA sign-off received
 - [ ] Product owner approval
 
-### 7.2 Release Checklist
+### 8.2 Release Checklist
 
 - [ ] Feature flag enabled for beta users
 - [ ] Monitoring dashboards configured
@@ -1154,7 +1393,7 @@ describe('Calculator User Flow', () => {
 
 ---
 
-## 8. Open Questions
+## 9. Open Questions
 
 1. **Expiration**: Should shareable links expire? If so, after how long?
 2. **Editing**: Can agents edit calculators after sharing? How to handle versioning?
@@ -1164,7 +1403,7 @@ describe('Calculator User Flow', () => {
 
 ---
 
-## 9. Future Enhancements (Out of Scope)
+## 10. Future Enhancements (Out of Scope)
 
 - Calculator templates library
 - PDF export with agent branding
@@ -1181,6 +1420,15 @@ describe('Calculator User Flow', () => {
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0.0 | 2025-01-04 | Product Team | Initial PRD |
+| 1.0.0 | 2025-01-04 | Product Team | Initial PRD with proposed TypeScript/OOP architecture |
+| 2.0.0 | 2025-11-05 | Development Team | **MAJOR UPDATE**: Added Section 2 documenting current HTML/JavaScript implementation. Updated to reflect actual state of two working calculators (CalculadoraFluxoPriceAjustada.html and Simulador de Financiamento.html). Clarified implementation status (core calculators ✅, shareable links ❌, backend integration ❌). Renamed original Section 2 to Section 3 "Proposed Technical Architecture" to distinguish current vs. future state. Added comparison table showing gaps between current and proposed architecture. |
 
-**Next Review**: 2025-01-11
+**Next Review**: 2025-12-05
+
+**Key Changes in v2.0.0**:
+- ✅ Documented two existing calculator implementations
+- ✅ Added technical stack details (Vanilla JS, no backend)
+- ✅ Listed implementation gaps and priorities
+- ✅ Clarified that shareable links are not yet implemented
+- ✅ Maintained proposed architecture for future reference
+- ✅ Updated document control section with implementation status
