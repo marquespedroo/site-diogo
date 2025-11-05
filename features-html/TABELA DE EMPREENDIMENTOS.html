@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Empreendimentos | Dashboard Premium</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--primary:#667eea;--secondary:#764ba2;--success:#10b981;--danger:#ef4444;--dark:#1f2937;--light:#f9fafb;--border:#e5e7eb}
+        body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;color:var(--dark);line-height:1.6}
+        .container{max-width:1920px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);animation:fadeIn .5s ease}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:40px 30px;text-align:center;position:relative;overflow:hidden}
+        .header h1{font-size:2.5em;margin-bottom:10px;font-weight:700;text-shadow:2px 2px 4px rgba(0,0,0,.1)}
+        .header p{font-size:1.1em;opacity:.95;font-weight:300}
+        .badge{display:inline-block;padding:6px 16px;background:rgba(255,255,255,.2);border-radius:20px;font-size:.9em;margin-top:10px;backdrop-filter:blur(10px)}
+        .feedback{display:none;padding:16px 30px;background:linear-gradient(135deg,var(--success) 0%,#059669 100%);color:#fff;text-align:center;font-weight:600;border-left:4px solid #047857}
+        .feedback.show{display:block;animation:slideDown .4s cubic-bezier(.68,-.55,.265,1.55)}
+        @keyframes slideDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+        .controls{padding:30px;background:linear-gradient(to bottom,#f9fafb 0%,#fff 100%);display:grid;gap:20px;border-bottom:1px solid var(--border)}
+        .control-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;align-items:start}
+        .control-group{display:flex;flex-direction:column;gap:8px}
+        .control-label{font-size:.875em;font-weight:600;color:var(--dark);text-transform:uppercase;letter-spacing:.5px}
+        .control-group select,.control-group input{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:12px;font-size:1em;transition:all .3s cubic-bezier(.4,0,.2,1);background:#fff}
+        .control-group select{cursor:pointer;appearance:none;background-image:url('data:image/svg+xml,<svg width="12" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M1 1l5 5 5-5" stroke="%23667eea" stroke-width="2" fill="none"/></svg>');background-repeat:no-repeat;background-position:right 18px center;padding-right:45px}
+        .control-group input:focus,.control-group select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.1);transform:translateY(-1px)}
+        .price-range-wrapper{display:flex;gap:12px;align-items:center}
+        .price-input-group{flex:1;display:flex;flex-direction:column;gap:6px}
+        .price-input-label{font-size:.75em;color:#6b7280;font-weight:500}
+        .price-input-group input{padding:10px 12px;font-size:.9em}
+        .filter-buttons{display:flex;gap:10px;flex-wrap:wrap;padding-top:10px}
+        .filter-btn{padding:12px 24px;border:2px solid var(--primary);background:#fff;color:var(--primary);border-radius:10px;cursor:pointer;font-weight:600;transition:all .3s;font-size:.95em}
+        .filter-btn:hover{background:var(--primary);color:#fff;transform:translateY(-2px);box-shadow:0 10px 20px rgba(102,126,234,.3)}
+        .filter-btn.active{background:var(--primary);color:#fff}
+        .action-buttons{display:flex;gap:12px;flex-wrap:wrap}
+        .btn{padding:14px 28px;border:none;border-radius:10px;cursor:pointer;font-weight:600;font-size:.95em;transition:all .3s;display:flex;align-items:center;gap:8px;white-space:nowrap}
+        .btn-primary{background:linear-gradient(135deg,var(--success) 0%,#059669 100%);color:#fff;box-shadow:0 4px 12px rgba(16,185,129,.3)}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(16,185,129,.4)}
+        .btn-secondary{background:linear-gradient(135deg,#3b82f6 0%,#2563eb 100%);color:#fff;box-shadow:0 4px 12px rgba(59,130,246,.3)}
+        .btn-secondary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,130,246,.4)}
+        .btn-outline{background:#fff;color:var(--dark);border:2px solid var(--border)}
+        .btn-outline:hover{background:var(--light);border-color:var(--primary);color:var(--primary)}
+        .btn-admin{background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);color:#fff;box-shadow:0 4px 12px rgba(139,92,246,.3)}
+        .btn-admin:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(139,92,246,.4)}
+        .modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
+        .modal.show{display:flex;animation:fadeIn .3s ease}
+        .modal-content{background:#fff;border-radius:20px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,.3);animation:slideUp .3s ease}
+        @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+        .modal-header{background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);color:#fff;padding:25px 30px;border-radius:20px 20px 0 0;display:flex;justify-content:space-between;align-items:center}
+        .modal-header h2{font-size:1.8em;font-weight:700}
+        .modal-close{background:rgba(255,255,255,.2);border:none;color:#fff;font-size:1.5em;width:35px;height:35px;border-radius:50%;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
+        .modal-close:hover{background:rgba(255,255,255,.3);transform:rotate(90deg)}
+        .modal-body{padding:30px}
+        .tabs{display:flex;gap:10px;margin-bottom:25px;border-bottom:2px solid var(--border)}
+        .tab{padding:12px 24px;background:transparent;border:none;color:#6b7280;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:all .3s;font-size:1em}
+        .tab:hover{color:var(--primary);background:rgba(102,126,234,.05)}
+        .tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+        .tab-content{display:none}
+        .tab-content.active{display:block;animation:fadeIn .3s ease}
+        .form-group{margin-bottom:20px}
+        .form-label{display:block;font-weight:600;margin-bottom:8px;color:var(--dark);font-size:.9em}
+        .form-input,.form-select{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:10px;font-size:1em;transition:all .3s}
+        .form-input:focus,.form-select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.1)}
+        .form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
+        .file-upload{border:3px dashed var(--border);border-radius:10px;padding:30px;text-align:center;cursor:pointer;transition:all .3s;background:var(--light)}
+        .file-upload:hover{border-color:var(--primary);background:rgba(102,126,234,.05)}
+        .file-upload input{display:none}
+        .file-upload-icon{font-size:3em;margin-bottom:10px;color:#6b7280}
+        .file-upload-text{color:#6b7280;font-size:.95em}
+        .file-name{margin-top:10px;color:var(--primary);font-weight:600}
+        .units-list{max-height:400px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;padding:15px}
+        .unit-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#fff;border:1px solid var(--border);border-radius:8px;margin-bottom:10px;transition:all .2s}
+        .unit-item:hover{box-shadow:0 2px 8px rgba(0,0,0,.1);transform:translateX(5px)}
+        .unit-info{flex:1}
+        .unit-name{font-weight:700;color:var(--dark);margin-bottom:4px}
+        .unit-details{font-size:.85em;color:#6b7280}
+        .unit-actions{display:flex;gap:8px}
+        .btn-small{padding:6px 12px;font-size:.85em;border:none;border-radius:6px;cursor:pointer;transition:all .3s}
+        .btn-edit{background:var(--info);color:#fff}
+        .btn-edit:hover{background:#2563eb;transform:scale(1.05)}
+        .btn-delete{background:var(--danger);color:#fff}
+        .btn-delete:hover{background:#dc2626;transform:scale(1.05)}
+        .alert{padding:15px 20px;border-radius:10px;margin-bottom:20px;font-weight:600;display:flex;align-items:center;gap:10px}
+        .alert-success{background:#d1fae5;color:#065f46;border-left:4px solid var(--success)}
+        .alert-error{background:#fee2e2;color:#991b1b;border-left:4px solid var(--danger)}
+        .alert-info{background:#dbeafe;color:#1e40af;border-left:4px solid var(--info)}
+        .table-wrapper{overflow-x:auto;max-height:650px;position:relative}
+        .table-wrapper::-webkit-scrollbar{width:10px;height:10px}
+        .table-wrapper::-webkit-scrollbar-track{background:var(--light)}
+        .table-wrapper::-webkit-scrollbar-thumb{background:var(--primary);border-radius:5px}
+        table{width:100%;border-collapse:separate;border-spacing:0;user-select:all}
+        thead{position:sticky;top:0;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+        th{padding:20px 16px;text-align:left;font-weight:600;font-size:.9em;text-transform:uppercase;letter-spacing:.5px;border-bottom:3px solid var(--secondary);white-space:nowrap}
+        th:nth-child(6),th:nth-child(7),th:nth-child(8),td:nth-child(6),td:nth-child(7),td:nth-child(8){text-align:right}
+        tbody tr{transition:all .2s ease;cursor:pointer}
+        tbody tr:nth-child(even){background:#f9fafb}
+        tbody tr:hover{background:linear-gradient(to right,#eff6ff 0%,#dbeafe 100%);transform:scale(1.01);box-shadow:0 4px 12px rgba(102,126,234,.15)}
+        td{padding:16px;border-bottom:1px solid var(--border);font-size:.95em}
+        .origem-real{color:var(--success);font-weight:700;display:inline-flex;align-items:center;gap:6px}
+        .origem-real::before{content:'✓';display:inline-block;width:20px;height:20px;background:var(--success);color:#fff;border-radius:50%;text-align:center;line-height:20px;font-size:.8em}
+        .origem-permutante{color:var(--danger);font-weight:700;display:inline-flex;align-items:center;gap:6px}
+        .origem-permutante::before{content:'⟳';display:inline-block;width:20px;height:20px;background:var(--danger);color:#fff;border-radius:50%;text-align:center;line-height:20px;font-size:.9em}
+        .valor-destaque{color:var(--primary);font-weight:700;font-family:'Courier New',monospace}
+        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;padding:30px;background:linear-gradient(to bottom,#fff 0%,#f9fafb 100%)}
+        .stat-card{background:#fff;padding:28px;border-radius:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,.1);position:relative;overflow:hidden;transition:all .3s;border:1px solid var(--border)}
+        .stat-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(to bottom,var(--primary),var(--secondary))}
+        .stat-card:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(0,0,0,.15)}
+        .stat-card h3{color:#6b7280;font-size:.85em;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+        .stat-card p{color:var(--primary);font-size:2em;font-weight:800;font-family:'Courier New',monospace}
+        .stat-icon{position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:3em;opacity:.1}
+        .empty-state{text-align:center;padding:60px 20px;color:#6b7280}
+        .empty-state-icon{font-size:4em;margin-bottom:20px;opacity:.3}
+        .empty-state h3{font-size:1.5em;margin-bottom:10px;color:var(--dark)}
+        .empty-state p{font-size:1.1em}
+        @media(max-width:1024px){
+            .header h1{font-size:2em}
+            .control-row{grid-template-columns:1fr}
+            th,td{padding:12px 10px;font-size:.85em}
+            .table-wrapper{max-height:500px}
+        }
+        @media(max-width:768px){
+            body{padding:10px}
+            .container{border-radius:15px}
+            .header{padding:25px 20px}
+            .header h1{font-size:1.6em;margin-bottom:8px}
+            .header p{font-size:1em}
+            .badge{padding:4px 12px;font-size:.8em;margin:5px 3px 0}
+            .controls{padding:20px 15px;gap:15px}
+            .control-row{grid-template-columns:1fr;gap:12px}
+            .control-label{font-size:.8em}
+            .control-group select,.control-group input{padding:12px 14px;font-size:.9em}
+            .price-range-wrapper{flex-direction:column;gap:10px}
+            .price-input-group{width:100%}
+            .filter-buttons{gap:8px}
+            .filter-btn{padding:10px 18px;font-size:.85em;flex:1;min-width:auto;text-align:center}
+            .action-buttons{flex-direction:column;width:100%}
+            .btn{width:100%;justify-content:center;padding:12px 20px;font-size:.9em}
+            .table-wrapper{max-height:400px;border-radius:0}
+            table{font-size:.8em;min-width:800px}
+            th{padding:14px 8px;font-size:.75em;white-space:normal}
+            td{padding:12px 8px;font-size:.85em}
+            .origem-real::before,.origem-permutante::before{width:16px;height:16px;font-size:.7em;line-height:16px}
+            .stats{grid-template-columns:1fr;gap:15px;padding:20px 15px}
+            .stat-card{padding:20px;text-align:left}
+            .stat-card h3{font-size:.8em;margin-bottom:8px}
+            .stat-card p{font-size:1.6em}
+            .stat-icon{font-size:2.5em;opacity:.08;right:15px}
+            .empty-state{padding:40px 15px}
+            .empty-state-icon{font-size:3em}
+            .empty-state h3{font-size:1.2em}
+            .empty-state p{font-size:.95em}
+        }
+        @media(max-width:480px){
+            body{padding:5px}
+            .container{border-radius:10px}
+            .header{padding:20px 15px}
+            .header h1{font-size:1.3em}
+            .header p{font-size:.9em}
+            .badge{font-size:.75em;padding:3px 10px}
+            .controls{padding:15px 10px}
+            .control-label{font-size:.75em}
+            .control-group select,.control-group input{padding:10px 12px;font-size:.85em}
+            .filter-btn{padding:8px 14px;font-size:.8em}
+            .btn{padding:10px 16px;font-size:.85em}
+            table{font-size:.7em;min-width:700px}
+            th{padding:12px 6px;font-size:.7em}
+            td{padding:10px 6px;font-size:.8em}
+            .stats{padding:15px 10px;gap:12px}
+            .stat-card{padding:16px}
+            .stat-card h3{font-size:.75em}
+            .stat-card p{font-size:1.4em}
+            .stat-icon{font-size:2em}
+        }
+        @media(max-width:360px){
+            .header h1{font-size:1.1em}
+            .header p{font-size:.85em}
+            .badge{font-size:.7em;padding:2px 8px}
+            table{font-size:.65em;min-width:650px}
+            th,td{padding:10px 5px}
+            .stat-card p{font-size:1.2em}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>TABELA DE EMPREENDIMENTOS</h1>
+                <p>Dashboard Premium de Unidades</p>
+                <span class="badge">📍 Águas Claras, DF</span>
+                <span class="badge">📅 Outubro/2025</span>
+            </div>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <div class="controls">
+            <div class="control-row">
+                <div class="control-group">
+                    <label class="control-label">🏢 Empreendimento</label>
+                    <select id="empSelect">
+                        <option value="TODOS">Todos os Empreendimentos</option>
+                        <option value="REAL URBANLIFE">Real Urbanlife</option>
+                        <option value="REAL GRAND RESORT">Real Grand Resort</option>
+                        <option value="REAL LIVING">Real Living</option>
+                        <option value="REAL BRISAS DO PARQUE">Real Brisas do Parque</option>
+                        <option value="REAL BOTHANIC">Real Bothanic</option>
+                        <option value="BAUHAUS 500">Bauhaus 500</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">🔍 Buscar</label>
+                    <input type="text" id="searchInput" placeholder="Unidade, torre...">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">📊 Ordenar</label>
+                    <select id="sortSelect">
+                        <option value="unidade-asc">Unidade (A → Z)</option>
+                        <option value="unidade-desc">Unidade (Z → A)</option>
+                        <option value="valor-asc">Valor (Menor)</option>
+                        <option value="valor-desc">Valor (Maior)</option>
+                        <option value="valorM2-asc">Valor/m² (Menor)</option>
+                        <option value="valorM2-desc">Valor/m² (Maior)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-row">
+                <div class="control-group">
+                    <label class="control-label">💰 Faixa de Preço</label>
+                    <div class="price-range-wrapper">
+                        <div class="price-input-group">
+                            <span class="price-input-label">Mínimo</span>
+                            <input type="number" id="priceMin" placeholder="0" step="50000">
+                        </div>
+                        <div class="price-input-group">
+                            <span class="price-input-label">Máximo</span>
+                            <input type="number" id="priceMax" placeholder="Sem limite" step="50000">
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">🏠 Origem</label>
+                    <select id="origemFilter">
+                        <option value="TODOS">Todas</option>
+                        <option value="Real">Real</option>
+                        <option value="Permutante">Permutante</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" style="opacity:0">.</label>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="copyBtn">📋 Copiar</button>
+                        <button class="btn btn-secondary" id="exportBtn">📥 CSV</button>
+                        <button class="btn btn-outline" id="resetBtn">🔄 Limpar</button>
+                        <button class="btn btn-admin" id="adminBtn">⚙️ Admin</button>
+                    </div>
+                </div>
+            </div>
+            <div class="control-row">
+                <div class="control-group">
+                    <label class="control-label">🏗️ Torre/Bloco</label>
+                    <div class="filter-buttons" id="filterButtons"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>             
+                <thead>
+                    <tr>
+                        <th>Empreendimento</th>
+                        <th>Bloco/Torre</th>
+                        <th>Unidade</th>
+                        <th>Vagas</th>
+                        <th>Origem</th>
+                        <th>Área (m²)</th>
+                        <th>Valor Total</th>
+                        <th>Valor/m²</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <span class="stat-icon">🏘️</span>
+                <h3>Total</h3>
+                <p id="totalUnits">0</p>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">💰</span>
+                <h3>Valor Total</h3>
+                <p id="totalValue">R$ 0</p>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">📉</span>
+                <h3>Mínimo</h3>
+                <p id="minPrice">R$ 0</p>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">📈</span>
+                <h3>Máximo</h3>
+                <p id="maxPrice">R$ 0</p>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">💎</span>
+                <h3>Médio</h3>
+                <p id="avgPrice">R$ 0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Admin -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ Painel Administrativo</h2>
+                <button class="modal-close" id="closeModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs">
+                    <button class="tab active" data-tab="add-unit">➕ Adicionar Unidade</button>
+                    <button class="tab" data-tab="manage-units">📋 Gerenciar Unidades</button>
+                    <button class="tab" data-tab="import-pdf">📄 Importar PDF</button>
+                </div>
+
+                <!-- Tab: Adicionar Unidade -->
+                <div class="tab-content active" id="add-unit">
+                    <div id="addAlert"></div>
+                    <form id="addUnitForm">
+                        <div class="form-group">
+                            <label class="form-label">Empreendimento</label>
+                            <select class="form-select" id="addEmp" required>
+                                <option value="">Selecione...</option>
+                                <option value="REAL URBANLIFE">Real Urbanlife</option>
+                                <option value="REAL GRAND RESORT">Real Grand Resort</option>
+                                <option value="REAL LIVING">Real Living</option>
+                                <option value="REAL BRISAS DO PARQUE">Real Brisas do Parque</option>
+                                <option value="REAL BOTHANIC">Real Bothanic</option>
+                                <option value="BAUHAUS 500">Bauhaus 500</option>
+                                <option value="NOVO">➕ Novo Empreendimento</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="newEmpGroup" style="display:none">
+                            <label class="form-label">Nome do Novo Empreendimento</label>
+                            <input type="text" class="form-input" id="newEmpName" placeholder="Ex: REAL PARK">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Torre/Bloco</label>
+                                <input type="text" class="form-input" id="addTorre" placeholder="Ex: A, B, Térreo" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Unidade</label>
+                                <input type="text" class="form-input" id="addUnidade" placeholder="Ex: 101, LJ 01" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Vagas</label>
+                            <input type="text" class="form-input" id="addVagas" placeholder="Ex: 123 - 124p">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Área (m²)</label>
+                                <input type="number" class="form-input" id="addArea" step="0.01" placeholder="Ex: 72.50" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Preço (R$)</label>
+                                <input type="number" class="form-input" id="addPreco" step="0.01" placeholder="Ex: 450000.00" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Origem</label>
+                            <select class="form-select" id="addOrigem" required>
+                                <option value="Real">Real</option>
+                                <option value="Permutante">Permutante</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:10px">➕ Adicionar Unidade</button>
+                    </form>
+                </div>
+
+                <!-- Tab: Gerenciar Unidades -->
+                <div class="tab-content" id="manage-units">
+                    <div id="manageAlert"></div>
+                    <div class="form-group">
+                        <label class="form-label">Filtrar por Empreendimento</label>
+                        <select class="form-select" id="filterEmpManage">
+                            <option value="TODOS">Todos</option>
+                            <option value="REAL URBANLIFE">Real Urbanlife</option>
+                            <option value="REAL GRAND RESORT">Real Grand Resort</option>
+                            <option value="REAL LIVING">Real Living</option>
+                            <option value="REAL BRISAS DO PARQUE">Real Brisas do Parque</option>
+                            <option value="REAL BOTHANIC">Real Bothanic</option>
+                            <option value="BAUHAUS 500">Bauhaus 500</option>
+                        </select>
+                    </div>
+                    <div class="units-list" id="unitsList"></div>
+                </div>
+
+                <!-- Tab: Editar Unidade (Hidden by default) -->
+                <div class="tab-content" id="edit-unit" style="display:none">
+                    <div id="editAlert"></div>
+                    <button class="btn btn-outline" id="backToList" style="margin-bottom:20px">
+                        ← Voltar para Lista
+                    </button>
+                    <form id="editUnitForm">
+                        <input type="hidden" id="editIndex">
+                        <div class="form-group">
+                            <label class="form-label">Empreendimento</label>
+                            <input type="text" class="form-input" id="editEmp" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Torre/Bloco</label>
+                                <input type="text" class="form-input" id="editTorre" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Unidade</label>
+                                <input type="text" class="form-input" id="editUnidade" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Vagas</label>
+                            <input type="text" class="form-input" id="editVagas">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Área (m²)</label>
+                                <input type="number" class="form-input" id="editArea" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Preço (R$)</label>
+                                <input type="number" class="form-input" id="editPreco" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Origem</label>
+                            <select class="form-select" id="editOrigem" required>
+                                <option value="Real">Real</option>
+                                <option value="Permutante">Permutante</option>
+                            </select>
+                        </div>
+                        <div style="display:flex;gap:10px">
+                            <button type="submit" class="btn btn-primary" style="flex:1">💾 Salvar Alterações</button>
+                            <button type="button" class="btn btn-outline" id="cancelEdit" style="flex:1">❌ Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tab: Importar PDF -->
+                <div class="tab-content" id="import-pdf">
+                    <div id="importAlert"></div>
+                    <div class="alert alert-info">
+                        ℹ️ Envie um PDF com a tabela de unidades. O sistema tentará extrair automaticamente os dados.
+                    </div>
+                    <div class="file-upload" id="fileUpload">
+                        <input type="file" id="pdfInput" accept=".pdf">
+                        <div class="file-upload-icon">📄</div>
+                        <div class="file-upload-text">
+                            <strong>Clique para selecionar</strong> ou arraste um arquivo PDF aqui
+                        </div>
+                        <div class="file-name" id="fileName"></div>
+                    </div>
+                    <button class="btn btn-primary" id="processPdfBtn" style="width:100%;margin-top:20px;display:none">
+                        🔄 Processar PDF
+                    </button>
+                    <div id="pdfPreview" style="margin-top:20px"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração de permutantes
+        const permUrban = ['B206','A206','B306','B105','A105','B205','B305','A205','A305','A610','B1304','A1303','B1306','A1203','B810','A1306','B711','B811','B911','A711','B1310','A811','B1205','A911','B1309','A1205','B1305','A1305','B3','A101','B314','B101','B202','B415','B714','A501','B602','B815','B1114','B501','A1002','B1002','A901','B1215','A714','B901','A814','A1301','A815','A1114','B1301','A1214','A3','LJ 01','LJ 02'];
+        const permGrand = ['A901','A702','A502','B802','B702','B601','C601','C401','65','74'];
+        const permLiving = ['709','1011','602','804','904','1209','1203','1102','1407','1303','707','1607','608','1707','1807','813','1907','914','2003','1108','1213','2103','2202','1411','2302','1906','1511','1611','2006','1711','1811','412','1409','2209','612','1112','506','701','805','1101','1501','1701','1404','1504','1804','2004','1905','2205','305','LJ 01','LJ 07'];
+        
+        // Dados das unidades
+        const allData = [
+            // REAL URBANLIFE - TORRE A
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '3', vagas: '334 - VSC', area: 86.81, preco: 969070.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '101', vagas: '304 - VSC', area: 58.09, preco: 657389.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '105', vagas: '', area: 37.19, preco: 406380.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '107', vagas: '', area: 35.37, preco: 386493.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '110', vagas: '', area: 37.35, preco: 392727.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '111', vagas: '', area: 37.19, preco: 406380.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '115', vagas: '338 - VSC', area: 58.09, preco: 683766.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '201', vagas: '303 - VSC', area: 58.09, preco: 675512.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '205', vagas: '', area: 37.19, preco: 420604.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '206', vagas: '', area: 35.54, preco: 386775.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '207', vagas: '', area: 35.37, preco: 400020.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '209', vagas: '', area: 35.37, preco: 400020.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '211', vagas: '', area: 37.19, preco: 420604.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '305', vagas: '', area: 37.19, preco: 428731.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '306', vagas: '', area: 35.54, preco: 394249.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '311', vagas: '', area: 37.19, preco: 428731.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '414', vagas: '224 - VSC', area: 58.09, preco: 725245.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '501', vagas: '300 - VSC', area: 58.09, preco: 705986.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '511', vagas: '202 - VTD', area: 37.19, preco: 463554.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '601', vagas: '299 - VSC', area: 58.09, preco: 715128.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '611', vagas: '166 - VTD', area: 37.19, preco: 469650.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '614', vagas: '226 - VSC', area: 58.09, preco: 734653.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '705', vagas: '171 - VTD', area: 37.19, preco: 473713.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '711', vagas: '177 - VTD', area: 37.19, preco: 473713.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '714', vagas: '227 - VSC', area: 58.09, preco: 740926.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '715', vagas: '289 - VSC', area: 58.09, preco: 754062.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '801', vagas: '297 - VSC', area: 58.09, preco: 727316.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '805', vagas: '182 - VTD', area: 37.19, preco: 477777.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '809', vagas: '22 - VTD', area: 35.37, preco: 455504.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '810', vagas: '21 - VTD', area: 37.35, preco: 462487.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '811', vagas: '20 - VTD', area: 37.19, preco: 477777.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '814', vagas: '228 - VSC', area: 58.09, preco: 747198.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '815', vagas: '288 - VSC', area: 58.09, preco: 760452.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '901', vagas: '296 - VSC', area: 58.09, preco: 733411.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '905', vagas: '15 - VTD', area: 37.19, preco: 481842.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '907', vagas: '13 - VTD', area: 35.37, preco: 459368.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '909', vagas: '11 - VTD', area: 35.37, preco: 459368.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '910', vagas: '10 - VTD', area: 37.35, preco: 466414.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '911', vagas: '9 - VTD', area: 37.19, preco: 481842.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '914', vagas: '229 - VSC', area: 58.09, preco: 753469.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1001', vagas: '295 - VSC', area: 58.09, preco: 739505.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1002', vagas: '237 - VSC', area: 58.09, preco: 726015.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1005', vagas: '4 - VTD', area: 37.19, preco: 485905.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1007', vagas: '2 - VTD', area: 35.37, preco: 463234.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1009', vagas: '54 - VTD', area: 35.37, preco: 463234.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1010', vagas: '55 - VTD', area: 37.35, preco: 470341.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1011', vagas: '56 - VTD', area: 37.19, preco: 485905.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1101', vagas: '294 - VSC', area: 58.09, preco: 745600.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1102', vagas: '236 - VSC', area: 58.09, preco: 731991.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1105', vagas: '63 - VTD', area: 37.19, preco: 489969.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1109', vagas: '67 - VTD', area: 35.37, preco: 467098.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1111', vagas: '69 - VTD', area: 37.19, preco: 489969.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1114', vagas: '231 - VSC', area: 58.09, preco: 766013.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1201', vagas: '293 - VSC', area: 58.09, preco: 751695.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1202', vagas: '235 - VSC', area: 58.09, preco: 737967.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1203', vagas: '112 - VTD', area: 34.22, preco: 456387.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1205', vagas: '184 - VTD', area: 37.19, preco: 494033.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1207', vagas: '219 - VTD', area: 35.37, preco: 470964.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1214', vagas: '232 - VSC', area: 58.09, preco: 772286.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1301', vagas: '331 - VSC', area: 58.09, preco: 757790.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1302', vagas: '234 - VSC', area: 58.09, preco: 743943.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1305', vagas: '329 - VSC', area: 37.19, preco: 520728.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1306', vagas: '159 - VTD', area: 35.54, preco: 459856.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1308', vagas: '160 - VTD', area: 34.98, preco: 452966.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1310', vagas: '213 - VTD', area: 37.35, preco: 482123.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1311', vagas: '337 - VSC', area: 37.19, preco: 520728.00},
+            {emp: 'REAL URBANLIFE', torre: 'A', unidade: '1312', vagas: '220 - VTD', area: 34.14, preco: 459104.00},
+            
+            // REAL URBANLIFE - TORRE B
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '3', vagas: '365 - VSC', area: 43.71, preco: 520924.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '10', vagas: '352 - VSC', area: 86.81, preco: 933526.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '101', vagas: '320 - VSC', area: 58.09, preco: 665345.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '105', vagas: '', area: 37.19, preco: 394803.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '201', vagas: '321 - VSC', area: 58.09, preco: 687083.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '202', vagas: '279 - VSC', area: 58.09, preco: 668890.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '205', vagas: '', area: 37.19, preco: 408622.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '209', vagas: '', area: 35.37, preco: 388625.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '210', vagas: '', area: 37.35, preco: 402487.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '211', vagas: '', area: 37.19, preco: 408622.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '301', vagas: '322 - VSC', area: 58.09, preco: 699503.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '305', vagas: '', area: 37.19, preco: 416518.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '306', vagas: '', area: 35.54, preco: 390384.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '311', vagas: '108 - VTD', area: 37.19, preco: 438928.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '314', vagas: '250 - VSC', area: 58.09, preco: 662415.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '415', vagas: '311 - VSC', area: 58.09, preco: 683742.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '501', vagas: '324 - VSC', area: 58.09, preco: 718135.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '515', vagas: '312 - VSC', area: 58.09, preco: 692707.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '602', vagas: '275 - VSC', area: 58.09, preco: 708116.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '610', vagas: '120 - VTD', area: 37.35, preco: 450174.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '615', vagas: '313 - VSC', area: 58.09, preco: 701671.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '701', vagas: '326 - VSC', area: 58.09, preco: 733662.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '714', vagas: '254 - VSC', area: 58.09, preco: 694640.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '715', vagas: '314 - VSC', area: 58.09, preco: 707647.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '805', vagas: '28 - VTD', area: 37.19, preco: 464589.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '810', vagas: '33 - VTD', area: 37.35, preco: 457953.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '811', vagas: '34 - VTD', area: 37.19, preco: 464589.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '815', vagas: '315 - VSC', area: 58.09, preco: 713623.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '901', vagas: '328 - VSC', area: 58.09, preco: 746082.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '902', vagas: '272 - VSC', area: 58.09, preco: 726221.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '905', vagas: '39 - VTD', area: 37.19, preco: 468538.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '911', vagas: '45 - VTD', area: 37.19, preco: 468538.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '915', vagas: '316 - VSC', area: 58.09, preco: 719600.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1002', vagas: '271 - VSC', area: 58.09, preco: 732255.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1005', vagas: '50 - VTD', area: 37.19, preco: 472486.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1010', vagas: '95 - VTD', area: 37.35, preco: 465730.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1011', vagas: '94 - VTD', area: 37.19, preco: 472486.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1014', vagas: '257 - VSC', area: 58.09, preco: 712217.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1015', vagas: '317 - VSC', area: 58.09, preco: 725576.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1101', vagas: '269 - VSC', area: 58.09, preco: 758503.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1102', vagas: '270 - VSC', area: 58.09, preco: 738290.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1105', vagas: '91 - VTD', area: 37.19, preco: 476434.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1107', vagas: '87 - VTD', area: 35.37, preco: 454215.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1110', vagas: '84 - VTD', area: 37.35, preco: 469618.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1114', vagas: '258 - VSC', area: 58.09, preco: 718076.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1115', vagas: '318 - VSC', area: 58.09, preco: 731552.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1201', vagas: '368 - VSC', area: 58.09, preco: 764715.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1202', vagas: '369 - VSC', area: 58.09, preco: 744325.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1204', vagas: '76 - VTD', area: 34.83, preco: 447196.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1205', vagas: '103 - VTD', area: 37.19, preco: 480382.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1207', vagas: '104 - VTD', area: 35.37, preco: 457970.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1210', vagas: '79 - VTD', area: 37.35, preco: 473507.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1214', vagas: '259 - VSC', area: 58.09, preco: 723936.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1215', vagas: '319 - VSC', area: 58.09, preco: 737528.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1301', vagas: '355 - VSC', area: 58.09, preco: 770925.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1302', vagas: '268 - VSC', area: 58.09, preco: 750360.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1304', vagas: '98 - VTD', area: 34.83, preco: 450858.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1305', vagas: '357 - VSC', area: 37.19, preco: 506740.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1306', vagas: '99 - VTD', area: 35.54, preco: 455348.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1310', vagas: '101 - VTD', area: 37.35, preco: 477397.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1311', vagas: '350 - VSC', area: 37.19, preco: 506740.00},
+            {emp: 'REAL URBANLIFE', torre: 'B', unidade: '1314', vagas: '260 - VSC', area: 58.09, preco: 729795.00},
+            
+            // REAL URBANLIFE - LOJAS
+            {emp: 'REAL URBANLIFE', torre: 'Lojas', unidade: 'LJ 01', vagas: '', area: 72.79, preco: 1383010.00},
+            {emp: 'REAL URBANLIFE', torre: 'Lojas', unidade: 'LJ 02', vagas: '', area: 72.14, preco: 1370660.00},
+            {emp: 'REAL URBANLIFE', torre: 'Lojas', unidade: 'LJ 03', vagas: '', area: 72.14, preco: 1370660.00},
+            {emp: 'REAL URBANLIFE', torre: 'Lojas', unidade: 'LJ 04', vagas: '', area: 72.14, preco: 1370660.00},
+            {emp: 'REAL URBANLIFE', torre: 'Lojas', unidade: 'LJ 05', vagas: '', area: 73.45, preco: 1395550.00},
+            
+            // REAL GRAND RESORT - TORRE A
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '102', vagas: '213 - 214p', area: 139.59, preco: 1772651.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '201', vagas: '119 - 120p', area: 139.55, preco: 1813657.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '202', vagas: '121 - 122p', area: 139.59, preco: 1798973.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '301', vagas: '233 - 234', area: 139.55, preco: 1832756.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '402', vagas: '220 - 231', area: 139.59, preco: 1833615.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '501', vagas: '239 - 249', area: 139.55, preco: 1868856.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '502', vagas: '238 - 248', area: 139.59, preco: 1769544.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '601', vagas: '227 - 235', area: 139.55, preco: 1890175.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '602', vagas: '236 - 246', area: 139.59, preco: 1870117.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '701', vagas: '241 - 251', area: 139.55, preco: 1987353.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '702', vagas: '240 - 250', area: 139.59, preco: 1882493.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '801', vagas: '237 - 247', area: 139.55, preco: 2046721.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '802', vagas: '225 - 226', area: 139.59, preco: 2029086.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '901', vagas: '244 - 229', area: 139.55, preco: 1976610.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '902', vagas: '245 - 230', area: 139.59, preco: 2046918.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '1001', vagas: '243 - 203 - 204p', area: 139.55, preco: 2101090.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '1002', vagas: '217 - 201 - 202p', area: 139.59, preco: 2083289.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '1101', vagas: '218 - 219 - 228', area: 139.55, preco: 2127860.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '1201', vagas: '93 - 100 - 106', area: 139.55, preco: 2149539.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '1202', vagas: '92 - 99 - 105', area: 139.59, preco: 2129740.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '1302', vagas: '89 - 88 - 113', area: 139.59, preco: 2152612.00},
+            {emp: 'REAL GRAND RESORT', torre: 'A', unidade: '1502', vagas: '102 - 103 - 115', area: 139.59, preco: 2174793.00},
+            
+            // REAL GRAND RESORT - TORRE B
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '101', vagas: '1 - 2p', area: 139.55, preco: 1777126.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '102', vagas: '3 - 4p', area: 139.59, preco: 1774661.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '201', vagas: '143 - 144p', area: 139.55, preco: 1798462.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '301', vagas: '147 - 148p', area: 139.55, preco: 1813347.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '302', vagas: '199 - 200p', area: 139.59, preco: 1816834.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '401', vagas: '125 - 126p', area: 139.55, preco: 1836423.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '601', vagas: '133 - 134p', area: 139.55, preco: 1787856.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '602', vagas: '197 - 198p', area: 139.59, preco: 1877317.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '701', vagas: '209 - 210p', area: 139.55, preco: 1969092.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '702', vagas: '211 - 212p', area: 139.59, preco: 1882493.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '802', vagas: '139 - 208', area: 139.59, preco: 1938968.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '901', vagas: '141 - 142', area: 139.55, preco: 2050863.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '902', vagas: '131 - 132', area: 139.59, preco: 2051388.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '1002', vagas: '137 - 138p - 165', area: 139.59, preco: 2087579.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '1102', vagas: '190 - 191p - 192', area: 139.59, preco: 2102409.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '1301', vagas: '85 - 86 - 96', area: 139.55, preco: 2146486.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '1302', vagas: '71 - 82 - 83p', area: 139.59, preco: 2140772.00},
+            {emp: 'REAL GRAND RESORT', torre: 'B', unidade: '1402', vagas: '67 - 78 - 79p', area: 139.59, preco: 2156692.00},
+            
+            // REAL GRAND RESORT - TORRE C
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '1', vagas: '27 - 28p - 44 - 45p', area: 262.76, preco: 2964901.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '101', vagas: '5 - 6p', area: 139.55, preco: 1776346.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '102', vagas: '61 - 62p', area: 139.59, preco: 1757225.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '201', vagas: '16 - 17', area: 139.55, preco: 1801372.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '202', vagas: '40 - 41', area: 139.59, preco: 1778792.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '301', vagas: '69 - 70p', area: 139.55, preco: 1821327.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '401', vagas: '23 - 24p', area: 139.55, preco: 1750217.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '601', vagas: '163 - 164', area: 139.55, preco: 1787856.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '602', vagas: '151 - 152p', area: 139.59, preco: 1859870.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '702', vagas: '161 - 162', area: 139.59, preco: 1954836.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '802', vagas: '63 - 64', area: 139.59, preco: 2016477.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '901', vagas: '180 - 182', area: 139.55, preco: 2053203.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '902', vagas: '54 - 56', area: 139.59, preco: 2031775.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '1002', vagas: '21 - 22p - 49', area: 139.59, preco: 2071011.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '1102', vagas: '184 - 185 - 186p', area: 139.59, preco: 2085198.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '1202', vagas: '169 - 170 - 171p', area: 139.59, preco: 2107186.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '1301', vagas: '168 - 172 - 173p', area: 139.55, preco: 2158286.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '1302', vagas: '149 - 150p - 174', area: 139.59, preco: 2127882.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '1402', vagas: '155 - 156p - 176', area: 139.59, preco: 2139115.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '1501', vagas: '157 - 158p - 177', area: 139.55, preco: 2166481.00},
+            {emp: 'REAL GRAND RESORT', torre: 'C', unidade: '1502', vagas: '25 - 26p - 51', area: 139.59, preco: 2146060.00},
+            
+            // REAL GRAND RESORT - GARAGEM
+            {emp: 'REAL GRAND RESORT', torre: 'Garagem', unidade: '39', vagas: '', area: 12.00, preco: 50000},
+            {emp: 'REAL GRAND RESORT', torre: 'Garagem', unidade: '65', vagas: '', area: 12.00, preco: 50000},
+            {emp: 'REAL GRAND RESORT', torre: 'Garagem', unidade: '74', vagas: '', area: 12.00, preco: 50000},
+            {emp: 'REAL GRAND RESORT', torre: 'Garagem', unidade: '166', vagas: '', area: 12.00, preco: 50000},
+            {emp: 'REAL GRAND RESORT', torre: 'Garagem', unidade: '167', vagas: '', area: 12.00, preco: 50000},
+            
+            // REAL LIVING - TORRE ÚNICA
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '301', vagas: '267 - 268', area: 161.76, preco: 1667936.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '305', vagas: '271 - 272', area: 157.13, preco: 1728119.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '309', vagas: '154', area: 115.16, preco: 1250891.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '406', vagas: '63', area: 87.50, preco: 1082081.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '412', vagas: '6', area: 73.36, preco: 883831.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '501', vagas: '178', area: 93.99, preco: 1122470.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '505', vagas: '64', area: 87.50, preco: 1121218.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '506', vagas: '65', area: 87.50, preco: 1129533.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '513', vagas: '9', area: 62.61, preco: 791284.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '602', vagas: '226', area: 62.27, preco: 772505.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '607', vagas: '223', area: 62.01, preco: 791205.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '608', vagas: '222', area: 62.70, preco: 799697.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '612', vagas: '221', area: 73.36, preco: 930904.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '701', vagas: '165', area: 93.99, preco: 1146524.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '702', vagas: '220', area: 62.27, preco: 776034.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '703', vagas: '219', area: 61.90, preco: 771589.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '704', vagas: '218', area: 61.90, preco: 771589.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '705', vagas: '314 - 315', area: 87.50, preco: 1166149.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '707', vagas: '217', area: 62.01, preco: 794822.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '708', vagas: '216', area: 62.70, preco: 803355.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '709', vagas: '284', area: 62.70, preco: 766431.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '714', vagas: '14', area: 62.88, preco: 805581.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '802', vagas: '214', area: 62.27, preco: 779563.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '804', vagas: '212', area: 61.90, preco: 775097.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '805', vagas: '310 - 311', area: 87.50, preco: 1158231.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '809', vagas: '281', area: 62.70, preco: 769914.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '813', vagas: '15', area: 62.61, preco: 805894.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '901', vagas: '192', area: 93.99, preco: 1165021.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '902', vagas: '208', area: 62.27, preco: 783092.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '903', vagas: '207', area: 61.90, preco: 778605.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '904', vagas: '197', area: 61.90, preco: 778605.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '905', vagas: '305 - 306', area: 87.50, preco: 1163432.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '908', vagas: '199', area: 62.70, preco: 810670.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '914', vagas: '45', area: 62.88, preco: 812916.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1001', vagas: '114', area: 93.99, preco: 1166316.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1002', vagas: '201', area: 62.27, preco: 786621.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1003', vagas: '202', area: 61.90, preco: 782112.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1004', vagas: '203', area: 61.90, preco: 782112.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1008', vagas: '205', area: 62.70, preco: 814327.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1013', vagas: '44', area: 62.61, preco: 813198.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1014', vagas: '43', area: 62.88, preco: 816584.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1101', vagas: '113', area: 93.99, preco: 1171236.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1102', vagas: '139', area: 62.27, preco: 790149.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1103', vagas: '140', area: 61.90, preco: 785620.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1105', vagas: '190 - 191', area: 87.50, preco: 1173836.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1107', vagas: '142', area: 62.01, preco: 809291.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1108', vagas: '143', area: 62.70, preco: 817985.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1112', vagas: '144', area: 73.36, preco: 952301.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1114', vagas: '41', area: 62.88, preco: 820252.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1201', vagas: '101', area: 93.99, preco: 1167028.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1202', vagas: '145', area: 62.27, preco: 793678.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1203', vagas: '146', area: 61.90, preco: 789127.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1207', vagas: '148', area: 62.01, preco: 812908.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1208', vagas: '149', area: 62.70, preco: 821642.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1209', vagas: '228', area: 62.70, preco: 783847.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1210', vagas: '227', area: 61.93, preco: 774565.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1213', vagas: '40', area: 62.61, preco: 820503.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1301', vagas: '112', area: 93.99, preco: 1170773.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1303', vagas: '157', area: 61.90, preco: 792635.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1306', vagas: '158', area: 62.70, preco: 825300.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1307', vagas: '325', area: 62.70, preco: 787331.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1308', vagas: '324', area: 61.93, preco: 778005.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1309', vagas: '307', area: 150.72, preco: 1872972.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1311', vagas: '37', area: 62.88, preco: 827588.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1401', vagas: '111', area: 93.99, preco: 1175861.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1402', vagas: '159', area: 62.27, preco: 800735.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1403', vagas: '160', area: 61.90, preco: 796143.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1404', vagas: '47 - 48', area: 100.66, preco: 1299526.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1405', vagas: '49 - 50', area: 101.11, preco: 1342015.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1406', vagas: '161', area: 62.70, preco: 828957.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1407', vagas: '323', area: 62.70, preco: 790814.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1408', vagas: '322', area: 61.93, preco: 781446.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1409', vagas: '321', area: 72.70, preco: 892287.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1410', vagas: '29', area: 62.61, preco: 827807.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1411', vagas: '28', area: 62.88, preco: 831256.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1501', vagas: '109', area: 93.99, preco: 1188297.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1502', vagas: '162', area: 62.27, preco: 804264.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1503', vagas: '163', area: 61.90, preco: 799651.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1505', vagas: '76 - 77', area: 101.11, preco: 1347913.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1506', vagas: '164', area: 62.70, preco: 832615.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1508', vagas: '319', area: 61.93, preco: 784886.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1509', vagas: '318', area: 72.70, preco: 900365.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1510', vagas: '27', area: 62.61, preco: 843774.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1511', vagas: '245', area: 62.88, preco: 849554.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1602', vagas: '168', area: 62.27, preco: 807792.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1603', vagas: '169', area: 61.90, preco: 803159.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1605', vagas: '53 - 54', area: 101.11, preco: 1353812.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1606', vagas: '170', area: 62.70, preco: 836272.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1607', vagas: '247', area: 62.70, preco: 797781.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1608', vagas: '248', area: 61.93, preco: 788327.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1609', vagas: '249', area: 72.70, preco: 908442.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1610', vagas: '244', area: 62.61, preco: 846855.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1611', vagas: '243', area: 62.88, preco: 850068.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1701', vagas: '107', area: 93.99, preco: 1190385.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1702', vagas: '171', area: 62.27, preco: 811321.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1703', vagas: '172', area: 61.90, preco: 806667.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1706', vagas: '173', area: 62.70, preco: 839930.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1707', vagas: '250', area: 62.70, preco: 801264.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1708', vagas: '251', area: 61.93, preco: 791767.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1709', vagas: '252', area: 72.70, preco: 916520.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1711', vagas: '241', area: 62.88, preco: 862427.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1801', vagas: '106', area: 93.99, preco: 1199667.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1803', vagas: '175', area: 61.90, preco: 810174.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1804', vagas: '59 - 60', area: 100.66, preco: 1322342.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1805', vagas: '66 - 71', area: 101.11, preco: 1385249.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1806', vagas: '176', area: 62.70, preco: 843587.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1807', vagas: '253', area: 62.70, preco: 804747.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1808', vagas: '254', area: 61.93, preco: 795208.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1809', vagas: '255', area: 72.70, preco: 920559.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1810', vagas: '240', area: 62.61, preco: 858455.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1811', vagas: '239', area: 62.88, preco: 862437.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1901', vagas: '105', area: 93.99, preco: 1203882.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1902', vagas: '177', area: 62.27, preco: 818378.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1904', vagas: '67 - 70', area: 100.66, preco: 1347520.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1905', vagas: '68 - 73', area: 101.11, preco: 1392824.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1906', vagas: '94', area: 62.70, preco: 847245.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1907', vagas: '256', area: 62.70, preco: 808231.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1908', vagas: '257', area: 61.93, preco: 798648.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '1909', vagas: '258', area: 72.70, preco: 922174.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2001', vagas: '104', area: 93.99, preco: 1218936.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2002', vagas: '95', area: 62.27, preco: 821906.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2003', vagas: '96', area: 61.90, preco: 817190.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2004', vagas: '25 - 30', area: 100.66, preco: 1356210.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2006', vagas: '97', area: 62.70, preco: 850902.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2007', vagas: '259', area: 62.70, preco: 811714.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2008', vagas: '260', area: 61.93, preco: 802090.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2009', vagas: '261', area: 72.70, preco: 922983.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2010', vagas: '279', area: 62.61, preco: 873377.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2011', vagas: '290', area: 62.88, preco: 864505.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2101', vagas: '103', area: 93.99, preco: 1225096.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2102', vagas: '98', area: 62.27, preco: 825435.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2103', vagas: '99', area: 61.90, preco: 820697.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2104', vagas: '23 - 32', area: 100.66, preco: 1359028.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2105', vagas: '22 - 33', area: 101.11, preco: 1405460.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2106', vagas: '100', area: 62.70, preco: 854560.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2107', vagas: '262', area: 62.70, preco: 815197.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2108', vagas: '263', area: 61.93, preco: 805530.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2109', vagas: '264', area: 72.70, preco: 923790.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2110', vagas: '273', area: 62.61, preco: 868540.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2111', vagas: '274', area: 62.88, preco: 871461.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2202', vagas: '138', area: 62.27, preco: 828964.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2203', vagas: '137', area: 61.90, preco: 824205.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2207', vagas: '265', area: 62.70, preco: 818680.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2208', vagas: '266', area: 61.93, preco: 808971.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2209', vagas: '302', area: 72.70, preco: 924598.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2210', vagas: '275', area: 62.61, preco: 868501.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2211', vagas: '276', area: 62.88, preco: 871674.00},
+            {emp: 'REAL LIVING', torre: 'Torre Única', unidade: '2302', vagas: '135', area: 62.27, preco: 832493.00},
+            
+            // REAL LIVING - LOJAS
+            {emp: 'REAL LIVING', torre: 'Lojas', unidade: 'Loja 1', vagas: '', area: 78.22, preco: 1744306.00},
+            {emp: 'REAL LIVING', torre: 'Lojas', unidade: 'Loja 3', vagas: '', area: 70.91, preco: 1581293.00},
+            {emp: 'REAL LIVING', torre: 'Lojas', unidade: 'Loja 4', vagas: '', area: 54.77, preco: 1221371.00},
+            {emp: 'REAL LIVING', torre: 'Lojas', unidade: 'Loja 5', vagas: '', area: 97.27, preco: 2169121.00},
+            {emp: 'REAL LIVING', torre: 'Lojas', unidade: 'Loja 6', vagas: '', area: 131.73, preco: 2937579.00},
+            {emp: 'REAL LIVING', torre: 'Lojas', unidade: 'Loja 7', vagas: '', area: 138.37, preco: 3085651.00},
+            {emp: 'REAL LIVING', torre: 'Lojas', unidade: 'Loja 8', vagas: '', area: 132.93, preco: 2964339.00},
+            
+            // REAL BRISAS DO PARQUE - TORRE ÚNICA
+            {emp: 'REAL BRISAS DO PARQUE', torre: 'Torre Única', unidade: '504', vagas: '107 - 108', area: 124.83, preco: 1746469.00},
+            {emp: 'REAL BRISAS DO PARQUE', torre: 'Torre Única', unidade: '701', vagas: '61 - 62', area: 124.83, preco: 1830572.00},
+            {emp: 'REAL BRISAS DO PARQUE', torre: 'Torre Única', unidade: '1104', vagas: '18 - 19', area: 124.83, preco: 1804381.00},
+            
+            // REAL BRISAS DO PARQUE - LOJAS
+            {emp: 'REAL BRISAS DO PARQUE', torre: 'Lojas', unidade: 'LJ 01', vagas: '', area: 56.28, preco: 956760.00},
+            {emp: 'REAL BRISAS DO PARQUE', torre: 'Lojas', unidade: 'LJ 02', vagas: '', area: 44.69, preco: 759730.00},
+            {emp: 'REAL BRISAS DO PARQUE', torre: 'Lojas', unidade: 'LJ 03', vagas: '', area: 38.72, preco: 658240.00},
+            
+            // REAL BOTHANIC - TORRE A
+            {emp: 'REAL BOTHANIC', torre: 'A', unidade: '1', vagas: '180 - 181 - 182', area: 308.47, preco: 3693676.00},
+            {emp: 'REAL BOTHANIC', torre: 'A', unidade: '2', vagas: '175 - 176 - 179', area: 270.25, preco: 3241300.00},
+            {emp: 'REAL BOTHANIC', torre: 'A', unidade: '4', vagas: '165 - 166 - 167', area: 329.44, preco: 3941879.00},
+            {emp: 'REAL BOTHANIC', torre: 'A', unidade: '101', vagas: '7 - 92', area: 157.37, preco: 1951884.00},
+            {emp: 'REAL BOTHANIC', torre: 'A', unidade: '104', vagas: '312 - 313', area: 157.37, preco: 2000972.00},
+            {emp: 'REAL BOTHANIC', torre: 'A', unidade: '201', vagas: '227 - 328', area: 157.37, preco: 1990669.00},
+            {emp: 'REAL BOTHANIC', torre: 'A', unidade: '302', vagas: '225 - 226', area: 157.37, preco: 2023400.00},
+            {emp: 'REAL BOTHANIC', torre: 'A', unidade: '301', vagas: '112 - 113', area: 157.37, preco: 2199500.00},
+            
+            // REAL BOTHANIC - TORRE B
+            {emp: 'REAL BOTHANIC', torre: 'B', unidade: '1', vagas: '67 - 69 - 70', area: 371.02, preco: 4412503.00},
+            {emp: 'REAL BOTHANIC', torre: 'B', unidade: '2', vagas: '30 - 31 - 32', area: 355.28, preco: 4227107.00},
+            
+            // REAL BOTHANIC - TORRE C
+            {emp: 'REAL BOTHANIC', torre: 'C', unidade: '1', vagas: '40 - 41 - 52', area: 411.86, preco: 5137221.00},
+            {emp: 'REAL BOTHANIC', torre: 'C', unidade: '102', vagas: '270 - 271 VP - 314', area: 260.39, preco: 3442077.00},
+            {emp: 'REAL BOTHANIC', torre: 'C', unidade: '202', vagas: '268 - 269 VP - 315', area: 260.39, preco: 3510380.00},
+            {emp: 'REAL BOTHANIC', torre: 'C', unidade: '302', vagas: '266 - 267 VP - 316', area: 260.39, preco: 3544532.00},
+            {emp: 'REAL BOTHANIC', torre: 'C', unidade: '1001', vagas: '17 - 18 - 19', area: 260.39, preco: 3650000.00},
+            
+            // BAUHAUS 500
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '102', vagas: '88 - 120', area: 124.29, preco: 2458082.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '106', vagas: '7 - 147 - 148', area: 159.23, preco: 3006667.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '107', vagas: '16 - 163 - 164', area: 159.23, preco: 3006667.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '108', vagas: '17 - 165 - 166', area: 157.90, preco: 2822772.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '110', vagas: '169 - 170', area: 109.48, preco: 2324139.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '201', vagas: '106 - 123', area: 109.48, preco: 2373068.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '202', vagas: '107 - 124', area: 124.29, preco: 2694087.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '206', vagas: '12 - 161 - 162', area: 159.23, preco: 3398067.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '207', vagas: '15 - 68 - 69', area: 159.23, preco: 3398067.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '208', vagas: '18 - 80 - 81', area: 157.90, preco: 2999195.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '301', vagas: '23 - 44', area: 109.48, preco: 2446462.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '302', vagas: '24 - 45', area: 124.29, preco: 2777409.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '307', vagas: '115 - 155 - 156', area: 159.23, preco: 3504813.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '308', vagas: '116 - 157 - 158', area: 157.90, preco: 3175618.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '309', vagas: '93 - 99', area: 124.29, preco: 2805183.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '403', vagas: '109 - 127 - 128', area: 157.90, preco: 3352042.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '408', vagas: '117 - 159 - 160', area: 157.90, preco: 3263830.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '501', vagas: '22 - 39', area: 109.48, preco: 2593250.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '502', vagas: '1 - 2', area: 124.29, preco: 2944054.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '503', vagas: '108 - 125 - 126', area: 157.90, preco: 3396148.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '505', vagas: '30 - 60 - 61', area: 159.23, preco: 3825049.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '508', vagas: '35 - 74 - 75', area: 157.90, preco: 3352042.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '601', vagas: '25 - 46 - 47', area: 109.48, preco: 2678876.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '603', vagas: '27 - 40 - 50 - 51', area: 320.80, preco: 5627399.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '604', vagas: '28 - 41 - 52 - 53', area: 318.76, preco: 5662844.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '605', vagas: '29 - 42 - 58 - 59', area: 318.76, preco: 5662844.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '606', vagas: '32 - 43 - 64 - 65', area: 318.76, preco: 5662844.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '607', vagas: '21 - 33 - 70 - 71', area: 318.76, preco: 5662844.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '608', vagas: '38 - 82 - 83 - 84', area: 309.77, preco: 5364691.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '609', vagas: '36 - 76 - 77', area: 259.41, preco: 4782383.00},
+            {emp: 'BAUHAUS 500', torre: 'Torre Única', unidade: '610', vagas: '37 - 78 - 79', area: 109.48, preco: 2629947.00}
+        ];
+
+        // Estado da aplicação
+        let state = {
+            filteredData: [...allData],
+            currentFilter: 'TODOS',
+            currentEmp: 'TODOS',
+            currentSort: 'unidade-asc',
+            currentOrigem: 'TODOS',
+            priceMin: null,
+            priceMax: null,
+            searchTerm: ''
+        };
+        
+        let debounceTimer = null;
+
+        // Funções auxiliares
+        function isPermutante(emp, torre, unidade) {
+            const fullKey = torre + unidade;
+            if (emp === 'REAL URBANLIFE') {
+                return permUrban.includes(fullKey) || permUrban.includes(unidade);
+            }
+            if (emp === 'REAL GRAND RESORT') {
+                return permGrand.includes(fullKey) || permGrand.includes(unidade);
+            }
+            if (emp === 'REAL LIVING') {
+                return permLiving.includes(unidade);
+            }
+            return false;
+        }
+
+        function formatCurrency(value) {
+            return value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+        }
+
+        function formatNumber(value) {
+            return value.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
+        function debounce(func, delay) {
+            return function(...args) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        function showMessage(text) {
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = text;
+            feedback.classList.add('show');
+            setTimeout(() => feedback.classList.remove('show'), 3000);
+        }
+
+        // Atualizar botões de filtro
+        function updateFilterButtons() {
+            const filterButtons = document.getElementById('filterButtons');
+            const torres = new Set();
+            
+            state.filteredData.forEach(item => {
+                if (state.currentEmp === 'TODOS' || item.emp === state.currentEmp) {
+                    torres.add(item.torre);
+                }
+            });
+
+            const sortedTorres = Array.from(torres).sort();
+            
+            filterButtons.innerHTML = '<button class="filter-btn active" data-filter="TODOS">Todos</button>';
+            
+            sortedTorres.forEach(torre => {
+                const isActive = state.currentFilter === torre ? 'active' : '';
+                filterButtons.innerHTML += `<button class="filter-btn ${isActive}" data-filter="${torre}">${torre}</button>`;
+            });
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const button = e.target.closest('.filter-btn');
+                    applyFilter(button.dataset.filter);
+                });
+            });
+        }
+
+        // Ordenar dados
+        function sortData(data, sortType) {
+            const sorted = [...data];
+            
+            switch(sortType) {
+                case 'unidade-asc':
+                    return sorted.sort((a, b) => {
+                        if (a.emp !== b.emp) return a.emp.localeCompare(b.emp);
+                        if (a.torre !== b.torre) return a.torre.localeCompare(b.torre);
+                        return a.unidade.localeCompare(b.unidade, undefined, {numeric: true});
+                    });
+                case 'unidade-desc':
+                    return sorted.sort((a, b) => {
+                        if (a.emp !== b.emp) return b.emp.localeCompare(a.emp);
+                        if (a.torre !== b.torre) return b.torre.localeCompare(a.torre);
+                        return b.unidade.localeCompare(a.unidade, undefined, {numeric: true});
+                    });
+                case 'valor-asc':
+                    return sorted.sort((a, b) => a.preco - b.preco);
+                case 'valor-desc':
+                    return sorted.sort((a, b) => b.preco - a.preco);
+                case 'valorM2-asc':
+                    return sorted.sort((a, b) => (a.preco/a.area) - (b.preco/b.area));
+                case 'valorM2-desc':
+                    return sorted.sort((a, b) => (b.preco/b.area) - (a.preco/a.area));
+                default:
+                    return sorted;
+            }
+        }
+
+        // Filtrar dados
+        function filterData() {
+            let data = state.filteredData.filter(item => {
+                const empMatch = state.currentEmp === 'TODOS' || item.emp === state.currentEmp;
+                const towerMatch = state.currentFilter === 'TODOS' || item.torre === state.currentFilter;
+                
+                const searchMatch = state.searchTerm === '' || 
+                    item.unidade.toLowerCase().includes(state.searchTerm) || 
+                    item.torre.toLowerCase().includes(state.searchTerm) ||
+                    item.emp.toLowerCase().includes(state.searchTerm);
+
+                const origem = isPermutante(item.emp, item.torre, item.unidade) ? 'Permutante' : 'Real';
+                const origemMatch = state.currentOrigem === 'TODOS' || origem === state.currentOrigem;
+
+                const priceMinMatch = state.priceMin === null || item.preco >= state.priceMin;
+                const priceMaxMatch = state.priceMax === null || item.preco <= state.priceMax;
+
+                return empMatch && towerMatch && searchMatch && origemMatch && priceMinMatch && priceMaxMatch;
+            });
+
+            return sortData(data, state.currentSort);
+        }
+
+        // Renderizar tabela
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const data = filterData();
+
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🔍</div>
+                                <h3>Nenhuma unidade encontrada</h3>
+                                <p>Ajuste os filtros de busca</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                updateStats([]);
+                return;
+            }
+
+            tbody.innerHTML = data.map(item => {
+                const valorM2 = item.preco / item.area;
+                const origem = isPermutante(item.emp, item.torre, item.unidade) ? 'Permutante' : 'Real';
+                const origemClass = origem === 'Real' ? 'origem-real' : 'origem-permutante';
+                
+                return `
+                    <tr>
+                        <td>${item.emp}</td>
+                        <td>${item.torre}</td>
+                        <td><strong>${item.unidade}</strong></td>
+                        <td>${item.vagas || '-'}</td>
+                        <td class="${origemClass}">${origem}</td>
+                        <td>${formatNumber(item.area)}</td>
+                        <td class="valor-destaque">${formatCurrency(item.preco)}</td>
+                        <td class="valor-destaque">${formatCurrency(valorM2)}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            updateStats(data);
+        }
+
+        // Atualizar estatísticas
+        function updateStats(data) {
+            if (data.length === 0) {
+                document.getElementById('totalUnits').textContent = '0';
+                document.getElementById('totalValue').textContent = 'R$ 0,00';
+                document.getElementById('minPrice').textContent = 'R$ 0,00';
+                document.getElementById('maxPrice').textContent = 'R$ 0,00';
+                document.getElementById('avgPrice').textContent = 'R$ 0,00';
+                return;
+            }
+
+            const total = data.length;
+            const precos = data.map(item => item.preco);
+            const sum = precos.reduce((a, b) => a + b, 0);
+            const min = Math.min(...precos);
+            const max = Math.max(...precos);
+            const avg = sum / total;
+
+            document.getElementById('totalUnits').textContent = total.toString();
+            document.getElementById('totalValue').textContent = formatCurrency(sum);
+            document.getElementById('minPrice').textContent = formatCurrency(min);
+            document.getElementById('maxPrice').textContent = formatCurrency(max);
+            document.getElementById('avgPrice').textContent = formatCurrency(avg);
+        }
+
+        // Aplicar filtro
+        function applyFilter(filter) {
+            state.currentFilter = filter;
+            renderTable();
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.filter === filter) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Copiar tabela
+        async function copyTable() {
+            const data = filterData();
+            
+            if (data.length === 0) {
+                showMessage('⚠️ Nenhum dado para copiar!');
+                return;
+            }
+
+            let text = 'Empreendimento\tBloco/Torre\tUnidade\tVagas\tOrigem\tÁrea (m²)\tValor Total\tValor/m²\n';
+
+            data.forEach(item => {
+                const valorM2 = item.preco / item.area;
+                const origem = isPermutante(item.emp, item.torre, item.unidade) ? 'Permutante' : 'Real';
+                text += `${item.emp}\t${item.torre}\t${item.unidade}\t${item.vagas || '-'}\t${origem}\t${item.area.toFixed(2)}\t${item.preco.toFixed(2)}\t${valorM2.toFixed(2)}\n`;
+            });
+
+            try {
+                await navigator.clipboard.writeText(text);
+                showMessage('✓ Tabela copiada! Cole no Excel ou Google Sheets.');
+            } catch (err) {
+                showMessage('❌ Erro ao copiar. Tente selecionar manualmente.');
+            }
+        }
+
+        // Exportar CSV
+        function exportToCSV() {
+            const data = filterData();
+            
+            if (data.length === 0) {
+                showMessage('⚠️ Nenhum dado para exportar!');
+                return;
+            }
+
+            let csv = 'Empreendimento,Bloco/Torre,Unidade,Vagas,Origem,Área (m²),Valor Total,Valor/m²\n';
+
+            data.forEach(item => {
+                const valorM2 = item.preco / item.area;
+                const origem = isPermutante(item.emp, item.torre, item.unidade) ? 'Permutante' : 'Real';
+                csv += `"${item.emp}","${item.torre}","${item.unidade}","${item.vagas || '-'}","${origem}",${item.area.toFixed(2)},${item.preco.toFixed(2)},${valorM2.toFixed(2)}\n`;
+            });
+
+            const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `real-empreendimentos-${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showMessage('✓ Arquivo CSV exportado com sucesso!');
+        }
+
+        // Resetar filtros
+        function resetFilters() {
+            state = {
+                filteredData: [...allData],
+                currentFilter: 'TODOS',
+                currentEmp: 'TODOS',
+                currentSort: 'unidade-asc',
+                currentOrigem: 'TODOS',
+                priceMin: null,
+                priceMax: null,
+                searchTerm: ''
+            };
+
+            document.getElementById('empSelect').value = 'TODOS';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('sortSelect').value = 'unidade-asc';
+            document.getElementById('origemFilter').value = 'TODOS';
+            document.getElementById('priceMin').value = '';
+            document.getElementById('priceMax').value = '';
+
+            updateFilterButtons();
+            renderTable();
+            showMessage('🔄 Filtros resetados!');
+        }
+
+        // Event Listeners
+        document.getElementById('empSelect').addEventListener('change', (e) => {
+            state.currentEmp = e.target.value;
+            state.currentFilter = 'TODOS';
+            state.filteredData = state.currentEmp === 'TODOS' ? [...allData] : allData.filter(item => item.emp === state.currentEmp);
+            updateFilterButtons();
+            renderTable();
+        });
+
+        document.getElementById('searchInput').addEventListener('input', debounce((e) => {
+            state.searchTerm = e.target.value.toLowerCase();
+            renderTable();
+        }, 300));
+        
+        document.getElementById('sortSelect').addEventListener('change', (e) => {
+            state.currentSort = e.target.value;
+            renderTable();
+        });
+
+        document.getElementById('origemFilter').addEventListener('change', (e) => {
+            state.currentOrigem = e.target.value;
+            renderTable();
+        });
+
+        document.getElementById('priceMin').addEventListener('input', debounce((e) => {
+            const value = parseFloat(e.target.value);
+            state.priceMin = isNaN(value) || value <= 0 ? null : value;
+            renderTable();
+        }, 300));
+
+        document.getElementById('priceMax').addEventListener('input', debounce((e) => {
+            const value = parseFloat(e.target.value);
+            state.priceMax = isNaN(value) || value <= 0 ? null : value;
+            renderTable();
+        }, 300));
+
+        document.getElementById('copyBtn').addEventListener('click', copyTable);
+        document.getElementById('exportBtn').addEventListener('click', exportToCSV);
+        document.getElementById('resetBtn').addEventListener('click', resetFilters);
+
+        // Admin Panel
+        const adminModal = document.getElementById('adminModal');
+        const adminBtn = document.getElementById('adminBtn');
+        const closeModal = document.getElementById('closeModal');
+
+        adminBtn.addEventListener('click', () => {
+            adminModal.classList.add('show');
+            renderUnitsList();
+        });
+
+        closeModal.addEventListener('click', () => {
+            adminModal.classList.remove('show');
+        });
+
+        adminModal.addEventListener('click', (e) => {
+            if (e.target === adminModal) {
+                adminModal.classList.remove('show');
+            }
+        });
+
+        // Tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Novo empreendimento
+        document.getElementById('addEmp').addEventListener('change', (e) => {
+            const newEmpGroup = document.getElementById('newEmpGroup');
+            if (e.target.value === 'NOVO') {
+                newEmpGroup.style.display = 'block';
+                document.getElementById('newEmpName').required = true;
+            } else {
+                newEmpGroup.style.display = 'none';
+                document.getElementById('newEmpName').required = false;
+            }
+        });
+
+        // Adicionar unidade
+        document.getElementById('addUnitForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            let empValue = document.getElementById('addEmp').value;
+            if (empValue === 'NOVO') {
+                empValue = document.getElementById('newEmpName').value.trim().toUpperCase();
+                if (!empValue) {
+                    showAlert('addAlert', 'error', 'Por favor, digite o nome do empreendimento.');
+                    return;
+                }
+            }
+
+            const newUnit = {
+                emp: empValue,
+                torre: document.getElementById('addTorre').value.trim(),
+                unidade: document.getElementById('addUnidade').value.trim(),
+                vagas: document.getElementById('addVagas').value.trim(),
+                area: parseFloat(document.getElementById('addArea').value),
+                preco: parseFloat(document.getElementById('addPreco').value)
+            };
+
+            const origem = document.getElementById('addOrigem').value;
+            
+            // Adicionar à lista de dados
+            allData.push(newUnit);
+            state.filteredData = [...allData];
+
+            // Atualizar permutantes se necessário
+            if (origem === 'Permutante') {
+                const key = newUnit.torre + newUnit.unidade;
+                if (empValue.includes('URBANLIFE')) {
+                    if (!permUrban.includes(key) && !permUrban.includes(newUnit.unidade)) {
+                        permUrban.push(newUnit.unidade);
+                    }
+                } else if (empValue.includes('GRAND')) {
+                    if (!permGrand.includes(key) && !permGrand.includes(newUnit.unidade)) {
+                        permGrand.push(newUnit.unidade);
+                    }
+                } else if (empValue.includes('LIVING')) {
+                    if (!permLiving.includes(newUnit.unidade)) {
+                        permLiving.push(newUnit.unidade);
+                    }
+                }
+            }
+
+            // Resetar form
+            document.getElementById('addUnitForm').reset();
+            document.getElementById('newEmpGroup').style.display = 'none';
+            
+            showAlert('addAlert', 'success', `✓ Unidade ${newUnit.unidade} adicionada com sucesso!`);
+            
+            // Atualizar visualização
+            updateFilterButtons();
+            renderTable();
+            
+            // Atualizar opções de empreendimento se novo
+            if (!document.querySelector(`#empSelect option[value="${empValue}"]`)) {
+                const option = document.createElement('option');
+                option.value = empValue;
+                option.textContent = empValue;
+                document.getElementById('empSelect').appendChild(option);
+                
+                const option2 = option.cloneNode(true);
+                document.getElementById('filterEmpManage').appendChild(option2);
+            }
+        });
+
+        // Renderizar lista de unidades
+        function renderUnitsList() {
+            const filterEmp = document.getElementById('filterEmpManage').value;
+            const unitsList = document.getElementById('unitsList');
+            
+            const filtered = allData.filter(item => 
+                filterEmp === 'TODOS' || item.emp === filterEmp
+            );
+
+            if (filtered.length === 0) {
+                unitsList.innerHTML = '<p style="text-align:center;color:#6b7280;padding:20px">Nenhuma unidade encontrada</p>';
+                return;
+            }
+
+            unitsList.innerHTML = filtered.map((item, index) => {
+                const origem = isPermutante(item.emp, item.torre, item.unidade) ? 'Permutante' : 'Real';
+                const realIndex = allData.indexOf(item);
+                return `
+                    <div class="unit-item">
+                        <div class="unit-info">
+                            <div class="unit-name">${item.emp} - Torre ${item.torre} - Un. ${item.unidade}</div>
+                            <div class="unit-details">
+                                ${item.area}m² • ${formatCurrency(item.preco)} • ${origem}
+                            </div>
+                        </div>
+                        <div class="unit-actions">
+                            <button class="btn-small btn-edit" onclick="editUnit(${realIndex})">✏️ Editar</button>
+                            <button class="btn-small btn-delete" onclick="deleteUnit(${realIndex})">🗑️ Excluir</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('filterEmpManage').addEventListener('change', renderUnitsList);
+
+        // Editar unidade
+        window.editUnit = function(index) {
+            const unit = allData[index];
+            const origem = isPermutante(unit.emp, unit.torre, unit.unidade) ? 'Permutante' : 'Real';
+            
+            // Preencher formulário
+            document.getElementById('editIndex').value = index;
+            document.getElementById('editEmp').value = unit.emp;
+            document.getElementById('editTorre').value = unit.torre;
+            document.getElementById('editUnidade').value = unit.unidade;
+            document.getElementById('editVagas').value = unit.vagas || '';
+            document.getElementById('editArea').value = unit.area;
+            document.getElementById('editPreco').value = unit.preco;
+            document.getElementById('editOrigem').value = origem;
+            
+            // Mostrar formulário de edição
+            document.getElementById('manage-units').style.display = 'none';
+            document.getElementById('edit-unit').style.display = 'block';
+        };
+
+        // Voltar para lista
+        document.getElementById('backToList').addEventListener('click', () => {
+            document.getElementById('edit-unit').style.display = 'none';
+            document.getElementById('manage-units').style.display = 'block';
+            renderUnitsList();
+        });
+
+        document.getElementById('cancelEdit').addEventListener('click', () => {
+            document.getElementById('edit-unit').style.display = 'none';
+            document.getElementById('manage-units').style.display = 'block';
+            renderUnitsList();
+        });
+
+        // Salvar edição
+        document.getElementById('editUnitForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const index = parseInt(document.getElementById('editIndex').value);
+            const oldUnit = {...allData[index]};
+            const novaOrigem = document.getElementById('editOrigem').value;
+            
+            // Atualizar unidade
+            allData[index] = {
+                emp: document.getElementById('editEmp').value.trim(),
+                torre: document.getElementById('editTorre').value.trim(),
+                unidade: document.getElementById('editUnidade').value.trim(),
+                vagas: document.getElementById('editVagas').value.trim(),
+                area: parseFloat(document.getElementById('editArea').value),
+                preco: parseFloat(document.getElementById('editPreco').value)
+            };
+
+            const newUnit = allData[index];
+            
+            // Atualizar permutantes
+            const oldOrigem = isPermutante(oldUnit.emp, oldUnit.torre, oldUnit.unidade) ? 'Permutante' : 'Real';
+            
+            if (oldOrigem !== novaOrigem) {
+                const key = newUnit.torre + newUnit.unidade;
+                
+                if (novaOrigem === 'Permutante') {
+                    // Adicionar aos permutantes
+                    if (newUnit.emp.includes('URBANLIFE')) {
+                        if (!permUrban.includes(key) && !permUrban.includes(newUnit.unidade)) {
+                            permUrban.push(newUnit.unidade);
+                        }
+                    } else if (newUnit.emp.includes('GRAND')) {
+                        if (!permGrand.includes(key) && !permGrand.includes(newUnit.unidade)) {
+                            permGrand.push(newUnit.unidade);
+                        }
+                    } else if (newUnit.emp.includes('LIVING')) {
+                        if (!permLiving.includes(newUnit.unidade)) {
+                            permLiving.push(newUnit.unidade);
+                        }
+                    }
+                } else {
+                    // Remover dos permutantes
+                    if (newUnit.emp.includes('URBANLIFE')) {
+                        const idx1 = permUrban.indexOf(key);
+                        const idx2 = permUrban.indexOf(newUnit.unidade);
+                        if (idx1 > -1) permUrban.splice(idx1, 1);
+                        if (idx2 > -1) permUrban.splice(idx2, 1);
+                    } else if (newUnit.emp.includes('GRAND')) {
+                        const idx1 = permGrand.indexOf(key);
+                        const idx2 = permGrand.indexOf(newUnit.unidade);
+                        if (idx1 > -1) permGrand.splice(idx1, 1);
+                        if (idx2 > -1) permGrand.splice(idx2, 1);
+                    } else if (newUnit.emp.includes('LIVING')) {
+                        const idx = permLiving.indexOf(newUnit.unidade);
+                        if (idx > -1) permLiving.splice(idx, 1);
+                    }
+                }
+            }
+            
+            state.filteredData = [...allData];
+            
+            showAlert('editAlert', 'success', `✓ Unidade ${newUnit.unidade} atualizada com sucesso!`);
+            
+            setTimeout(() => {
+                document.getElementById('edit-unit').style.display = 'none';
+                document.getElementById('manage-units').style.display = 'block';
+                renderUnitsList();
+                updateFilterButtons();
+                renderTable();
+            }, 1500);
+        });
+
+        // Excluir unidade
+        window.deleteUnit = function(index) {
+            if (confirm('Tem certeza que deseja excluir esta unidade?')) {
+                const unit = allData[index];
+                allData.splice(index, 1);
+                state.filteredData = [...allData];
+                
+                showAlert('manageAlert', 'success', `✓ Unidade ${unit.unidade} excluída com sucesso!`);
+                renderUnitsList();
+                updateFilterButtons();
+                renderTable();
+            }
+        };
+
+        // Upload PDF
+        const fileUpload = document.getElementById('fileUpload');
+        const pdfInput = document.getElementById('pdfInput');
+        const fileName = document.getElementById('fileName');
+        const processPdfBtn = document.getElementById('processPdfBtn');
+
+        fileUpload.addEventListener('click', () => pdfInput.click());
+
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.style.borderColor = 'var(--primary)';
+            fileUpload.style.background = 'rgba(102, 126, 234, 0.1)';
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.style.borderColor = 'var(--border)';
+            fileUpload.style.background = 'var(--light)';
+        });
+
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.style.borderColor = 'var(--border)';
+            fileUpload.style.background = 'var(--light)';
+            
+            if (e.dataTransfer.files.length > 0) {
+                pdfInput.files = e.dataTransfer.files;
+                handleFileSelect();
+            }
+        });
+
+        pdfInput.addEventListener('change', handleFileSelect);
+
+        function handleFileSelect() {
+            const file = pdfInput.files[0];
+            if (file) {
+                if (file.type !== 'application/pdf') {
+                    showAlert('importAlert', 'error', '❌ Por favor, selecione um arquivo PDF.');
+                    return;
+                }
+                fileName.textContent = `📄 ${file.name}`;
+                processPdfBtn.style.display = 'block';
+                showAlert('importAlert', 'info', '📄 Arquivo selecionado. Clique em "Processar PDF" para importar os dados.');
+            }
+        }
+
+        processPdfBtn.addEventListener('click', () => {
+            showAlert('importAlert', 'info', '🔄 Processando PDF... Esta funcionalidade requer integração com biblioteca de extração de PDF. Por enquanto, adicione as unidades manualmente na aba "Adicionar Unidade".');
+        });
+
+        // Função auxiliar para mostrar alertas
+        function showAlert(containerId, type, message) {
+            const container = document.getElementById(containerId);
+            const alertClass = type === 'success' ? 'alert-success' : type === 'error' ? 'alert-error' : 'alert-info';
+            container.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // Inicialização
+        updateFilterButtons();
+        renderTable();
+    </script>
+</body>
+</html>

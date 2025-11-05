@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Financiamento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #64748b;
+        }
+
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .choice-card {
+            background: #f8fafc;
+            border: 3px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .choice-card:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .choice-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .choice-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .choice-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .choice-desc {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .choice-info {
+            font-size: 12px;
+            color: #667eea;
+            font-weight: 600;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .mode-toggle {
+            display: flex;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #64748b;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 10px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 8px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            border: 3px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .slider-value {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 16px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #667eea;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 12px;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 2px solid #93c5fd;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .info-box strong {
+            display: block;
+            color: #1e40af;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .info-box p {
+            color: #1e3a8a;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+            margin-bottom: 24px;
+        }
+
+        .result-label {
+            font-size: 16px;
+            font-weight: 600;
+            opacity: 0.95;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .result-value {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1a1a2e;
+        }
+
+
+        @media (max-width: 640px) {
+            .choice-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            #modoSimulacao .choice-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Etapa 1: Escolha do Modo (Capacidade ou Simulação) -->
+        <div id="etapaModo" class="card">
+            <div class="card-header">
+                <h1>💰 Simulador de Financiamento</h1>
+                <p class="subtitle" id="subtitulo">O que você deseja fazer?</p>
+            </div>
+
+            <div class="choice-grid" style="grid-template-columns: 1fr 1fr;">
+                <div class="choice-card" onclick="selecionarModo('capacidade')">
+                    <div class="choice-icon">📊</div>
+                    <div class="choice-title">Calcular Capacidade</div>
+                    <div class="choice-desc">Descubra quanto você pode financiar com base na sua renda</div>
+                </div>
+
+                <div class="choice-card" onclick="selecionarModo('simulacao')">
+                    <div class="choice-icon">🧮</div>
+                    <div class="choice-title">Simular Financiamento</div>
+                    <div class="choice-desc">Calcule as parcelas de um imóvel específico</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Etapa 2: Formulário (Capacidade ou Simulação) -->
+        <div id="etapaFormulario" class="card hidden">
+
+            <div class="card-header">
+                <h1 id="tituloFormulario">💰 Simulador de Financiamento</h1>
+                <p class="subtitle" id="subtituloFormulario">Configure sua simulação</p>
+            </div>
+
+            <!-- Modo Capacidade -->
+            <div id="modoCapacidade" class="hidden">
+                <div class="info-box">
+                    <strong>💡 Como funciona?</strong>
+                    <p>Calcule quanto você pode financiar considerando que a parcela não deve ultrapassar 30% da sua renda.</p>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">💵 Renda Mensal</label>
+                    <input type="text" class="input-field" id="renda" placeholder="R$ 0,00" 
+                           oninput="formatarMoedaInput(this)">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">📅 Prazo do Financiamento</label>
+                    <input type="range" class="slider" id="prazoCapacidade" min="5" max="35" value="25" 
+                           oninput="atualizarSlider('prazoCapDisplay', this.value + ' anos')">
+                    <div style="text-align: center;">
+                        <span class="slider-value" id="prazoCapDisplay">25 anos</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">📈 Taxa de Juros (% ao ano)</label>
+                    <input type="range" class="slider" id="taxaCapacidade" min="5" max="15" step="0.1" value="10" 
+                           oninput="atualizarSlider('taxaCapDisplay', this.value + '%')">
+                    <div style="text-align: center;">
+                        <span class="slider-value" id="taxaCapDisplay">10%</span>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="calcularCapacidade()">
+                    🔍 Calcular Minha Capacidade
+                </button>
+            </div>
+
+            <!-- Modo Simulação -->
+            <div id="modoSimulacao" class="hidden">
+                <div class="info-box">
+                    <strong>💡 Preencha os dados do financiamento</strong>
+                    <p>Simule as parcelas do imóvel que você deseja financiar.</p>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">🏦 Tipo de Financiamento</label>
+                    <div class="choice-grid" style="grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 0;">
+                        <div class="choice-card" style="padding: 16px 12px;" onclick="selecionarTipoFinanciamento('residencial')" id="tipoResidencial">
+                            <div class="choice-icon" style="font-size: 32px; margin-bottom: 8px;">🏠</div>
+                            <div class="choice-title" style="font-size: 14px; margin-bottom: 4px;">Residencial</div>
+                            <div class="choice-info" style="font-size: 10px; margin-top: 4px;">Até 35 anos</div>
+                        </div>
+                        <div class="choice-card" style="padding: 16px 12px;" onclick="selecionarTipoFinanciamento('comercial')" id="tipoComercial">
+                            <div class="choice-icon" style="font-size: 32px; margin-bottom: 8px;">🏢</div>
+                            <div class="choice-title" style="font-size: 14px; margin-bottom: 4px;">Comercial</div>
+                            <div class="choice-info" style="font-size: 10px; margin-top: 4px;">Até 25 anos</div>
+                        </div>
+                        <div class="choice-card" style="padding: 16px 12px;" onclick="selecionarTipoFinanciamento('rural')" id="tipoRural">
+                            <div class="choice-icon" style="font-size: 32px; margin-bottom: 8px;">🌾</div>
+                            <div class="choice-title" style="font-size: 14px; margin-bottom: 4px;">Rural</div>
+                            <div class="choice-info" style="font-size: 10px; margin-top: 4px;">Até 30 anos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">👤 Sua Idade</label>
+                    <input type="number" class="input-field" id="idade" placeholder="Ex: 30" min="18" max="80"
+                           oninput="ajustarPrazoMaximo()">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">🏠 Valor do Imóvel</label>
+                    <input type="text" class="input-field" id="valorImovel" placeholder="R$ 0,00" 
+                           oninput="formatarMoedaInput(this); calcularPercentualEntrada()">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">💰 Valor da Entrada <span id="percentualEntrada" style="color: #667eea;"></span></label>
+                    <input type="text" class="input-field" id="valorEntrada" placeholder="R$ 0,00" 
+                           oninput="formatarMoedaInput(this); calcularPercentualEntrada()">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">📅 Prazo do Financiamento</label>
+                    <input type="range" class="slider" id="prazo" min="5" max="35" value="25" 
+                           oninput="atualizarSlider('prazoDisplay', this.value + ' anos')">
+                    <div style="text-align: center;">
+                        <span class="slider-value" id="prazoDisplay">25 anos</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">📈 Taxa de Juros (% ao ano)</label>
+                    <input type="range" class="slider" id="taxa" min="5" max="15" step="0.1" value="10" 
+                           oninput="atualizarSlider('taxaDisplay', this.value + '%')">
+                    <div style="text-align: center;">
+                        <span class="slider-value" id="taxaDisplay">10%</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">📋 Modalidade de Amortização</label>
+                    <div class="mode-toggle">
+                        <button class="mode-btn active" id="btnPrice" onclick="selecionarModalidade('price')">
+                            PRICE (Parcelas Fixas)
+                        </button>
+                        <button class="mode-btn" id="btnSac" onclick="selecionarModalidade('sac')">
+                            SAC (Parcelas Decrescentes)
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="calcularSimulacao()">
+                    🧮 Calcular Simulação
+                </button>
+            </div>
+
+            <button class="btn-secondary" onclick="voltarParaModo()">← Voltar</button>
+        </div>
+
+        <!-- Resultados -->
+        <div id="resultados" class="card hidden">
+            <div class="result-card">
+                <div class="result-label" id="labelResultado">Sua Parcela Mensal</div>
+                <div class="result-value" id="valorResultado">R$ 0,00</div>
+            </div>
+
+            <div class="stats-grid" id="statsGrid"></div>
+
+            <button class="btn-primary" onclick="novaSimulacao()">
+                🔄 Nova Simulação
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Configurações por tipo de financiamento
+        const configuracoes = {
+            residencial: {
+                nome: 'Residencial 🏠',
+                prazoMax: 35,
+                prazoDefault: 25,
+                taxaMin: 9,
+                taxaMax: 14,
+                taxaDefault: 10
+            },
+            comercial: {
+                nome: 'Comercial 🏢',
+                prazoMax: 25,
+                prazoDefault: 20,
+                taxaMin: 10,
+                taxaMax: 15,
+                taxaDefault: 11
+            },
+            rural: {
+                nome: 'Rural 🌾',
+                prazoMax: 30,
+                prazoDefault: 25,
+                taxaMin: 8,
+                taxaMax: 13,
+                taxaDefault: 9
+            }
+        };
+
+        let tipoFinanciamentoSelecionado = 'residencial'; // Padrão
+        let modoAtual = null;
+        let modalidadeSelecionada = 'price';
+
+        // Dados salvos para cada modo
+        let dadosSalvos = {
+            capacidade: {},
+            simulacao: {}
+        };
+
+        function selecionarModo(modo) {
+            modoAtual = modo;
+            
+            // Ocultar etapa 1 e mostrar etapa 2
+            document.getElementById('etapaModo').classList.add('hidden');
+            document.getElementById('etapaFormulario').classList.remove('hidden');
+            
+            // Mostrar formulário correto
+            if (modo === 'capacidade') {
+                document.getElementById('modoCapacidade').classList.remove('hidden');
+                document.getElementById('modoSimulacao').classList.add('hidden');
+                document.getElementById('tituloFormulario').textContent = '📊 Calcular Capacidade';
+                document.getElementById('subtituloFormulario').textContent = 'Descubra quanto você pode financiar';
+                
+                // Aplicar configurações padrão para capacidade
+                aplicarConfiguracoesFinanciamento();
+            } else {
+                document.getElementById('modoSimulacao').classList.remove('hidden');
+                document.getElementById('modoCapacidade').classList.add('hidden');
+                document.getElementById('tituloFormulario').textContent = '🧮 Simular Financiamento';
+                document.getElementById('subtituloFormulario').textContent = 'Calcule as parcelas do seu imóvel';
+                
+                // Aplicar configurações do tipo residencial por padrão
+                aplicarConfiguracoesFinanciamento();
+                
+                // Marcar o tipo residencial como selecionado por padrão
+                selecionarTipoFinanciamento('residencial');
+            }
+            
+            // Ocultar resultados
+            document.getElementById('resultados').classList.add('hidden');
+        }
+
+        function selecionarTipoFinanciamento(tipo) {
+            tipoFinanciamentoSelecionado = tipo;
+            
+            // Remover classe 'selected' de todos os cards de tipo
+            document.getElementById('tipoResidencial').classList.remove('selected');
+            document.getElementById('tipoComercial').classList.remove('selected');
+            document.getElementById('tipoRural').classList.remove('selected');
+            
+            // Adicionar classe 'selected' ao card clicado
+            document.getElementById('tipo' + tipo.charAt(0).toUpperCase() + tipo.slice(1)).classList.add('selected');
+            
+            // Aplicar configurações do tipo selecionado
+            aplicarConfiguracoesFinanciamento();
+        }
+
+        function aplicarConfiguracoesFinanciamento() {
+            const config = configuracoes[tipoFinanciamentoSelecionado];
+            
+            // Aplicar no modo capacidade
+            const prazoCapSlider = document.getElementById('prazoCapacidade');
+            prazoCapSlider.max = config.prazoMax;
+            prazoCapSlider.value = config.prazoDefault;
+            document.getElementById('prazoCapDisplay').textContent = config.prazoDefault + ' anos';
+            
+            const taxaCapSlider = document.getElementById('taxaCapacidade');
+            taxaCapSlider.min = config.taxaMin;
+            taxaCapSlider.max = config.taxaMax;
+            taxaCapSlider.value = config.taxaDefault;
+            document.getElementById('taxaCapDisplay').textContent = config.taxaDefault + '%';
+            
+            // Aplicar no modo simulação
+            const prazoSimSlider = document.getElementById('prazo');
+            prazoSimSlider.max = config.prazoMax;
+            prazoSimSlider.value = config.prazoDefault;
+            document.getElementById('prazoDisplay').textContent = config.prazoDefault + ' anos';
+            
+            const taxaSimSlider = document.getElementById('taxa');
+            taxaSimSlider.min = config.taxaMin;
+            taxaSimSlider.max = config.taxaMax;
+            taxaSimSlider.value = config.taxaDefault;
+            document.getElementById('taxaDisplay').textContent = config.taxaDefault + '%';
+        }
+
+        function voltarParaModo() {
+            document.getElementById('etapaFormulario').classList.add('hidden');
+            document.getElementById('etapaModo').classList.remove('hidden');
+            document.getElementById('resultados').classList.add('hidden');
+            modoAtual = null;
+        }
+
+        function salvarDados() {
+            if (modoAtual === 'capacidade') {
+                dadosSalvos.capacidade = {
+                    renda: document.getElementById('renda').value
+                };
+            } else if (modoAtual === 'simulacao') {
+                dadosSalvos.simulacao = {
+                    idade: document.getElementById('idade').value,
+                    imovel: document.getElementById('valorImovel').value,
+                    entrada: document.getElementById('valorEntrada').value
+                };
+            }
+        }
+
+        function selecionarModalidade(modalidade) {
+            modalidadeSelecionada = modalidade;
+            
+            if (modalidade === 'price') {
+                document.getElementById('btnPrice').classList.add('active');
+                document.getElementById('btnSac').classList.remove('active');
+            } else {
+                document.getElementById('btnSac').classList.add('active');
+                document.getElementById('btnPrice').classList.remove('active');
+            }
+        }
+
+        function formatarMoeda(valor) {
+            return valor.toLocaleString('pt-BR', { 
+                style: 'currency', 
+                currency: 'BRL',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function formatarMoedaInput(input) {
+            let valor = input.value.replace(/\D/g, '');
+            valor = (parseInt(valor) / 100).toFixed(2);
+            input.value = formatarMoeda(parseFloat(valor));
+        }
+
+        function atualizarSlider(elementId, valor) {
+            document.getElementById(elementId).textContent = valor;
+        }
+
+        function calcularPercentualEntrada() {
+            const imovel = parseFloat(document.getElementById('valorImovel').value.replace(/\D/g, '')) / 100 || 0;
+            const entrada = parseFloat(document.getElementById('valorEntrada').value.replace(/\D/g, '')) / 100 || 0;
+            
+            if (imovel > 0 && entrada > 0) {
+                const percentual = (entrada / imovel * 100).toFixed(1);
+                document.getElementById('percentualEntrada').textContent = `(${percentual}%)`;
+            } else {
+                document.getElementById('percentualEntrada').textContent = '';
+            }
+        }
+
+        function ajustarPrazoMaximo() {
+            const idade = parseInt(document.getElementById('idade').value) || 0;
+            const prazoSlider = document.getElementById('prazo');
+            const config = configuracoes[tipoFinanciamentoSelecionado];
+            
+            if (idade >= 18 && idade <= 80) {
+                const prazoMaxIdade = Math.floor(80.5 - idade);
+                prazoSlider.max = Math.min(prazoMaxIdade, config.prazoMax);
+                
+                if (parseInt(prazoSlider.value) > prazoSlider.max) {
+                    prazoSlider.value = prazoSlider.max;
+                    document.getElementById('prazoDisplay').textContent = prazoSlider.max + ' anos';
+                }
+            }
+        }
+
+        function calcularCapacidade() {
+            const renda = parseFloat(document.getElementById('renda').value.replace(/\D/g, '')) / 100 || 0;
+            const prazoAnos = parseInt(document.getElementById('prazoCapacidade').value);
+            const taxaAnual = parseFloat(document.getElementById('taxaCapacidade').value);
+
+            if (renda <= 0) {
+                alert('❌ Informe sua renda mensal!');
+                return;
+            }
+
+            const parcelaMax = renda * 0.30;
+            const meses = prazoAnos * 12;
+            const taxaMensal = taxaAnual / 12 / 100;
+            
+            const valorFinanciado = parcelaMax * ((Math.pow(1 + taxaMensal, meses) - 1) / 
+                                    (taxaMensal * Math.pow(1 + taxaMensal, meses)));
+            
+            const valorMaxImovel = valorFinanciado / 0.8;
+            const entrada = valorMaxImovel * 0.2;
+
+            document.getElementById('labelResultado').textContent = 'Parcela Máxima Recomendada';
+            document.getElementById('valorResultado').textContent = formatarMoeda(parcelaMax);
+
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-label">Valor Máximo do Imóvel</div>
+                    <div class="stat-value">${formatarMoeda(valorMaxImovel)}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Entrada Necessária (20%)</div>
+                    <div class="stat-value">${formatarMoeda(entrada)}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Valor a Financiar</div>
+                    <div class="stat-value">${formatarMoeda(valorFinanciado)}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Sua Renda</div>
+                    <div class="stat-value">${formatarMoeda(renda)}</div>
+                </div>
+            `;
+
+            document.getElementById('resultados').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('resultados').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function calcularSimulacao() {
+            // Validar se o tipo de financiamento foi selecionado
+            if (!tipoFinanciamentoSelecionado) {
+                alert('❌ Selecione o tipo de financiamento!');
+                return;
+            }
+
+            const idade = parseInt(document.getElementById('idade').value) || 0;
+            const imovel = parseFloat(document.getElementById('valorImovel').value.replace(/\D/g, '')) / 100 || 0;
+            const entrada = parseFloat(document.getElementById('valorEntrada').value.replace(/\D/g, '')) / 100 || 0;
+            const prazoAnos = parseInt(document.getElementById('prazo').value);
+            const taxaAnual = parseFloat(document.getElementById('taxa').value);
+
+            // Validações
+            if (idade < 18) {
+                alert('❌ Idade mínima para financiamento: 18 anos');
+                return;
+            }
+
+            if (idade > 80) {
+                alert('❌ Idade máxima permitida pelos bancos: 80 anos');
+                return;
+            }
+
+            const idadeFinal = idade + prazoAnos;
+            if (idadeFinal > 80.5) {
+                alert('❌ A soma da sua idade (' + idade + ' anos) + prazo (' + prazoAnos + ' anos) ultrapassa o limite de 80 anos e 6 meses!\n\nIdade final seria: ' + idadeFinal + ' anos\nPrazo máximo permitido: ' + Math.floor(80.5 - idade) + ' anos');
+                return;
+            }
+
+            if (imovel <= 0 || entrada <= 0 || entrada >= imovel) {
+                alert('❌ Verifique os valores do imóvel e da entrada!');
+                return;
+            }
+
+            const valorFinanciado = imovel - entrada;
+            const meses = prazoAnos * 12;
+            const taxaMensal = taxaAnual / 12 / 100;
+            
+            let primeiraParcela = 0;
+            let ultimaParcela = 0;
+            let totalJuros = 0;
+
+            if (modalidadeSelecionada === 'price') {
+                // Tabela PRICE - Parcelas fixas
+                const parcela = valorFinanciado * (taxaMensal * Math.pow(1 + taxaMensal, meses)) / 
+                               (Math.pow(1 + taxaMensal, meses) - 1);
+                
+                primeiraParcela = parcela;
+                ultimaParcela = parcela;
+                
+                // Calcular juros total
+                let saldo = valorFinanciado;
+                for (let i = 1; i <= meses; i++) {
+                    const juros = saldo * taxaMensal;
+                    const amortizacao = parcela - juros;
+                    saldo -= amortizacao;
+                    totalJuros += juros;
+                }
+            } else {
+                // Tabela SAC - Parcelas decrescentes
+                const amortizacaoFixa = valorFinanciado / meses;
+                let saldo = valorFinanciado;
+                
+                for (let i = 1; i <= meses; i++) {
+                    const juros = saldo * taxaMensal;
+                    const parcela = amortizacaoFixa + juros;
+                    saldo -= amortizacaoFixa;
+                    totalJuros += juros;
+                    
+                    if (i === 1) primeiraParcela = parcela;
+                    if (i === meses) ultimaParcela = parcela;
+                }
+            }
+            
+            const totalPago = entrada + valorFinanciado + totalJuros;
+
+            document.getElementById('labelResultado').textContent = 
+                modalidadeSelecionada === 'price' ? 'Sua Parcela Mensal (Fixa)' : 'Primeira Parcela';
+            document.getElementById('valorResultado').textContent = formatarMoeda(primeiraParcela);
+
+            // Calcular renda mínima necessária (parcela não deve ultrapassar 30% da renda)
+            const rendaMinima = primeiraParcela / 0.30;
+
+            const ultimaParcelaHTML = modalidadeSelecionada === 'sac' ? `
+                <div class="stat-item">
+                    <div class="stat-label">Última Parcela</div>
+                    <div class="stat-value">${formatarMoeda(ultimaParcela)}</div>
+                </div>
+            ` : '';
+
+            const config = configuracoes[tipoFinanciamentoSelecionado];
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-label">Renda Mínima Recomendada</div>
+                    <div class="stat-value" style="color: #667eea;">${formatarMoeda(rendaMinima)}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Total a Pagar</div>
+                    <div class="stat-value">${formatarMoeda(totalPago)}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Total de Juros</div>
+                    <div class="stat-value">${formatarMoeda(totalJuros)}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Valor Financiado</div>
+                    <div class="stat-value">${formatarMoeda(valorFinanciado)}</div>
+                </div>
+                ${ultimaParcelaHTML}
+                <div class="stat-item">
+                    <div class="stat-label">Modalidade</div>
+                    <div class="stat-value">${modalidadeSelecionada === 'price' ? 'PRICE' : 'SAC'}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Tipo de Financiamento</div>
+                    <div class="stat-value" style="font-size: 18px;">${config.nome}</div>
+                </div>
+            `;
+
+            document.getElementById('resultados').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('resultados').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function novaSimulacao() {
+            // Voltar para a etapa 1
+            document.getElementById('etapaFormulario').classList.add('hidden');
+            document.getElementById('resultados').classList.add('hidden');
+            document.getElementById('etapaModo').classList.remove('hidden');
+            
+            // Resetar variáveis
+            tipoFinanciamentoSelecionado = 'residencial';
+            modoAtual = null;
+            dadosSalvos = { capacidade: {}, simulacao: {} };
+        }
+
+        console.log('Simulador carregado com sucesso!');
+    </script>
+</body>
+</html>
