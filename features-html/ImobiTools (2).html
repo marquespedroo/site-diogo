@@ -1145,7 +1145,7 @@
                     </div>
                 </div>
 
-                <button class="btn-product orange" onclick="scrollTo('#precos')">
+                <button class="btn-product orange" onclick="smoothScrollTo('#precos')">
                     Ver Detalhes e Assinar →
                 </button>
             </div>
@@ -1182,7 +1182,7 @@
                     </div>
                 </div>
 
-                <button class="btn-product blue" onclick="scrollTo('#precos')">
+                <button class="btn-product blue" onclick="smoothScrollTo('#precos')">
                     Ver Detalhes e Assinar →
                 </button>
             </div>
@@ -1455,8 +1455,8 @@
             }
         });
 
-        // Smooth scrolling
-        function scrollTo(target) {
+        // Smooth scrolling (FIXED: Renamed to avoid conflict with native window.scrollTo)
+        function smoothScrollTo(target) {
             const element = document.querySelector(target);
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1467,7 +1467,7 @@
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = this.getAttribute('href');
-                scrollTo(target);
+                smoothScrollTo(target);
             });
         });
 
@@ -1493,21 +1493,23 @@
             observer.observe(el);
         });
 
-        // FAQ Accordion
-        document.querySelectorAll('.faq-question').forEach(question => {
-            question.addEventListener('click', () => {
-                const faqItem = question.parentElement;
-                const isActive = faqItem.classList.contains('active');
-                
-                // Close all FAQ items
-                document.querySelectorAll('.faq-item').forEach(item => {
-                    item.classList.remove('active');
+        // FAQ Accordion (FIXED: Wrapped in DOMContentLoaded)
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.faq-question').forEach(question => {
+                question.addEventListener('click', () => {
+                    const faqItem = question.parentElement;
+                    const isActive = faqItem.classList.contains('active');
+
+                    // Close all FAQ items
+                    document.querySelectorAll('.faq-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+
+                    // Open clicked item if it wasn't active
+                    if (!isActive) {
+                        faqItem.classList.add('active');
+                    }
                 });
-                
-                // Open clicked item if it wasn't active
-                if (!isActive) {
-                    faqItem.classList.add('active');
-                }
             });
         });
     </script>
