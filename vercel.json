@@ -1,0 +1,98 @@
+{
+  "version": 2,
+  "name": "imobitools",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
+  "framework": null,
+  "public": false,
+
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    }
+  },
+
+  "env": {
+    "VITE_SUPABASE_URL": "@imobitools-supabase-url",
+    "VITE_SUPABASE_ANON_KEY": "@imobitools-supabase-anon-key"
+  },
+
+  "regions": ["gru1"],
+
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/c/([^/]+)",
+      "dest": "/calculator-shared.html?code=$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(), microphone=(), camera=()"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(?:js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+
+  "rewrites": [
+    {
+      "source": "/calculadora",
+      "destination": "/calculadora-fluxo.html"
+    },
+    {
+      "source": "/simulador",
+      "destination": "/simulador-financiamento.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/public/dashboard.html"
+    }
+  ]
+}
