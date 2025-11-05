@@ -333,16 +333,16 @@ const CalculatorModule = {
         const installmentHTML = `
             <div class="installment-item" data-phase="${phase}" data-id="${installmentId}">
                 <div class="form-group">
-                    <label>Amount (R$)</label>
+                    <label>Valor (R$)</label>
                     <input type="number" name="${phase}_amount_${installmentId}" placeholder="10000" min="0" step="100" required>
                 </div>
                 <div class="form-group">
-                    <label>Due Date</label>
+                    <label>Data de Vencimento</label>
                     <input type="date" name="${phase}_date_${installmentId}" required>
                 </div>
                 <div class="form-group">
-                    <label>Description</label>
-                    <input type="text" name="${phase}_desc_${installmentId}" placeholder="Payment #${installmentId}" required>
+                    <label>Descrição</label>
+                    <input type="text" name="${phase}_desc_${installmentId}" placeholder="Pagamento #${installmentId}" required>
                 </div>
                 <button type="button" class="btn-remove-installment" onclick="CalculatorModule.removeInstallment('${phase}', ${installmentId})">×</button>
             </div>
@@ -399,9 +399,9 @@ const CalculatorModule = {
 
     collectPhaseData(phase) {
         const phaseName = {
-            entry: 'Entry Payments',
-            during: 'During Construction',
-            post: 'Post-Construction'
+            entry: 'Pagamentos de Entrada',
+            during: 'Durante Obra',
+            post: 'Pós-Obra'
         }[phase];
 
         const installments = [];
@@ -456,11 +456,11 @@ const CalculatorModule = {
             this.updateCalculationsTable();
 
             // Show success message
-            this.showSuccessMessage('Calculation saved successfully!');
+            this.showSuccessMessage('Cálculo salvo com sucesso!');
 
         } catch (error) {
             console.error('Error submitting calculation:', error);
-            this.showErrorMessage('Failed to save calculation. Please try again.');
+            this.showErrorMessage('Falha ao salvar cálculo. Por favor, tente novamente.');
         } finally {
             this.showLoadingState(false);
         }
@@ -512,16 +512,16 @@ const CalculatorModule = {
         const card = document.getElementById('approvalStatusCard');
 
         if (approved) {
-            title.textContent = '✓ Approved';
-            description.textContent = 'The property financing meets the required captation percentage.';
+            title.textContent = '✓ Aprovado';
+            description.textContent = 'O financiamento do imóvel atende à porcentagem de captação necessária.';
             card.style.background = 'linear-gradient(135deg, #2dce89 0%, #2dcecc 100%)';
             icon.innerHTML = `
                 <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="3" fill="none"/>
                 <path d="M20 32l8 8 16-16" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
             `;
         } else {
-            title.textContent = '✗ Not Approved';
-            description.textContent = 'The property financing does not meet the required captation percentage.';
+            title.textContent = '✗ Não Aprovado';
+            description.textContent = 'O financiamento do imóvel não atende à porcentagem de captação necessária.';
             card.style.background = 'linear-gradient(135deg, #f5365c 0%, #f56036 100%)';
             icon.innerHTML = `
                 <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="3" fill="none"/>
@@ -599,7 +599,7 @@ const CalculatorModule = {
     async generateShareLink() {
         try {
             if (!this.currentCalculatorId) {
-                this.showErrorMessage('No calculation to share');
+                this.showErrorMessage('Nenhum cálculo para compartilhar');
                 return;
             }
 
@@ -619,7 +619,7 @@ const CalculatorModule = {
 
         } catch (error) {
             console.error('Error generating share link:', error);
-            this.showErrorMessage('Failed to generate share link');
+            this.showErrorMessage('Falha ao gerar link de compartilhamento');
         }
     },
 
@@ -649,12 +649,12 @@ const CalculatorModule = {
         `;
 
         modal.innerHTML = `
-            <h3 style="margin: 0 0 16px; color: #172B4D;">Shareable Link Generated!</h3>
-            <p style="margin: 0 0 16px; color: #8392AB;">Share this link with others to view the calculation:</p>
+            <h3 style="margin: 0 0 16px; color: #172B4D;">Link Compartilhável Gerado!</h3>
+            <p style="margin: 0 0 16px; color: #8392AB;">Compartilhe este link com outros para visualizar o cálculo:</p>
             <input type="text" value="${url}" readonly style="width: 100%; padding: 12px; border: 1px solid #DEE2E6; border-radius: 8px; margin-bottom: 16px; font-family: monospace;">
             <div style="display: flex; gap: 12px;">
-                <button onclick="navigator.clipboard.writeText('${url}'); alert('Link copied!')" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Copy Link</button>
-                <button onclick="this.closest('div').parentElement.parentElement.remove()" style="padding: 12px 24px; background: transparent; color: #8392AB; border: 2px solid #DEE2E6; border-radius: 8px; cursor: pointer; font-weight: 600;">Close</button>
+                <button onclick="navigator.clipboard.writeText('${url}'); alert('Link copiado!')" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Copiar Link</button>
+                <button onclick="this.closest('div').parentElement.parentElement.remove()" style="padding: 12px 24px; background: transparent; color: #8392AB; border: 2px solid #DEE2E6; border-radius: 8px; cursor: pointer; font-weight: 600;">Fechar</button>
             </div>
         `;
 

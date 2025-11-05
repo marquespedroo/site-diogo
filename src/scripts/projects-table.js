@@ -165,20 +165,20 @@ const ProjectsTableModule = {
     editUnit(id) {
         const unit = this.units.find(u => u.id === id);
         if (unit) {
-            alert(`Edit unit: ${unit.tower}-${unit.number}\n\nThis feature will open an edit modal.`);
+            alert(`Editar unidade: ${unit.tower}-${unit.number}\n\nEste recurso abrirá um modal de edição.`);
         }
     },
 
     showAddUnitModal() {
-        alert('Add Unit feature will open a modal form to create new units.\n\nThis will be integrated with the backend API.');
+        alert('O recurso Adicionar Unidade abrirá um formulário modal para criar novas unidades.\n\nEste recurso será integrado com a API backend.');
     },
 
     showImportModal() {
-        alert('Import CSV feature will allow bulk upload of units.\n\nSupported format: Tower, Unit, Area, Price, Parking, Origin, Status');
+        alert('O recurso Importar CSV permitirá upload em massa de unidades.\n\nFormato suportado: Torre, Unidade, Área, Preço, Vagas, Origem, Status');
     },
 
     exportToCSV() {
-        const headers = ['Tower', 'Unit', 'Area (m²)', 'Price', 'Price/m²', 'Parking', 'Origin', 'Status'];
+        const headers = ['Torre', 'Unidade', 'Área (m²)', 'Preço', 'Preço/m²', 'Vagas', 'Origem', 'Status'];
         const rows = this.filteredUnits.map(unit => {
             const pricePerSqm = unit.price / unit.area;
             return [
@@ -202,7 +202,7 @@ const ProjectsTableModule = {
         a.click();
         URL.revokeObjectURL(url);
 
-        this.showSuccessMessage('CSV exported successfully!');
+        this.showSuccessMessage('CSV exportado com sucesso!');
     },
 
     formatCurrency(value) {

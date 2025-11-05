@@ -29,19 +29,19 @@ const MarketStudyModule = {
         const sampleHTML = `
             <div class="sample-item" data-id="${sampleId}">
                 <div class="form-group">
-                    <label>Address</label>
+                    <label>Endereço</label>
                     <input type="text" name="sample_address_${sampleId}" placeholder="Rua Example, 456, Centro" required>
                 </div>
                 <div class="form-group">
-                    <label>Area (m²)</label>
+                    <label>Área (m²)</label>
                     <input type="number" name="sample_area_${sampleId}" placeholder="80" min="1" step="0.01" required>
                 </div>
                 <div class="form-group">
-                    <label>Price (R$)</label>
+                    <label>Preço (R$)</label>
                     <input type="number" name="sample_price_${sampleId}" placeholder="350000" min="0" step="1000" required>
                 </div>
                 <div class="form-group">
-                    <label>Beds/Baths/Parking</label>
+                    <label>Quartos/Banheiros/Vagas</label>
                     <input type="text" name="sample_features_${sampleId}" placeholder="2/1/1" required>
                 </div>
                 <button type="button" class="btn-remove-installment" onclick="MarketStudyModule.removeSample(${sampleId})">×</button>
@@ -134,7 +134,7 @@ const MarketStudyModule = {
 
             // Validate minimum samples
             if (formData.samples.length < 3) {
-                this.showErrorMessage('Please add at least 3 comparable properties for accurate valuation.');
+                this.showErrorMessage('Por favor, adicione pelo menos 3 imóveis comparáveis para avaliação precisa.');
                 return;
             }
 
@@ -148,11 +148,11 @@ const MarketStudyModule = {
             this.displayStatistics(result.statistics);
 
             // Show success message
-            this.showSuccessMessage('Market study completed successfully!');
+            this.showSuccessMessage('Estudo de mercado concluído com sucesso!');
 
         } catch (error) {
             console.error('Error calculating valuation:', error);
-            this.showErrorMessage('Failed to calculate valuation. Please try again.');
+            this.showErrorMessage('Falha ao calcular avaliação. Por favor, tente novamente.');
         } finally {
             this.showLoadingState(false);
         }
@@ -299,7 +299,7 @@ const MarketStudyModule = {
     async generatePDF() {
         try {
             if (!this.currentStudyId) {
-                this.showErrorMessage('No market study to export');
+                this.showErrorMessage('Nenhum estudo de mercado para exportar');
                 return;
             }
 
@@ -308,14 +308,14 @@ const MarketStudyModule = {
             // Simulate PDF generation (will integrate with real API)
             await new Promise(resolve => setTimeout(resolve, 2000));
 
-            this.showSuccessMessage('PDF report generated successfully!');
+            this.showSuccessMessage('Relatório PDF gerado com sucesso!');
 
             // In production, this would download the PDF
             // window.open(`/api/market-study/generate-pdf?id=${this.currentStudyId}`, '_blank');
 
         } catch (error) {
             console.error('Error generating PDF:', error);
-            this.showErrorMessage('Failed to generate PDF report.');
+            this.showErrorMessage('Falha ao gerar relatório PDF.');
         } finally {
             this.showLoadingState(false);
         }

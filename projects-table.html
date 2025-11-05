@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projects Table - ImobiTools</title>
+    <title>Tabela de Empreendimentos - ImobiTools</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@700&display=swap" rel="stylesheet">
@@ -113,24 +113,26 @@
         <div class="sidebar-separator"></div>
 
         <nav class="sidebar-nav">
+            <div class="nav-header">FERRAMENTAS</div>
+
             <div class="nav-section">
                 <a href="/index.html" class="nav-btn-secondary">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M2 2h5v5H2V2zm0 7h5v5H2V9zm7-7h5v5H9V2zm0 7h5v5H9V9z"/>
                     </svg>
-                    Property Calculator
+                    Calculadora de Imóveis
                 </a>
                 <a href="/market-study.html" class="nav-btn-secondary">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M3 3h10a1 1 0 011 1v8a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1z"/>
                     </svg>
-                    Market Study
+                    Estudo de Mercado
                 </a>
                 <a href="/projects-table.html" class="nav-btn-secondary active">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M2 3h12a1 1 0 011 1v8a1 1 0 01-1 1H2a1 1 0 01-1-1V4a1 1 0 011-1z"/>
                     </svg>
-                    Projects Table
+                    Tabela de Empreendimentos
                 </a>
             </div>
         </nav>
@@ -143,10 +145,10 @@
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
                         <path d="M7 1L1 7h2v5h3V9h2v3h3V7h2L7 1z"/>
                     </svg>
-                    <span class="breadcrumb-text">/ Tools / </span>
-                    <span class="breadcrumb-current">Projects Table</span>
+                    <span class="breadcrumb-text">/ Ferramentas / </span>
+                    <span class="breadcrumb-current">Tabela de Empreendimentos</span>
                 </div>
-                <h2 class="page-title">Projects Table</h2>
+                <h2 class="page-title">Tabela de Empreendimentos</h2>
                 <button class="menu-toggle" id="menu-toggle">
                     <svg width="21" height="16" viewBox="0 0 21 16" fill="currentColor">
                         <rect width="21" height="2" rx="1"/>
@@ -161,14 +163,14 @@
                     <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M11.7 10.3l3.6 3.6-1.4 1.4-3.6-3.6a6 6 0 111.4-1.4zM6 10a4 4 0 100-8 4 4 0 000 8z"/>
                     </svg>
-                    <input type="text" placeholder="Search units..." class="search-input" id="searchInput">
+                    <input type="text" placeholder="Buscar unidades..." class="search-input" id="searchInput">
                 </div>
 
                 <a href="#" class="sign-in-link">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-3 0-6 1.5-6 3v1h12v-1c0-1.5-3-3-6-3z"/>
                     </svg>
-                    <span>Sign-in</span>
+                    <span>Entrar</span>
                 </a>
 
                 <button class="icon-btn" aria-label="Settings">
@@ -191,7 +193,7 @@
             <div class="stat-card">
                 <div class="stat-content">
                     <div class="stat-text">
-                        <p class="stat-label">TOTAL UNITS</p>
+                        <p class="stat-label">TOTAL DE UNIDADES</p>
                         <h3 class="stat-value" id="totalUnits">0</h3>
                     </div>
                     <div class="stat-icon money">
@@ -201,14 +203,14 @@
                     </div>
                 </div>
                 <div class="stat-footer">
-                    <span class="stat-period">across all projects</span>
+                    <span class="stat-period">em todos os projetos</span>
                 </div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-content">
                     <div class="stat-text">
-                        <p class="stat-label">AVAILABLE</p>
+                        <p class="stat-label">DISPONÍVEIS</p>
                         <h3 class="stat-value" id="availableUnits">0</h3>
                     </div>
                     <div class="stat-icon users">
@@ -220,14 +222,14 @@
                 </div>
                 <div class="stat-footer">
                     <span class="stat-change positive" id="availableRate">0%</span>
-                    <span class="stat-period">availability rate</span>
+                    <span class="stat-period">taxa de disponibilidade</span>
                 </div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-content">
                     <div class="stat-text">
-                        <p class="stat-label">SOLD</p>
+                        <p class="stat-label">VENDIDAS</p>
                         <h3 class="stat-value" id="soldUnits">0</h3>
                     </div>
                     <div class="stat-icon clients">
@@ -238,14 +240,14 @@
                 </div>
                 <div class="stat-footer">
                     <span class="stat-change positive" id="soldRate">0%</span>
-                    <span class="stat-period">conversion rate</span>
+                    <span class="stat-period">taxa de conversão</span>
                 </div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-content">
                     <div class="stat-text">
-                        <p class="stat-label">TOTAL VALUE</p>
+                        <p class="stat-label">VALOR TOTAL</p>
                         <h3 class="stat-value" id="totalValue">R$ 0</h3>
                     </div>
                     <div class="stat-icon sales">
@@ -257,7 +259,7 @@
                     </div>
                 </div>
                 <div class="stat-footer">
-                    <span class="stat-period">inventory value</span>
+                    <span class="stat-period">valor do estoque</span>
                 </div>
             </div>
         </section>
@@ -265,47 +267,47 @@
         <!-- Filter Controls -->
         <div class="card">
             <div class="card-header">
-                <h3>Filters & Actions</h3>
+                <h3>Filtros e Ações</h3>
             </div>
             <div style="padding: var(--spacing-lg);">
                 <div class="filter-controls">
                     <div class="form-group">
                         <label>Status</label>
                         <select id="filterStatus" class="form-input">
-                            <option value="">All</option>
-                            <option value="available">Available</option>
-                            <option value="reserved">Reserved</option>
-                            <option value="sold">Sold</option>
+                            <option value="">Todos</option>
+                            <option value="available">Disponível</option>
+                            <option value="reserved">Reservado</option>
+                            <option value="sold">Vendido</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label>Origin</label>
+                        <label>Origem</label>
                         <select id="filterOrigin" class="form-input">
-                            <option value="">All</option>
+                            <option value="">Todos</option>
                             <option value="real">Real</option>
                             <option value="permutante">Permutante</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label>Tower</label>
-                        <input type="text" id="filterTower" class="form-input" placeholder="Filter by tower">
+                        <label>Torre</label>
+                        <input type="text" id="filterTower" class="form-input" placeholder="Filtrar por torre">
                     </div>
 
                     <div class="form-group">
-                        <label>Actions</label>
+                        <label>Ações</label>
                         <div style="display: flex; gap: 8px;">
-                            <button class="btn-primary-form" id="btnFilter">Apply Filters</button>
-                            <button class="btn-secondary-form" id="btnClearFilters">Clear</button>
+                            <button class="btn-primary-form" id="btnFilter">Aplicar Filtros</button>
+                            <button class="btn-secondary-form" id="btnClearFilters">Limpar</button>
                         </div>
                     </div>
                 </div>
 
                 <div style="margin-top: var(--spacing-lg); display: flex; gap: var(--spacing-md);">
-                    <button class="btn-primary-form" id="btnAddUnit">+ Add Unit</button>
-                    <button class="btn-secondary-form" id="btnExportCSV">Export CSV</button>
-                    <button class="btn-secondary-form" id="btnImportCSV">Import CSV</button>
+                    <button class="btn-primary-form" id="btnAddUnit">+ Adicionar Unidade</button>
+                    <button class="btn-secondary-form" id="btnExportCSV">Exportar CSV</button>
+                    <button class="btn-secondary-form" id="btnImportCSV">Importar CSV</button>
                 </div>
             </div>
         </div>
@@ -313,21 +315,21 @@
         <!-- Projects Table -->
         <div class="card table-card">
             <div class="card-header">
-                <h3>Units</h3>
+                <h3>Unidades</h3>
             </div>
             <div class="projects-table-wrapper">
                 <table class="projects-table">
                     <thead>
                         <tr>
-                            <th>Tower</th>
-                            <th>Unit</th>
-                            <th>Area (m²)</th>
-                            <th>Price</th>
-                            <th>Price/m²</th>
-                            <th>Parking</th>
-                            <th>Origin</th>
+                            <th>Torre</th>
+                            <th>Unidade</th>
+                            <th>Área (m²)</th>
+                            <th>Preço</th>
+                            <th>Preço/m²</th>
+                            <th>Vagas</th>
+                            <th>Origem</th>
                             <th>Status</th>
-                            <th>Actions</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody id="unitsTableBody">
@@ -338,7 +340,7 @@
                                         <circle cx="24" cy="24" r="20" stroke="#8392AB" stroke-width="2" opacity="0.3"/>
                                         <path d="M16 24h16M24 16v16" stroke="#8392AB" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
                                     </svg>
-                                    <p>No units yet. Add units to start managing your projects.</p>
+                                    <p>Ainda não há unidades. Adicione unidades para começar a gerenciar seus projetos.</p>
                                 </div>
                             </td>
                         </tr>
