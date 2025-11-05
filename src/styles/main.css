@@ -1,0 +1,116 @@
+/**
+ * ImobiTools - Main Stylesheet
+ * Version: 1.0.0
+ * Last Updated: 2025-01-05
+ *
+ * This is the master stylesheet that imports all foundation styles.
+ * Import this single file in your HTML to get the complete design system.
+ *
+ * Usage:
+ * <link rel="stylesheet" href="/src/styles/main.css">
+ */
+
+/* ========================================================================
+   FOUNDATION LAYER
+   Design System Tokens, Reset, and Utilities
+   ======================================================================== */
+
+/* 1. Design Tokens (CSS Custom Properties) */
+@import './tokens.css';
+
+/* 2. Modern CSS Reset */
+@import './reset.css';
+
+/* 3. Utility Classes */
+@import './utilities.css';
+
+/* ========================================================================
+   COMPONENT LAYER
+   Reusable UI Components
+   ======================================================================== */
+
+/* Button Component (Consolidates all button styles) */
+@import '../components/Button/Button.css';
+
+/*
+ * Additional component imports will be added here as they're created:
+ *
+ * @import '../components/Card/Card.css';
+ * @import '../components/Input/Input.css';
+ * @import '../components/Toast/Toast.css';
+ * @import '../components/Modal/Modal.css';
+ * @import '../components/Tooltip/Tooltip.css';
+ * @import '../components/Loading/Loading.css';
+ * @import '../components/EmptyState/EmptyState.css';
+ */
+
+/* ========================================================================
+   LAYOUT LAYER (Optional - Page-specific layouts)
+   ======================================================================== */
+
+/* Dashboard Layout */
+/* @import '../layouts/dashboard.css'; */
+
+/* Landing Page Layout */
+/* @import '../layouts/landing.css'; */
+
+/* ========================================================================
+   UTILITY OVERRIDES
+   Last-resort utilities that should override everything
+   ======================================================================== */
+
+/* Force Hidden */
+.hide,
+[hidden] {
+  display: none !important;
+}
+
+/* Force Visible */
+.show {
+  display: block !important;
+}
+
+/* No JS Warning */
+.no-js-warning {
+  display: block;
+  padding: var(--space-4);
+  background-color: var(--color-warning-100);
+  color: var(--color-warning-700);
+  text-align: center;
+  font-weight: var(--font-semibold);
+}
+
+.js .no-js-warning {
+  display: none;
+}
+
+/* ========================================================================
+   PRINT STYLES
+   ======================================================================== */
+
+@media print {
+  /* Hide navigation and interactive elements */
+  .no-print,
+  nav,
+  aside,
+  .sidebar,
+  .btn,
+  [role="navigation"] {
+    display: none !important;
+  }
+
+  /* Ensure proper page breaks */
+  h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+
+  img, table, figure {
+    page-break-inside: avoid;
+  }
+
+  /* Remove shadows and backgrounds for print */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}

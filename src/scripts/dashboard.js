@@ -19,15 +19,11 @@ function toggleSubmenu(buttonId, submenuId) {
 
 // ===== SIDEBAR NAVIGATION =====
 function initSidebar() {
-    // Toggle submenus
+    // Toggle submenus (FIXED: Only call for existing submenus)
     toggleSubmenu('dashboards-toggle', 'dashboards-submenu');
-    toggleSubmenu('pages-toggle', null);
-    toggleSubmenu('applications-toggle', null);
-    toggleSubmenu('ecommerce-toggle', null);
-    toggleSubmenu('authentication-toggle', null);
-    toggleSubmenu('basics-toggle', null);
-    toggleSubmenu('components-toggle', null);
-    toggleSubmenu('changelog-toggle', null);
+    // Note: Other menu items don't have submenus yet, so we don't call toggleSubmenu
+    // When adding more submenus, add them here like:
+    // toggleSubmenu('pages-toggle', 'pages-submenu');
 
     // Mobile menu toggle
     const menuToggle = document.getElementById('menu-toggle');
@@ -38,11 +34,11 @@ function initSidebar() {
             sidebar.classList.toggle('open');
         });
 
-        // Close sidebar when clicking outside on mobile
+        // Close sidebar when clicking outside on mobile (FIXED: Use remove instead of toggle)
         document.addEventListener('click', (e) => {
             if (window.innerWidth <= 1024) {
                 if (!sidebar.contains(e.target) && !menuToggle.contains(e.target) && sidebar.classList.contains('open')) {
-                    sidebar.classList.toggle('open');
+                    sidebar.classList.remove('open'); // Changed from toggle to remove
                 }
             }
         });
@@ -55,8 +51,9 @@ function initSalesChart() {
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
+    // FIXED: Added 'Mar' to match 10 data points with 10 labels
     const data = [280, 350, 420, 390, 450, 480, 520, 490, 550, 580];
-    const labels = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const labels = ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     // Calculate dimensions
     const width = canvas.offsetWidth;
