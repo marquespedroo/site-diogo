@@ -30,9 +30,39 @@ function initSidebar() {
   // When adding more submenus, add them here like:
   // toggleSubmenu('pages-toggle', 'pages-submenu');
 
+  // Sidebar collapse functionality
+  const collapseBtn = document.getElementById('sidebarCollapseBtn');
+  const sidebar = document.getElementById('sidebar');
+
+  if (collapseBtn && sidebar) {
+    // Load saved state from localStorage
+    try {
+      const savedState = localStorage.getItem('sidebarCollapsed');
+      if (savedState === 'true') {
+        sidebar.classList.add('collapsed');
+      }
+    } catch (error) {
+      logger.warn('Could not load sidebar state from localStorage', error);
+    }
+
+    collapseBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+
+      // Save state to localStorage
+      try {
+        const isCollapsed = sidebar.classList.contains('collapsed');
+        localStorage.setItem('sidebarCollapsed', isCollapsed);
+      } catch (error) {
+        logger.warn('Could not save sidebar state to localStorage', error);
+      }
+
+      // Trigger window resize to update any responsive elements
+      window.dispatchEvent(new Event('resize'));
+    });
+  }
+
   // Mobile menu toggle
   const menuToggle = document.getElementById('menu-toggle');
-  const sidebar = document.getElementById('sidebar');
 
   if (menuToggle && sidebar) {
     menuToggle.addEventListener('click', () => {
@@ -52,6 +82,53 @@ function initSidebar() {
       }
     });
   }
+}
+
+// ===== BREADCRUMB NAVIGATION =====
+function initBreadcrumb() {
+  // Handle breadcrumb navigation
+  const breadcrumbLinks = document.querySelectorAll('.breadcrumb-link');
+
+  breadcrumbLinks.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+
+      // Handle "Ferramentas" link - open sidebar on mobile or highlight tools section
+      if (href === '#ferramentas') {
+        e.preventDefault();
+
+        const sidebar = document.getElementById('sidebar');
+
+        // On mobile, open the sidebar
+        if (window.innerWidth <= 1024 && sidebar) {
+          sidebar.classList.add('open');
+
+          // Scroll to the tools section in sidebar
+          const toolsSection = sidebar.querySelector('.nav-header');
+          if (toolsSection) {
+            toolsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        } else {
+          // On desktop, just highlight the tools section in sidebar
+          const toolsSection = sidebar?.querySelector('.nav-section');
+          if (toolsSection) {
+            // Add a temporary highlight effect
+            toolsSection.style.transition = 'background-color 0.3s ease';
+            toolsSection.style.backgroundColor = 'rgba(102, 126, 234, 0.1)';
+
+            setTimeout(() => {
+              toolsSection.style.backgroundColor = '';
+            }, 1000);
+          }
+        }
+
+        logger.info('Breadcrumb: Navigated to Ferramentas section');
+      }
+      // For other links, allow default navigation
+    });
+  });
+
+  logger.info('Breadcrumb navigation initialized');
 }
 
 // ===== SALES CHART =====
@@ -199,22 +276,6 @@ function animateProgressBars() {
   progressBars.forEach((bar) => observer.observe(bar));
 }
 
-// ===== STAT CARDS ANIMATION =====
-function animateStatCards() {
-  const statCards = document.querySelectorAll('.stat-card');
-
-  statCards.forEach((card, index) => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-
-    setTimeout(() => {
-      card.style.transition = 'all 0.4s ease';
-      card.style.opacity = '1';
-      card.style.transform = 'translateY(0)';
-    }, 100 * index);
-  });
-}
-
 // ===== RESPONSIVE CHART RESIZE =====
 function handleChartResize() {
   let resizeTimeout;
@@ -247,10 +308,10 @@ function initSmoothScrolling() {
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', () => {
   initSidebar();
+  initBreadcrumb();
   initSalesChart();
   initTodoList();
   animateProgressBars();
-  animateStatCards();
   handleChartResize();
   initSmoothScrolling();
 
@@ -662,20 +723,7 @@ const CalculatorModule = {
   },
 
   updateStatistics() {
-    const total = this.userCalculations.length;
-    const approved = this.userCalculations.filter((c) => c.approvalStatus.approved).length;
-    const approvalRate = total > 0 ? ((approved / total) * 100).toFixed(0) : 0;
-
-    const avgPropertyValue =
-      total > 0 ? this.userCalculations.reduce((sum, c) => sum + c.propertyValue, 0) / total : 0;
-
-    const sharedLinks = this.userCalculations.filter((c) => c.shortCode).length;
-
-    document.getElementById('totalCalculations').textContent = total;
-    document.getElementById('approvedCalculations').textContent = approved;
-    document.getElementById('approvalRate').textContent = `${approvalRate}%`;
-    document.getElementById('avgPropertyValue').textContent = formatCurrency(avgPropertyValue);
-    document.getElementById('sharedLinks').textContent = sharedLinks;
+    // Stats cards removed from dashboard - function kept for compatibility
   },
 
   updateCalculationsTable() {
