@@ -95,16 +95,22 @@
   aside,
   .sidebar,
   .btn,
-  [role="navigation"] {
+  [role='navigation'] {
     display: none !important;
   }
 
   /* Ensure proper page breaks */
-  h2, h3, h4, h5, h6 {
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     page-break-after: avoid;
   }
 
-  img, table, figure {
+  img,
+  table,
+  figure {
     page-break-inside: avoid;
   }
 

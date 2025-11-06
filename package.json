@@ -1,0 +1,54 @@
+{
+  "name": "imobitools",
+  "version": "1.0.0",
+  "description": "ImobiTools - Professional Real Estate SaaS Platform",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,md}\"",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "dompurify": "^3.3.0",
+    "nanoid": "^5.0.4",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/dompurify": "^3.0.5",
+    "@types/node": "^24.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vitejs/plugin-legacy": "^7.0.0",
+    "@vitest/coverage-v8": "^4.0.0",
+    "@vitest/ui": "^4.0.0",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^10.0.0",
+    "postcss": "^8.4.32",
+    "prettier": "^3.2.0",
+    "typescript": "^5.3.3",
+    "vite": "^7.0.0",
+    "vitest": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "real-estate",
+    "saas",
+    "calculator",
+    "brazil",
+    "imobiliario"
+  ],
+  "author": "ImobiTools Team",
+  "license": "UNLICENSED",
+  "private": true
+}

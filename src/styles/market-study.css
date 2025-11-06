@@ -1,0 +1,116 @@
+/**
+ * Market Study Page Styles
+ * Styles specific to the market-study.html page
+ */
+
+.market-study-form {
+  padding: var(--spacing-md) 0;
+}
+
+.samples-section {
+  margin: var(--spacing-xl) 0;
+}
+
+.sample-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.sample-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--gray-100);
+  border-radius: var(--radius-md);
+  align-items: end;
+}
+
+.valuation-results {
+  margin-top: var(--spacing-xl);
+}
+
+.valuation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+  margin: var(--spacing-lg) 0;
+}
+
+.valuation-card {
+  padding: var(--spacing-lg);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.valuation-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.valuation-card h4 {
+  font-size: 14px;
+  color: var(--secondary);
+  margin-bottom: var(--spacing-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.valuation-card .price {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: var(--spacing-sm) 0;
+}
+
+.valuation-card .price-per-sqm {
+  font-size: 14px;
+  color: var(--gray-600);
+}
+
+.statistics-card {
+  padding: var(--spacing-lg);
+  background: var(--gray-100);
+  border-radius: var(--radius-lg);
+  margin: var(--spacing-lg) 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-item .label {
+  font-size: 12px;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-item .value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 4px;
+}
+
+/* Responsive adjustments for market study */
+@media (max-width: 768px) {
+  .sample-item {
+    grid-template-columns: 1fr;
+  }
+
+  .valuation-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Imóveis - ImobiTools</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Calculadora profissional de financiamento imobiliário. Simule aprovações, calcule captação necessária e planeje pagamentos de entrada, durante obra e pós-obra.">
+    <link rel="canonical" href="https://imobitools.vercel.app/index.html">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Calculadora de Imóveis - ImobiTools">
+    <meta property="og:description" content="Calculadora profissional de financiamento imobiliário. Simule aprovações e planeje pagamentos.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://imobitools.vercel.app/index.html">
+    <meta property="og:image" content="https://imobitools.vercel.app/assets/og-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/src/styles/dashboard.css">
+</head>
+<body>
+    <!-- Skip to content link for accessibility -->
+    <a href="#main-content" class="skip-link" style="position: absolute; left: -9999px; z-index: 9999; padding: 1rem; background: #667eea; color: white; text-decoration: none; border-radius: 4px;">Pular para o conteúdo principal</a>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-label="Logo ImobiTools">
+                    <!-- Background circle -->
+                    <circle cx="16" cy="16" r="15" fill="url(#argon-gradient)"/>
+                    <!-- Dashboard bars -->
+                    <rect x="7" y="8" width="4" height="12" rx="1" fill="white" opacity="0.9"/>
+                    <rect x="13" y="10" width="4" height="10" rx="1" fill="white" opacity="0.8"/>
+                    <rect x="19" y="6" width="4" height="14" rx="1" fill="white"/>
+                    <defs>
+                        <linearGradient id="argon-gradient" x1="0" y1="0" x2="32" y2="32">
+                            <stop offset="0%" stop-color="#667eea"/>
+                            <stop offset="100%" stop-color="#764ba2"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1 class="logo-text">ImobiTools</h1>
+            </div>
+        </div>
+
+        <div class="sidebar-separator"></div>
+
+        <!-- Main Navigation -->
+        <nav class="sidebar-nav">
+            <div class="nav-header">FERRAMENTAS</div>
+
+            <div class="nav-section">
+                <a href="/index.html" class="nav-btn-secondary active">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M2 2h5v5H2V2zm0 7h5v5H2V9zm7-7h5v5H9V2zm0 7h5v5H9V9z"/>
+                    </svg>
+                    Calculadora de Imóveis
+                </a>
+
+                <a href="/market-study.html" class="nav-btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M3 3h10a1 1 0 011 1v8a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1z"/>
+                    </svg>
+                    Estudo de Mercado
+                </a>
+
+                <a href="/projects-table.html" class="nav-btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M2 3h12a1 1 0 011 1v8a1 1 0 01-1 1H2a1 1 0 01-1-1V4a1 1 0 011-1z"/>
+                    </svg>
+                    Tabela de Empreendimentos
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="breadcrumb">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+                        <path d="M7 1L1 7h2v5h3V9h2v3h3V7h2L7 1z"/>
+                    </svg>
+                    <span class="breadcrumb-text">/ Ferramentas / </span>
+                    <span class="breadcrumb-current">Calculadora de Imóveis</span>
+                </div>
+                <h2 class="page-title">Calculadora de Imóveis</h2>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu de navegação">
+                    <svg width="21" height="16" viewBox="0 0 21 16" fill="currentColor" aria-hidden="true">
+                        <rect width="21" height="2" rx="1"/>
+                        <rect y="7" width="21" height="2" rx="1"/>
+                        <rect y="14" width="21" height="2" rx="1"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="header-right">
+                <div class="search-box">
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M11.7 10.3l3.6 3.6-1.4 1.4-3.6-3.6a6 6 0 111.4-1.4zM6 10a4 4 0 100-8 4 4 0 000 8z"/>
+                    </svg>
+                    <input type="text" placeholder="Digite aqui..." class="search-input" aria-label="Pesquisar">
+                </div>
+
+                <a href="javascript:void(0)" class="sign-in-link" role="button">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-3 0-6 1.5-6 3v1h12v-1c0-1.5-3-3-6-3z"/>
+                    </svg>
+                    <span>Entrar</span>
+                </a>
+
+                <button class="icon-btn" aria-label="Configurações">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M8 10a2 2 0 100-4 2 2 0 000 4z"/>
+                        <path d="M13.5 8c0-.3 0-.6-.1-.9l1.3-1-1-1.7-1.5.6c-.4-.3-.8-.6-1.3-.8L10.5 2h-2l-.4 1.6c-.5.2-.9.5-1.3.8l-1.5-.6-1 1.7 1.3 1c-.1.3-.1.6-.1.9s0 .6.1.9l-1.3 1 1 1.7 1.5-.6c.4.3.8.6 1.3.8l.4 1.6h2l.4-1.6c.5-.2.9-.5 1.3-.8l1.5.6 1-1.7-1.3-1c.1-.3.1-.6.1-.9z"/>
+                    </svg>
+                </button>
+
+                <button class="icon-btn" aria-label="Notificações">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M8 2a4 4 0 00-4 4v3l-1 2h10l-1-2V6a4 4 0 00-4-4zm0 12a2 2 0 01-2-2h4a2 2 0 01-2 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Calculator Statistics Cards -->
+        <section class="stats-cards" role="region" aria-label="Estatísticas de cálculos">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-text">
+                        <p class="stat-label">TOTAL DE CÁLCULOS</p>
+                        <h3 class="stat-value" id="totalCalculations">0</h3>
+                    </div>
+                    <div class="stat-icon money">
+                        <svg width="22" height="23" viewBox="0 0 22 23" fill="white">
+                            <rect x="3" y="4" width="16" height="15" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M7 4V3a1 1 0 011-1h6a1 1 0 011 1v1" stroke="currentColor" stroke-width="2"/>
+                            <path d="M7 9h8M7 13h8" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-footer">
+                    <span class="stat-change positive" id="totalChange">+0%</span>
+                    <span class="stat-period">neste mês</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-text">
+                        <p class="stat-label">APROVADOS</p>
+                        <h3 class="stat-value" id="approvedCalculations">0</h3>
+                    </div>
+                    <div class="stat-icon users">
+                        <svg width="22" height="23" viewBox="0 0 22 23" fill="white">
+                            <circle cx="11" cy="11.5" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M7 11.5l3 3 5-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-footer">
+                    <span class="stat-change positive" id="approvalRate">0%</span>
+                    <span class="stat-period">taxa de aprovação</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-text">
+                        <p class="stat-label">VALOR MÉDIO DO IMÓVEL</p>
+                        <h3 class="stat-value" id="avgPropertyValue">R$ 0</h3>
+                    </div>
+                    <div class="stat-icon clients">
+                        <svg width="22" height="23" viewBox="0 0 22 23" fill="white">
+                            <path d="M11 2.5L3 8.5v10a2 2 0 002 2h12a2 2 0 002-2v-10l-8-6z" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <path d="M8 20.5v-8h6v8" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-footer">
+                    <span class="stat-change positive" id="avgChange">+0%</span>
+                    <span class="stat-period">vs mês passado</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-text">
+                        <p class="stat-label">LINKS COMPARTILHADOS</p>
+                        <h3 class="stat-value" id="sharedLinks">0</h3>
+                    </div>
+                    <div class="stat-icon sales">
+                        <svg width="22" height="23" viewBox="0 0 22 23" fill="white">
+                            <path d="M15 8.5l-3-3-3 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+                            <path d="M12 5.5v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M5 15.5v3a2 2 0 002 2h8a2 2 0 002-2v-3" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-footer">
+                    <span class="stat-change positive" id="shareRate">+0%</span>
+                    <span class="stat-period">taxa de engajamento</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Calculator Form -->
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h3>Novo Cálculo de Imóvel</h3>
+                    <p class="chart-subtitle">
+                        <span class="trend-period">Calcule o status de aprovação do financiamento do imóvel</span>
+                    </p>
+                </div>
+                <div class="calculator-form">
+                    <form id="calculatorForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="propertyValue">Valor do Imóvel (R$)</label>
+                                <input type="number" id="propertyValue" name="propertyValue" placeholder="500000" min="0" step="1000" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="captationPercentage">Porcentagem de Captação (%)</label>
+                                <input type="number" id="captationPercentage" name="captationPercentage" placeholder="30" min="0" max="100" step="0.1" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="completionMonth">Mês de Entrega</label>
+                                <select id="completionMonth" name="completionMonth" required>
+                                    <option value="">Selecione o mês</option>
+                                    <option value="1">Janeiro</option>
+                                    <option value="2">Fevereiro</option>
+                                    <option value="3">Março</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Maio</option>
+                                    <option value="6">Junho</option>
+                                    <option value="7">Julho</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Setembro</option>
+                                    <option value="10">Outubro</option>
+                                    <option value="11">Novembro</option>
+                                    <option value="12">Dezembro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="completionYear">Ano de Entrega</label>
+                                <input type="number" id="completionYear" name="completionYear" placeholder="2025" min="2024" max="2100" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="habiteSe">Valor do Habite-se (R$)</label>
+                            <input type="number" id="habiteSe" name="habiteSe" placeholder="0" min="0" step="100" required>
+                        </div>
+
+                        <div class="payment-phases-section">
+                            <h4>Fases de Pagamento</h4>
+                            <p class="section-subtitle">Adicione parcelas para cada fase de pagamento</p>
+
+                            <div class="phase-tabs">
+                                <button type="button" class="phase-tab active" data-phase="entry">Entrada</button>
+                                <button type="button" class="phase-tab" data-phase="during">Durante Obra</button>
+                                <button type="button" class="phase-tab" data-phase="post">Pós-Obra</button>
+                            </div>
+
+                            <div class="phase-content active" id="entryPhase">
+                                <div class="installments-list" id="entryInstallments"></div>
+                                <button type="button" class="btn-add-installment" data-phase="entry">+ Adicionar Parcela de Entrada</button>
+                            </div>
+
+                            <div class="phase-content" id="duringPhase">
+                                <div class="installments-list" id="duringInstallments"></div>
+                                <button type="button" class="btn-add-installment" data-phase="during">+ Adicionar Parcela Durante Obra</button>
+                            </div>
+
+                            <div class="phase-content" id="postPhase">
+                                <div class="installments-list" id="postInstallments"></div>
+                                <button type="button" class="btn-add-installment" data-phase="post">+ Adicionar Parcela Pós-Obra</button>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary-form">Calcular e Salvar</button>
+                            <button type="button" class="btn-secondary-form" id="btnReset">Limpar Formulário</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Approval Status Display -->
+            <div class="card gradient-card" id="approvalStatusCard">
+                <div class="gradient-content">
+                    <div class="gradient-icon">
+                        <svg width="64" height="64" viewBox="0 0 64 64" fill="white" id="statusIcon">
+                            <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="3" fill="none"/>
+                            <path d="M20 32l8 8 16-16" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="gradient-title" id="statusTitle">Aguardando Cálculo</h3>
+                    <p class="gradient-description" id="statusDescription">Preencha o formulário e clique em "Calcular e Salvar" para ver o status de aprovação do financiamento do seu imóvel.</p>
+                    <div id="statusDetails" class="status-details hidden">
+                        <div class="status-metric">
+                            <span class="metric-label">Captação Necessária</span>
+                            <span class="metric-value" id="requiredCaptation">R$ 0</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">Captação Real</span>
+                            <span class="metric-value" id="actualCaptation">R$ 0</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">Diferença</span>
+                            <span class="metric-value" id="difference">R$ 0</span>
+                        </div>
+                        <div class="status-metric">
+                            <span class="metric-label">Porcentagem Paga</span>
+                            <span class="metric-value" id="percentagePaid">0%</span>
+                        </div>
+                    </div>
+                    <button class="btn-share hidden" id="btnShare">Gerar Link Compartilhável</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculator Tables Section -->
+        <div class="tables-section">
+            <!-- Recent Calculations Table -->
+            <div class="card table-card">
+                <div class="card-header">
+                    <h3>Cálculos Recentes</h3>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Valor do Imóvel</th>
+                                <th>Captação</th>
+                                <th>Status</th>
+                                <th>Aprovação %</th>
+                                <th>Data</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="calculationsTableBody">
+                            <tr>
+                                <td colspan="6" class="empty-state">
+                                    <div class="empty-state-content">
+                                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                                            <circle cx="24" cy="24" r="20" stroke="#8392AB" stroke-width="2" opacity="0.3"/>
+                                            <path d="M16 24h16M24 16v16" stroke="#8392AB" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+                                        </svg>
+                                        <p>Ainda não há cálculos. Crie seu primeiro cálculo usando o formulário acima.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="/src/scripts/dashboard.js"></script>
+    </main>
+</body>
+</html>

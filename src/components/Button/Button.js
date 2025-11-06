@@ -61,7 +61,7 @@ export class Button {
       fullWidth: false,
       pill: false,
       elevated: false,
-      ...options
+      ...options,
     };
 
     this.element = this.createElement();
@@ -292,7 +292,7 @@ export function initButtons(root = document) {
       size: buttonElement.dataset.buttonSize || 'base',
       disabled: buttonElement.hasAttribute('disabled'),
       loading: buttonElement.dataset.buttonLoading === 'true',
-      ariaLabel: buttonElement.getAttribute('aria-label')
+      ariaLabel: buttonElement.getAttribute('aria-label'),
     };
 
     // Apply classes
@@ -307,7 +307,7 @@ export function initButtons(root = document) {
 
         // Wait for async operation (example)
         // In real usage, this would be connected to actual async work
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
         buttonElement.classList.remove(loadingClass);
         buttonElement.disabled = false;
@@ -412,7 +412,7 @@ export function createIconButton(options) {
     ...options,
     text: '',
     className: 'btn--icon btn--round',
-    variant: options.variant || 'ghost'
+    variant: options.variant || 'ghost',
   });
 }
 
@@ -428,7 +428,7 @@ export function createConfirmButton(options) {
   const button = new Button({
     variant: 'danger',
     text: options.text,
-    size: 'base'
+    size: 'base',
   });
 
   button.element.addEventListener('click', async () => {

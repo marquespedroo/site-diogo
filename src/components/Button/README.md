@@ -28,13 +28,11 @@ Enterprise-grade button component that consolidates all button styles across the
 
 ```html
 <!-- Import styles -->
-<link rel="stylesheet" href="/src/styles/tokens.css">
-<link rel="stylesheet" href="/src/components/Button/Button.css">
+<link rel="stylesheet" href="/src/styles/tokens.css" />
+<link rel="stylesheet" href="/src/components/Button/Button.css" />
 
 <!-- Primary button -->
-<button class="btn btn--primary btn--md">
-  Click me
-</button>
+<button class="btn btn--primary btn--md">Click me</button>
 
 <!-- Secondary button with icon -->
 <button class="btn btn--secondary btn--base">
@@ -45,24 +43,16 @@ Enterprise-grade button component that consolidates all button styles across the
 </button>
 
 <!-- Danger button (small) -->
-<button class="btn btn--danger btn--sm">
-  Delete
-</button>
+<button class="btn btn--danger btn--sm">Delete</button>
 
 <!-- Loading state -->
-<button class="btn btn--primary btn--md btn--loading">
-  Processing...
-</button>
+<button class="btn btn--primary btn--md btn--loading">Processing...</button>
 
 <!-- Disabled state -->
-<button class="btn btn--primary btn--md" disabled>
-  Disabled
-</button>
+<button class="btn btn--primary btn--md" disabled>Disabled</button>
 
 <!-- Full width -->
-<button class="btn btn--primary btn--md btn--full">
-  Full Width Button
-</button>
+<button class="btn btn--primary btn--md btn--full">Full Width Button</button>
 
 <!-- Icon-only button -->
 <button class="btn btn--ghost btn--icon btn--round" aria-label="Settings">
@@ -80,7 +70,7 @@ const btn = createButton({
   variant: 'primary',
   size: 'md',
   text: 'Click me',
-  onClick: () => console.log('Clicked!')
+  onClick: () => console.log('Clicked!'),
 });
 
 // Add to DOM
@@ -113,7 +103,7 @@ const iconBtn = createIconButton({
   icon: '<svg>...</svg>',
   ariaLabel: 'Delete item', // Required!
   variant: 'danger',
-  onClick: () => deleteItem()
+  onClick: () => deleteItem(),
 });
 ```
 
@@ -127,7 +117,7 @@ const confirmBtn = createConfirmButton({
   confirmText: 'Deleting...',
   onConfirm: async () => {
     await deleteAccount();
-  }
+  },
 });
 ```
 
@@ -140,9 +130,9 @@ const group = new ButtonGroup({
   buttons: [
     new Button({ text: 'Left', variant: 'secondary' }),
     new Button({ text: 'Center', variant: 'secondary' }),
-    new Button({ text: 'Right', variant: 'secondary' })
+    new Button({ text: 'Right', variant: 'secondary' }),
   ],
-  attached: true // Buttons connected
+  attached: true, // Buttons connected
 });
 
 document.body.appendChild(group.element);
@@ -152,97 +142,112 @@ document.body.appendChild(group.element);
 
 ```html
 <!-- Buttons with data-button attribute are auto-initialized -->
-<button
-  data-button
-  data-button-variant="primary"
-  data-button-size="md">
+<button data-button data-button-variant="primary" data-button-size="md">
   Auto-initialized Button
 </button>
 
 <!-- With loading on click -->
-<button
-  data-button
-  data-button-loading-target="true">
-  Click to Load
-</button>
+<button data-button data-button-loading-target="true">Click to Load</button>
 ```
 
 ## Variants
 
 ### Primary
+
 Default button style. Use for main call-to-action.
+
 ```html
 <button class="btn btn--primary btn--md">Primary</button>
 ```
 
 ### Secondary
+
 Alternative style. Use for secondary actions.
+
 ```html
 <button class="btn btn--secondary btn--md">Secondary</button>
 ```
 
 ### Danger
+
 Destructive actions (delete, remove, cancel).
+
 ```html
 <button class="btn btn--danger btn--md">Delete</button>
 ```
 
 ### Success
+
 Positive actions (save, confirm, approve).
+
 ```html
 <button class="btn btn--success btn--md">Save</button>
 ```
 
 ### Warning
+
 Warning actions (proceed with caution).
+
 ```html
 <button class="btn btn--warning btn--md">Warning</button>
 ```
 
 ### Ghost
+
 Transparent background. Use for tertiary actions.
+
 ```html
 <button class="btn btn--ghost btn--md">Ghost</button>
 ```
 
 ### Outlined
+
 Outlined style. Use for secondary emphasis.
+
 ```html
 <button class="btn btn--outlined btn--md">Outlined</button>
 ```
 
 ### Text
+
 Text-only. Use for least emphasis.
+
 ```html
 <button class="btn btn--text btn--md">Text Only</button>
 ```
 
 ## Sizes
 
-| Class | Height | Padding | Font Size | Use Case |
-|-------|--------|---------|-----------|----------|
-| `btn--sm` | 32px | 8px 12px | 14px | Compact spaces, tables |
-| `btn--base` | 40px | 12px 16px | 16px | Default, most common |
-| `btn--md` | 44px | 12px 20px | 16px | Touch-friendly (mobile) |
-| `btn--lg` | 48px | 16px 24px | 18px | Hero sections |
-| `btn--xl` | 56px | 20px 32px | 20px | Landing pages |
+| Class       | Height | Padding   | Font Size | Use Case                |
+| ----------- | ------ | --------- | --------- | ----------------------- |
+| `btn--sm`   | 32px   | 8px 12px  | 14px      | Compact spaces, tables  |
+| `btn--base` | 40px   | 12px 16px | 16px      | Default, most common    |
+| `btn--md`   | 44px   | 12px 20px | 16px      | Touch-friendly (mobile) |
+| `btn--lg`   | 48px   | 16px 24px | 18px      | Hero sections           |
+| `btn--xl`   | 56px   | 20px 32px | 20px      | Landing pages           |
 
 ## States
 
 ### Loading
+
 Shows spinner, disables interaction.
+
 ```javascript
 button.setLoading(true);
 ```
 
 ### Disabled
+
 Grayed out, not clickable.
+
 ```html
 <button class="btn btn--primary btn--md" disabled>Disabled</button>
 ```
 
 ### Focus
+
 Keyboard navigation support with visible focus ring.
+
 ```css
 /* Automatic - no code needed */
 .btn:focus-visible {
@@ -252,7 +257,9 @@ Keyboard navigation support with visible focus ring.
 ```
 
 ### Active (Pressed)
+
 Visual feedback when clicked.
+
 ```css
 /* Automatic - no code needed */
 .btn:active {
@@ -298,29 +305,30 @@ btn.setLoading(true); // Sets aria-busy="true"
 
 ## Keyboard Navigation
 
-| Key | Action |
-|-----|--------|
-| Tab | Focus next button |
+| Key       | Action                |
+| --------- | --------------------- |
+| Tab       | Focus next button     |
 | Shift+Tab | Focus previous button |
-| Enter | Activate button |
-| Space | Activate button |
+| Enter     | Activate button       |
+| Space     | Activate button       |
 
 ## Migration Guide
 
 ### From Old Button Classes
 
-| Old Class | New Class | Notes |
-|-----------|-----------|-------|
-| `.btn-primary` | `.btn .btn--primary .btn--base` | Use base size |
-| `.btn-add` | `.btn .btn--success .btn--sm` | Changed to success variant |
-| `.btn-remove` | `.btn .btn--danger .btn--sm .btn--icon` | Icon button |
-| `.btn-product` | `.btn .btn--primary .btn--lg` | Large size |
-| `.btn-outline` | `.btn .btn--outlined .btn--base` | Renamed |
-| `.btn-tool` | `.btn .btn--secondary .btn--base` | Secondary variant |
+| Old Class      | New Class                               | Notes                      |
+| -------------- | --------------------------------------- | -------------------------- |
+| `.btn-primary` | `.btn .btn--primary .btn--base`         | Use base size              |
+| `.btn-add`     | `.btn .btn--success .btn--sm`           | Changed to success variant |
+| `.btn-remove`  | `.btn .btn--danger .btn--sm .btn--icon` | Icon button                |
+| `.btn-product` | `.btn .btn--primary .btn--lg`           | Large size                 |
+| `.btn-outline` | `.btn .btn--outlined .btn--base`        | Renamed                    |
+| `.btn-tool`    | `.btn .btn--secondary .btn--base`       | Secondary variant          |
 
 ### Example Migration
 
 **Before:**
+
 ```html
 <button class="btn-primary">Click me</button>
 <button class="btn-add">Add</button>
@@ -328,6 +336,7 @@ btn.setLoading(true); // Sets aria-busy="true"
 ```
 
 **After:**
+
 ```html
 <button class="btn btn--primary btn--base">Click me</button>
 <button class="btn btn--success btn--sm">Add</button>
@@ -336,39 +345,40 @@ btn.setLoading(true); // Sets aria-busy="true"
 
 ## Props API (JavaScript)
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variant` | `'primary' \| 'secondary' \| 'danger' \| 'success' \| 'warning' \| 'ghost' \| 'outlined' \| 'text'` | `'primary'` | Button style variant |
-| `size` | `'sm' \| 'base' \| 'md' \| 'lg' \| 'xl'` | `'base'` | Button size |
-| `text` | `string` | - | Button text content |
-| `icon` | `string` | - | SVG string or icon class |
-| `iconPosition` | `'left' \| 'right'` | `'left'` | Icon position |
-| `disabled` | `boolean` | `false` | Disabled state |
-| `loading` | `boolean` | `false` | Loading state |
-| `fullWidth` | `boolean` | `false` | Full width button |
-| `pill` | `boolean` | `false` | Pill-shaped button |
-| `elevated` | `boolean` | `false` | Extra shadow elevation |
-| `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | HTML button type |
-| `ariaLabel` | `string` | - | ARIA label (required for icon buttons) |
-| `className` | `string` | - | Additional CSS classes |
-| `onClick` | `function` | - | Click event handler |
-| `onFocus` | `function` | - | Focus event handler |
-| `onBlur` | `function` | - | Blur event handler |
+| Prop           | Type                                                                                                | Default     | Description                            |
+| -------------- | --------------------------------------------------------------------------------------------------- | ----------- | -------------------------------------- |
+| `variant`      | `'primary' \| 'secondary' \| 'danger' \| 'success' \| 'warning' \| 'ghost' \| 'outlined' \| 'text'` | `'primary'` | Button style variant                   |
+| `size`         | `'sm' \| 'base' \| 'md' \| 'lg' \| 'xl'`                                                            | `'base'`    | Button size                            |
+| `text`         | `string`                                                                                            | -           | Button text content                    |
+| `icon`         | `string`                                                                                            | -           | SVG string or icon class               |
+| `iconPosition` | `'left' \| 'right'`                                                                                 | `'left'`    | Icon position                          |
+| `disabled`     | `boolean`                                                                                           | `false`     | Disabled state                         |
+| `loading`      | `boolean`                                                                                           | `false`     | Loading state                          |
+| `fullWidth`    | `boolean`                                                                                           | `false`     | Full width button                      |
+| `pill`         | `boolean`                                                                                           | `false`     | Pill-shaped button                     |
+| `elevated`     | `boolean`                                                                                           | `false`     | Extra shadow elevation                 |
+| `type`         | `'button' \| 'submit' \| 'reset'`                                                                   | `'button'`  | HTML button type                       |
+| `ariaLabel`    | `string`                                                                                            | -           | ARIA label (required for icon buttons) |
+| `className`    | `string`                                                                                            | -           | Additional CSS classes                 |
+| `onClick`      | `function`                                                                                          | -           | Click event handler                    |
+| `onFocus`      | `function`                                                                                          | -           | Focus event handler                    |
+| `onBlur`       | `function`                                                                                          | -           | Blur event handler                     |
 
 ## Methods API
 
-| Method | Params | Description |
-|--------|--------|-------------|
-| `setLoading(loading)` | `boolean` | Set loading state |
-| `setDisabled(disabled)` | `boolean` | Set disabled state |
-| `setText(text)` | `string` | Update button text |
-| `setVariant(variant)` | `string` | Change button variant |
-| `destroy()` | - | Remove button and cleanup |
-| `getElement()` | - | Get button DOM element |
+| Method                  | Params    | Description               |
+| ----------------------- | --------- | ------------------------- |
+| `setLoading(loading)`   | `boolean` | Set loading state         |
+| `setDisabled(disabled)` | `boolean` | Set disabled state        |
+| `setText(text)`         | `string`  | Update button text        |
+| `setVariant(variant)`   | `string`  | Change button variant     |
+| `destroy()`             | -         | Remove button and cleanup |
+| `getElement()`          | -         | Get button DOM element    |
 
 ## Best Practices
 
 ### ✅ DO:
+
 - Use `btn--primary` for main call-to-action (one per section)
 - Use `btn--secondary` for alternative actions
 - Use `btn--danger` for destructive actions only
@@ -378,6 +388,7 @@ btn.setLoading(true); // Sets aria-busy="true"
 - Disable buttons to prevent double-clicks
 
 ### ❌ DON'T:
+
 - Don't use multiple primary buttons in one section
 - Don't create buttons smaller than `btn--sm` (32px)
 - Don't forget `aria-label` on icon buttons
@@ -392,38 +403,36 @@ btn.setLoading(true); // Sets aria-busy="true"
 ```html
 <form id="myForm">
   <!-- form fields -->
-  <button type="submit" class="btn btn--primary btn--md btn--full">
-    Submit Form
-  </button>
+  <button type="submit" class="btn btn--primary btn--md btn--full">Submit Form</button>
 </form>
 
 <script>
-import { createButton } from './components/Button/Button.js';
+  import { createButton } from './components/Button/Button.js';
 
-const form = document.getElementById('myForm');
-const submitBtn = form.querySelector('button[type="submit"]');
+  const form = document.getElementById('myForm');
+  const submitBtn = form.querySelector('button[type="submit"]');
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-  // Set loading state
-  submitBtn.classList.add('btn--loading');
-  submitBtn.disabled = true;
+    // Set loading state
+    submitBtn.classList.add('btn--loading');
+    submitBtn.disabled = true;
 
-  try {
-    await submitForm(new FormData(form));
-    // Success
-    submitBtn.textContent = 'Success!';
-    submitBtn.classList.remove('btn--loading', 'btn--primary');
-    submitBtn.classList.add('btn--success');
-  } catch (error) {
-    // Error
-    alert('Submission failed');
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.classList.remove('btn--loading');
-  }
-});
+    try {
+      await submitForm(new FormData(form));
+      // Success
+      submitBtn.textContent = 'Success!';
+      submitBtn.classList.remove('btn--loading', 'btn--primary');
+      submitBtn.classList.add('btn--success');
+    } catch (error) {
+      // Error
+      alert('Submission failed');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('btn--loading');
+    }
+  });
 </script>
 ```
 
@@ -441,7 +450,7 @@ const deleteBtn = createConfirmButton({
       // Remove from UI
       document.getElementById('item-123').remove();
     }
-  }
+  },
 });
 ```
 
@@ -468,13 +477,14 @@ const deleteBtn = createConfirmButton({
 
 ## Changelog
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2025-01-05 | Initial release - consolidated 8 button styles into unified component |
+| Version | Date       | Changes                                                               |
+| ------- | ---------- | --------------------------------------------------------------------- |
+| 1.0.0   | 2025-01-05 | Initial release - consolidated 8 button styles into unified component |
 
 ## Support
 
 For issues or questions:
+
 - Check [COMPONENT_REGISTRY.md](../../../COMPONENT_REGISTRY.md)
 - Review [DESIGN_SYSTEM.md](../../../DESIGN_SYSTEM.md)
 - See [Architecture Document](../../../implementation/00-ARCHITECTURE.md)

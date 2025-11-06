@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudo de Mercado - ImobiTools</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Ferramenta profissional de estudo de mercado imobiliário. Avalie imóveis comparando com amostras similares conforme NBR 14653-2.">
+    <link rel="canonical" href="https://imobitools.vercel.app/market-study.html">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Estudo de Mercado - ImobiTools">
+    <meta property="og:description" content="Ferramenta profissional de estudo de mercado imobiliário conforme NBR 14653-2.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://imobitools.vercel.app/market-study.html">
+    <meta property="og:image" content="https://imobitools.vercel.app/assets/og-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/src/styles/dashboard.css">
+    <link rel="stylesheet" href="/src/styles/market-study.css">
+</head>
+<body>
+    <!-- Skip to content link for accessibility -->
+    <a href="#main-content" class="skip-link" style="position: absolute; left: -9999px; z-index: 9999; padding: 1rem; background: #667eea; color: white; text-decoration: none; border-radius: 4px;">Pular para o conteúdo principal</a>
+
+    <!-- Sidebar Navigation (same as calculator) -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="15" fill="url(#argon-gradient)"/>
+                    <rect x="7" y="8" width="4" height="12" rx="1" fill="white" opacity="0.9"/>
+                    <rect x="13" y="10" width="4" height="10" rx="1" fill="white" opacity="0.8"/>
+                    <rect x="19" y="6" width="4" height="14" rx="1" fill="white"/>
+                    <defs>
+                        <linearGradient id="argon-gradient" x1="0" y1="0" x2="32" y2="32">
+                            <stop offset="0%" stop-color="#667eea"/>
+                            <stop offset="100%" stop-color="#764ba2"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1 class="logo-text">ImobiTools</h1>
+            </div>
+        </div>
+
+        <div class="sidebar-separator"></div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-header">FERRAMENTAS</div>
+
+            <div class="nav-section">
+                <a href="/index.html" class="nav-btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M2 2h5v5H2V2zm0 7h5v5H2V9zm7-7h5v5H9V2zm0 7h5v5H9V9z"/>
+                    </svg>
+                    Calculadora de Imóveis
+                </a>
+                <a href="/market-study.html" class="nav-btn-secondary active">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M3 3h10a1 1 0 011 1v8a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1z"/>
+                    </svg>
+                    Estudo de Mercado
+                </a>
+                <a href="/projects-table.html" class="nav-btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M2 3h12a1 1 0 011 1v8a1 1 0 01-1 1H2a1 1 0 01-1-1V4a1 1 0 011-1z"/>
+                    </svg>
+                    Tabela de Empreendimentos
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content" id="main-content">
+        <header class="top-header">
+            <div class="header-left">
+                <div class="breadcrumb">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                        <path d="M7 1L1 7h2v5h3V9h2v3h3V7h2L7 1z"/>
+                    </svg>
+                    <span class="breadcrumb-text">/ Ferramentas / </span>
+                    <span class="breadcrumb-current">Estudo de Mercado</span>
+                </div>
+                <h2 class="page-title">Estudo de Mercado</h2>
+                <button class="menu-toggle" id="menu-toggle">
+                    <svg width="21" height="16" viewBox="0 0 21 16" fill="currentColor">
+                        <rect width="21" height="2" rx="1"/>
+                        <rect y="7" width="21" height="2" rx="1"/>
+                        <rect y="14" width="21" height="2" rx="1"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="header-right">
+                <div class="search-box">
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M11.7 10.3l3.6 3.6-1.4 1.4-3.6-3.6a6 6 0 111.4-1.4zM6 10a4 4 0 100-8 4 4 0 000 8z"/>
+                    </svg>
+                    <input type="text" placeholder="Digite aqui..." class="search-input">
+                </div>
+
+                <a href="javascript:void(0)" class="sign-in-link" role="button">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-3 0-6 1.5-6 3v1h12v-1c0-1.5-3-3-6-3z"/>
+                    </svg>
+                    <span>Entrar</span>
+                </a>
+
+                <button class="icon-btn" aria-label="Settings">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 10a2 2 0 100-4 2 2 0 000 4z"/>
+                        <path d="M13.5 8c0-.3 0-.6-.1-.9l1.3-1-1-1.7-1.5.6c-.4-.3-.8-.6-1.3-.8L10.5 2h-2l-.4 1.6c-.5.2-.9.5-1.3.8l-1.5-.6-1 1.7 1.3 1c-.1.3-.1.6-.1.9s0 .6.1.9l-1.3 1 1 1.7 1.5-.6c.4.3.8.6 1.3.8l.4 1.6h2l.4-1.6c.5-.2.9-.5 1.3-.8l1.5.6 1-1.7-1.3-1c.1-.3.1-.6.1-.9z"/>
+                    </svg>
+                </button>
+
+                <button class="icon-btn" aria-label="Notifications">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 2a4 4 0 00-4 4v3l-1 2h10l-1-2V6a4 4 0 00-4-4zm0 12a2 2 0 01-2-2h4a2 2 0 01-2 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Market Study Content -->
+        <div class="content-grid">
+            <!-- Subject Property Form -->
+            <div class="card chart-card">
+                <div class="card-header">
+                    <h3>Imóvel Avaliado</h3>
+                    <p class="chart-subtitle">
+                        <span class="trend-period">Insira os detalhes do imóvel a ser avaliado</span>
+                    </p>
+                </div>
+                <div class="market-study-form">
+                    <form id="marketStudyForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="subjectStreet">Endereço</label>
+                                <input type="text" id="subjectStreet" name="subjectStreet" placeholder="Rua das Flores" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="subjectNumber">Número</label>
+                                <input type="text" id="subjectNumber" name="subjectNumber" placeholder="123" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="subjectNeighborhood">Bairro</label>
+                                <input type="text" id="subjectNeighborhood" name="subjectNeighborhood" placeholder="Centro" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="subjectCity">Cidade</label>
+                                <input type="text" id="subjectCity" name="subjectCity" placeholder="São Paulo" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="subjectState">Estado</label>
+                                <select id="subjectState" name="subjectState" required>
+                                    <option value="">Selecione o estado</option>
+                                    <option value="SP">São Paulo</option>
+                                    <option value="RJ">Rio de Janeiro</option>
+                                    <option value="MG">Minas Gerais</option>
+                                    <option value="PR">Paraná</option>
+                                    <option value="SC">Santa Catarina</option>
+                                    <option value="RS">Rio Grande do Sul</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="subjectArea">Área (m²)</label>
+                                <input type="number" id="subjectArea" name="subjectArea" placeholder="85" min="1" step="0.01" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="subjectBedrooms">Quartos</label>
+                                <input type="number" id="subjectBedrooms" name="subjectBedrooms" placeholder="2" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="subjectBathrooms">Banheiros</label>
+                                <input type="number" id="subjectBathrooms" name="subjectBathrooms" placeholder="1" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="subjectParking">Vagas</label>
+                                <input type="number" id="subjectParking" name="subjectParking" placeholder="1" min="0" required>
+                            </div>
+                        </div>
+
+                        <div class="samples-section">
+                            <h4>Imóveis Comparáveis</h4>
+                            <p class="section-subtitle">Adicione pelo menos 3 imóveis comparáveis para avaliação</p>
+
+                            <div class="sample-list" id="samplesList"></div>
+                            <button type="button" class="btn-add-installment" id="btnAddSample">+ Adicionar Imóvel Comparável</button>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary-form">Calcular Avaliação</button>
+                            <button type="button" class="btn-secondary-form" id="btnResetMarketStudy">Limpar Formulário</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Valuation Results -->
+            <div class="card gradient-card" id="valuationResultsCard">
+                <div class="gradient-content">
+                    <div class="gradient-icon">
+                        <svg width="64" height="64" viewBox="0 0 64 64" fill="white">
+                            <path d="M32 8L8 20v20c0 15 10 28 24 32 14-4 24-17 24-32V20L32 8z" stroke="currentColor" stroke-width="3" fill="none"/>
+                            <path d="M24 32l8 8 16-16" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="gradient-title" id="valuationTitle">Aguardando Análise</h3>
+                    <p class="gradient-description" id="valuationDescription">Preencha o formulário com os detalhes do imóvel e amostras comparáveis para gerar um estudo de mercado profissional.</p>
+                    <div id="valuationDetails" class="valuation-results hidden">
+                        <div class="valuation-grid" id="valuationGrid"></div>
+                    </div>
+                    <button class="btn-share hidden" id="btnGeneratePDF">Gerar Relatório PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="card" id="statisticsCard" style="display: none;">
+            <div class="card-header">
+                <h3>Análise Estatística (NBR 14653-2)</h3>
+            </div>
+            <div class="statistics-card">
+                <div class="stats-grid" id="statsGrid"></div>
+            </div>
+        </div>
+
+        <script type="module" src="/src/scripts/dashboard.js"></script>
+        <script type="module" src="/src/scripts/market-study.js"></script>
+    </main>
+</body>
+</html>

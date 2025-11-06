@@ -73,7 +73,12 @@ body {
    Typography
    ======================================================================== */
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
   font-weight: var(--font-bold, 700);
   line-height: var(--leading-tight, 1.25);
@@ -150,8 +155,8 @@ ol {
 }
 
 /* Restore list styles when explicitly set */
-ul[role="list"],
-ol[role="list"] {
+ul[role='list'],
+ol[role='list'] {
   list-style: revert;
 }
 
@@ -187,9 +192,9 @@ textarea {
 }
 
 button,
-[type="button"],
-[type="reset"],
-[type="submit"] {
+[type='button'],
+[type='reset'],
+[type='submit'] {
   -webkit-appearance: button;
   appearance: button;
   cursor: pointer;
@@ -199,9 +204,9 @@ button,
 }
 
 button:disabled,
-[type="button"]:disabled,
-[type="reset"]:disabled,
-[type="submit"]:disabled {
+[type='button']:disabled,
+[type='reset']:disabled,
+[type='submit']:disabled {
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -221,30 +226,30 @@ textarea::placeholder {
 }
 
 /* Remove default number input spinners */
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   appearance: none;
   margin: 0;
 }
 
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
 
 /* Remove default search input styles */
-input[type="search"]::-webkit-search-decoration,
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-results-button,
-input[type="search"]::-webkit-search-results-decoration {
+input[type='search']::-webkit-search-decoration,
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-results-button,
+input[type='search']::-webkit-search-results-decoration {
   -webkit-appearance: none;
   appearance: none;
 }
 
 /* Consistent checkbox and radio styles */
-input[type="checkbox"],
-input[type="radio"] {
+input[type='checkbox'],
+input[type='radio'] {
   width: auto;
   height: auto;
 }
@@ -297,11 +302,11 @@ object {
 }
 
 /* Consistent cursor for interactive elements */
-[role="button"],
+[role='button'],
 button,
-input[type="submit"],
-input[type="reset"],
-input[type="button"],
+input[type='submit'],
+input[type='reset'],
+input[type='button'],
 label[for],
 select {
   cursor: pointer;
@@ -309,7 +314,7 @@ select {
 
 /* Disabled state for interactive elements */
 [disabled],
-[aria-disabled="true"] {
+[aria-disabled='true'] {
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -372,17 +377,17 @@ select {
   }
 
   a[href]::after {
-    content: " (" attr(href) ")";
+    content: ' (' attr(href) ')';
   }
 
   abbr[title]::after {
-    content: " (" attr(title) ")";
+    content: ' (' attr(title) ')';
   }
 
   /* Don't show links for internal references */
-  a[href^="#"]::after,
-  a[href^="javascript:"]::after {
-    content: "";
+  a[href^='#']::after,
+  a[href^='javascript:']::after {
+    content: '';
   }
 
   pre,

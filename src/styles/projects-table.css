@@ -1,0 +1,99 @@
+/**
+ * Projects Table Page Styles
+ * Styles specific to the projects-table.html page
+ */
+
+.projects-table-wrapper {
+  overflow-x: auto;
+  margin: var(--spacing-lg) 0;
+}
+
+.projects-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.projects-table thead {
+  background: var(--gradient-primary);
+  color: var(--white);
+}
+
+.projects-table th {
+  padding: var(--spacing-md);
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.projects-table td {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.projects-table tbody tr:hover {
+  background: var(--gray-100);
+}
+
+.unit-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.unit-status.available {
+  background: rgba(45, 206, 137, 0.15);
+  color: var(--success);
+}
+
+.unit-status.reserved {
+  background: rgba(251, 99, 64, 0.15);
+  color: var(--warning);
+}
+
+.unit-status.sold {
+  background: rgba(139, 92, 246, 0.15);
+  color: #8b5cf6;
+}
+
+.filter-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.origin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.origin-badge.real {
+  color: var(--success);
+}
+
+.origin-badge.permutante {
+  color: var(--danger);
+}
+
+/* Responsive adjustments for projects table */
+@media (max-width: 768px) {
+  .filter-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-table {
+    font-size: 14px;
+  }
+
+  .projects-table th,
+  .projects-table td {
+    padding: var(--spacing-sm);
+  }
+}
