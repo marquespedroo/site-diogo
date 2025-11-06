@@ -1,0 +1,2641 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Fluxo - ImobiTools</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Calcule e planeje o fluxo de pagamento do seu imóvel com precisão. Gerencie entrada, durante obra, habite-se e pós-obra.">
+    <link rel="canonical" href="https://imobitools.vercel.app/cash-flow-calculator.html">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Calculadora de Fluxo - ImobiTools">
+    <meta property="og:description" content="Calcule e planeje o fluxo de pagamento do seu imóvel com precisão.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://imobitools.vercel.app/cash-flow-calculator.html">
+    <meta property="og:image" content="https://imobitools.vercel.app/assets/og-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/src/styles/dashboard.css">
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+        }
+        
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-in { animation: slideIn 0.5s ease-out; }
+        .float { animation: float 3s ease-in-out infinite; }
+        .pulse { animation: pulse 2s ease-in-out infinite; }
+        
+        /* Estilos Gerais */
+        body {
+            min-height: 100vh;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Background decorativo */
+        .bg-decoration {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .bg-circle {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(80px);
+        }
+        
+        .bg-circle-1 {
+            top: -200px;
+            left: -200px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .bg-circle-2 {
+            bottom: -200px;
+            right: -200px;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        /* Cards e Containers */
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card {
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Cabeçalho */
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .header-icon {
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .header-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+        
+        /* Seções */
+        .section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-orange {
+            background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-green {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+        
+        .section-blue {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+        
+        .section-purple {
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+        }
+        
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .section-orange .section-title {
+            color: white;
+        }
+        
+        .section-icon {
+            padding: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .section-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+        
+        /* Inputs */
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-orange .input-label {
+            color: white;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        
+        input::placeholder {
+            color: #9ca3af;
+        }
+        
+        input[readonly] {
+            background: #f3f4f6;
+            cursor: not-allowed;
+        }
+        
+        /* Grid */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        /* Botões */
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-full {
+            width: 100%;
+        }
+        
+        .btn-lg {
+            padding: 1.25rem 2rem;
+            font-size: 1.25rem;
+        }
+        
+        .btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+        
+        /* Tooltip */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip-icon {
+            cursor: help;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            margin-left: 0.25rem;
+        }
+        
+        .tooltip-content {
+            visibility: hidden;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            width: 250px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip-container:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .tooltip-content::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1f2937;
+        }
+        
+        /* Resultados */
+        .result-box {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: #6b7280;
+        }
+        
+        .result-value {
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: #1f2937;
+        }
+        
+        .result-highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+        
+        .result-highlight .result-item {
+            border-bottom-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .result-highlight .result-label,
+        .result-highlight .result-value {
+            color: white;
+        }
+        
+        /* Status */
+        .status-box {
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .status-approved {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .status-rejected {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+        
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .status-icon-box {
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+        }
+        
+        .status-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Info e Alert Boxes */
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-box p {
+            color: #1e40af;
+            font-weight: 600;
+            margin: 0.25rem 0;
+        }
+        
+        .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .warning-box p {
+            color: #92400e;
+            font-weight: 600;
+            margin: 0.25rem 0;
+        }
+        
+        /* Tabela */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+        }
+        
+        table th:first-child {
+            border-top-left-radius: 12px;
+        }
+        
+        table th:last-child {
+            border-top-right-radius: 12px;
+        }
+        
+        table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+            font-weight: 600;
+        }
+        
+        table tbody tr:hover {
+            background: #f9fafb;
+        }
+        
+        table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .justify-between {
+            justify-content: space-between;
+        }
+        
+        .gap-1 { gap: 0.25rem; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-3 { gap: 0.75rem; }
+        .gap-4 { gap: 1rem; }
+        
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .text-sm {
+            font-size: 0.875rem;
+        }
+        
+        .text-lg {
+            font-size: 1.125rem;
+        }
+        
+        .text-xl {
+            font-size: 1.25rem;
+        }
+        
+        .text-2xl {
+            font-size: 1.5rem;
+        }
+        
+        .text-3xl {
+            font-size: 1.875rem;
+        }
+        
+        .font-bold {
+            font-weight: 700;
+        }
+        
+        .font-black {
+            font-weight: 900;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            border: 2px solid #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .section {
+                padding: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .result-value {
+                font-size: 1.25rem;
+            }
+            
+            .status-title {
+                font-size: 1.75rem;
+            }
+            
+            .modal-body {
+                padding: 1.5rem;
+            }
+            
+            table th,
+            table td {
+                padding: 0.75rem;
+                font-size: 0.875rem;
+            }
+        }
+        
+        /* Redução de movimento para acessibilidade */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    
+
+        /* Override body background for this page */
+        body {
+            background: var(--gray-100) !important;
+            padding: 0 !important;
+        }
+
+        /* Adjust main content to account for sidebar */
+        .cash-flow-content {
+            margin-left: calc(var(--sidebar-width) + var(--spacing-md));
+            padding: var(--spacing-md);
+            transition: margin-left 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .cash-flow-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to content link for accessibility -->
+    <a href="#main-content" class="skip-link" style="position: absolute; left: -9999px; z-index: 9999; padding: 1rem; background: #667eea; color: white; text-decoration: none; border-radius: 4px;">Pular para o conteúdo principal</a>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-label="Logo ImobiTools">
+                    <circle cx="16" cy="16" r="15" fill="url(#argon-gradient)"/>
+                    <rect x="7" y="8" width="4" height="12" rx="1" fill="white" opacity="0.9"/>
+                    <rect x="13" y="10" width="4" height="10" rx="1" fill="white" opacity="0.8"/>
+                    <rect x="19" y="6" width="4" height="14" rx="1" fill="white"/>
+                    <defs>
+                        <linearGradient id="argon-gradient" x1="0" y1="0" x2="32" y2="32">
+                            <stop offset="0%" stop-color="#667eea"/>
+                            <stop offset="100%" stop-color="#764ba2"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1 class="logo-text">ImobiTools</h1>
+            </div>
+            <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" aria-label="Toggle sidebar">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M13 6L8 10L13 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-header">FERRAMENTAS</div>
+
+            <div class="nav-section">
+                <a href="/index.html" class="nav-btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M2 2h5v5H2V2zm0 7h5v5H2V9zm7-7h5v5H9V2zm0 7h5v5H9V9z"/>
+                    </svg>
+                    <span>Calculadora de Imóveis</span>
+                </a>
+
+                <a href="/cash-flow-calculator.html" class="nav-btn-secondary active">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M2 2h12v2H2V2zm0 4h12v2H2V6zm0 4h12v2H2v-2zm0 4h12v2H2v-2z"/>
+                    </svg>
+                    <span>Calculadora de Fluxo</span>
+                </a>
+
+                <a href="/financing-simulator.html" class="nav-btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M1 4h14v8H1V4zm2 2v4h10V6H3z"/>
+                    </svg>
+                    <span>Simulador de Financiamento</span>
+                </a>
+
+                <a href="/market-study.html" class="nav-btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M3 3h10a1 1 0 011 1v8a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1z"/>
+                    </svg>
+                    <span>Estudo de Mercado</span>
+                </a>
+
+                <a href="/projects-table.html" class="nav-btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M2 3h12a1 1 0 011 1v8a1 1 0 01-1 1H2a1 1 0 01-1-1V4a1 1 0 011-1z"/>
+                    </svg>
+                    <span>Tabela de Empreendimentos</span>
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="cash-flow-content" id="main-content">
+        <div class="container">
+        
+        <!-- Card Principal -->
+        <div class="glass card fade-in card-hover">
+            
+            <!-- Cabeçalho -->
+            <div class="header">
+                <div class="header-icon float">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="4" y="2" width="16" height="20" rx="2"/>
+                        <line x1="8" y1="6" x2="16" y2="6"/>
+                        <line x1="8" y1="10" x2="16" y2="10"/>
+                        <line x1="8" y1="14" x2="16" y2="14"/>
+                        <line x1="8" y1="18" x2="12" y2="18"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1>Calculadora de Fluxo</h1>
+                    <p class="subtitle">Planeje seus pagamentos com inteligência e precisão</p>
+                </div>
+            </div>
+
+            <!-- 1. Informações da Obra e Captação -->
+            <div class="section section-orange slide-in">
+                <h2 class="section-title">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                    </div>
+                    Informações da Obra e Captação
+                </h2>
+                <div class="grid grid-3">
+                    <div class="input-group">
+                        <label for="mes-obra" class="input-label">Data de Conclusão da Obra</label>
+                        <div class="grid grid-2">
+                            <input type="number" id="mes-obra" placeholder="Mês" min="1" max="12" />
+                            <input type="number" id="ano-obra" placeholder="Ano" min="2025" />
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="percentual-captacao" class="input-label">
+                            Captação (%)
+                            <div class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <div class="tooltip-content">
+                                    Percentual do valor total do imóvel que o cliente deve pagar à construtora até a entrega do empreendimento.
+                                </div>
+                            </div>
+                        </label>
+                        <input type="number" id="percentual-captacao" placeholder="0" step="0.01" />
+                    </div>
+                    <div id="info-meses" class="hidden" style="display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.15); border-radius: 12px; padding: 1.25rem;">
+                        <div class="text-center">
+                            <p style="color: rgba(255,255,255,0.9); font-size: 0.875rem; margin-bottom: 0.5rem; font-weight: 700;">Faltam</p>
+                            <p style="font-size: 3.75rem; font-weight: 900; color: white;" class="pulse" id="meses-faltantes">0</p>
+                            <p style="color: rgba(255,255,255,0.9); font-size: 0.875rem; margin-top: 0.5rem; font-weight: 700;" id="meses-label">meses</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Valor Total do Imóvel -->
+            <div class="slide-in">
+                <label for="valor-total" class="section-title">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                            <line x1="7" y1="7" x2="7.01" y2="7"/>
+                        </svg>
+                    </div>
+                    Valor Total do Imóvel
+                </label>
+                <input type="text" id="valor-total" placeholder="R$ 0,00" style="font-size: 2rem; font-weight: 900; box-shadow: 0 10px 30px rgba(0,0,0,0.15);" />
+            </div>
+
+            <!-- 3. Entrada -->
+            <div id="entradas-section" class="section section-green hidden fade-in">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="section-title" style="margin-bottom: 0;">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                            <svg viewBox="0 0 24 24">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                            </svg>
+                        </div>
+                        Entrada
+                        <div class="tooltip-container">
+                            <span class="tooltip-icon">?</span>
+                            <div class="tooltip-content">
+                                Adicione mais campos caso precise parcelar a entrada.
+                            </div>
+                        </div>
+                    </h3>
+                    <button id="btn-adicionar-entrada" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Adicionar
+                    </button>
+                </div>
+                <div id="lista-entradas"></div>
+            </div>
+
+            <!-- 4. Durante a Obra -->
+            <div id="durante-obra-section" class="section section-blue hidden fade-in">
+                <h3 class="section-title">
+                    <div class="section-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                    </div>
+                    Durante a Obra (<span id="durante-meses">0</span> meses)
+                </h3>
+                
+                <!-- Parcelas Recorrentes -->
+                <div class="mb-6">
+                    <h4 class="text-xl font-black mb-4" style="color: #1f2937;">Parcelas Recorrentes</h4>
+                    <div id="durante-obra-parcelas"></div>
+                </div>
+                
+                <!-- Parcelas Únicas -->
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-xl font-black" style="color: #1f2937;">
+                            Parcelas Únicas
+                            <div class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <div class="tooltip-content">
+                                    Valores únicos pagos durante a obra que não se repetem.
+                                </div>
+                            </div>
+                        </h4>
+                        <button id="btn-adicionar-parcela-unica-obra" class="btn btn-primary" type="button">
+                            <svg viewBox="0 0 24 24">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Adicionar
+                        </button>
+                    </div>
+                    <div id="lista-parcelas-unicas-obra"></div>
+                </div>
+            </div>
+
+            <!-- 5. Habite-se -->
+            <div id="habite-se-section" class="section section-purple hidden fade-in">
+                <div class="flex items-center justify-between mb-4">
+                    <label for="parcela-habite-se" class="section-title" style="margin-bottom: 0;">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                <polyline points="9 22 9 12 15 12 15 22"/>
+                            </svg>
+                        </div>
+                        Habite-se
+                        <div class="tooltip-container">
+                            <span class="tooltip-icon">?</span>
+                            <div class="tooltip-content">
+                                Valor único pago no momento da entrega do empreendimento, quando o imóvel está pronto e recebe a Carta de Habite-se.
+                            </div>
+                        </div>
+                    </label>
+                    <span id="habite-se-percentual" class="hidden" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.5rem 1rem; border-radius: 12px; font-weight: 900;">0%</span>
+                </div>
+                <input type="text" id="parcela-habite-se" placeholder="R$ 0,00" style="font-size: 1.25rem;" />
+            </div>
+
+            <!-- 6. Pós-Obra -->
+            <div id="pos-obra-section" class="section section-green hidden fade-in">
+                <h3 class="section-title">
+                    <div class="section-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <svg viewBox="0 0 24 24">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                    </div>
+                    Pós-Obra
+                </h3>
+                <div id="pos-obra-parcelas"></div>
+            </div>
+        </div>
+
+        <!-- 7. Resultados -->
+        <div id="resultados-section" class="glass card hidden fade-in">
+            <h2 class="section-title" style="font-size: 2.5rem; margin-bottom: 2rem;">
+                <div class="section-icon" style="padding: 0.75rem;">
+                    <svg viewBox="0 0 24 24" style="width: 32px; height: 32px;">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                </div>
+                Análise do Fluxo
+            </h2>
+
+            <!-- Status de Aprovação -->
+            <div id="status-aprovacao" class="status-box">
+                <div class="status-header">
+                    <div class="status-icon-box">
+                        <svg id="status-icon" viewBox="0 0 24 24" style="width: 32px; height: 32px; stroke: white; fill: none; stroke-width: 2;"></svg>
+                    </div>
+                    <h3 id="status-texto" class="status-title"></h3>
+                </div>
+                <div id="status-detalhes"></div>
+            </div>
+
+            <!-- 8. Resumo Financeiro -->
+            <div class="section">
+                <h3 class="section-title">
+                    <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; stroke: #667eea; fill: none; stroke-width: 2;">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                    Resumo Financeiro
+                </h3>
+                <div id="resumo-valores"></div>
+            </div>
+
+            <!-- Botão para Simulação de Financiamento -->
+            <div id="btn-financiamento-container" class="hidden">
+                <button onclick="mostrarEscolhaSimulacao()" class="btn btn-primary btn-full btn-lg" style="margin-top: 2rem;">
+                    <svg viewBox="0 0 24 24" style="width: 28px; height: 28px;">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                        <line x1="1" y1="10" x2="23" y2="10"/>
+                    </svg>
+                    Simular Financiamento do Valor Restante
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal de Escolha do Tipo de Simulação -->
+        <div id="modalEscolha" class="modal">
+            <div class="modal-content" style="max-width: 600px;" onclick="event.stopPropagation()">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem 2rem; border-radius: 24px 24px 0 0;">
+                    <h2 style="font-size: 1.5rem; font-weight: 900; margin: 0;">
+                        🎯 Escolha o Tipo de Simulação
+                    </h2>
+                </div>
+                <div style="padding: 2rem;">
+                    <p style="font-size: 1rem; color: #4b5563; margin-bottom: 2rem; line-height: 1.6;">
+                        Como você gostaria de simular o financiamento?
+                    </p>
+                    
+                    <div class="grid gap-4 mb-6">
+                        <button onclick="abrirSimulacaoSaldoTotal()" class="btn btn-primary btn-full" style="padding: 1.5rem; justify-content: flex-start; text-align: left;">
+                            <div>
+                                <div style="font-size: 1.125rem; font-weight: 900; margin-bottom: 0.5rem;">
+                                    💰 Usar Saldo Restante Total
+                                </div>
+                                <div style="font-size: 0.875rem; opacity: 0.9; font-weight: 600;">
+                                    Financiar todo o valor restante em parcelas mensais fixas (Tabela Price)
+                                </div>
+                            </div>
+                        </button>
+                        
+                        <button onclick="abrirSimulacaoPosObra()" class="btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 1.5rem; justify-content: flex-start; text-align: left; width: 100%; border: none; cursor: pointer; border-radius: 12px; font-weight: 700; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);">
+                            <div>
+                                <div style="font-size: 1.125rem; font-weight: 900; margin-bottom: 0.5rem;">
+                                    📊 Usar Valores do Pós-Obra
+                                </div>
+                                <div style="font-size: 0.875rem; opacity: 0.9; font-weight: 600;">
+                                    Calcular com base nos valores e periodicidade já preenchidos no Pós-Obra
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <button onclick="fecharModalEscolha()" class="btn" style="background: #e5e7eb; color: #374151; width: 100%;">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção Calculadora Price -->
+        <div id="priceSection" class="glass card hidden fade-in" style="margin-top: 2rem;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem 2rem; border-radius: 20px 20px 0 0; margin: -2.5rem -2.5rem 2rem -2.5rem;">
+                <h2 style="font-size: 1.75rem; font-weight: 900; display: flex; align-items: center; gap: 0.75rem; margin: 0;">
+                    <svg viewBox="0 0 24 24" style="width: 28px; height: 28px; stroke: white; fill: none; stroke-width: 2;">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                        <line x1="1" y1="10" x2="23" y2="10"/>
+                    </svg>
+                    <span id="priceTituloSimulacao">Simulação de Financiamento - Tabela Price</span>
+                </h2>
+            </div>
+
+            <div class="info-box" id="priceInfoBox">
+                <p><strong>💡 Informação:</strong> <span id="priceInfoTexto">Esta simulação utiliza o sistema Price (parcelas fixas).</span></p>
+            </div>
+
+            <!-- Modo: Saldo Total -->
+            <div id="priceModoSaldoTotal" class="section hidden">
+                <h3 class="section-title">Dados do Financiamento</h3>
+                
+                <!-- Escolha da Modalidade -->
+                <div class="mb-6">
+                    <label class="input-label mb-3">Modalidade de Financiamento</label>
+                    <div class="grid grid-2" style="gap: 1rem;">
+                        <button id="btnModalidadePrice" onclick="selecionarModalidade('price')" class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem; justify-content: center;">
+                            📊 Tabela PRICE
+                            <div style="font-size: 0.75rem; opacity: 0.9; margin-top: 0.25rem;">Parcelas Fixas</div>
+                        </button>
+                        <button id="btnModalidadeSac" onclick="selecionarModalidade('sac')" class="btn" style="background: #e5e7eb; color: #374151; padding: 1rem; justify-content: center;">
+                            📉 Tabela SAC
+                            <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 0.25rem;">Parcelas Decrescentes</div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-2 mb-6">
+                    <div class="input-group">
+                        <label for="priceValorFinanciar" class="input-label">Valor a Financiar (R$)</label>
+                        <input type="number" id="priceValorFinanciar" step="0.01" placeholder="Ex: 500000" />
+                    </div>
+                    <div class="input-group">
+                        <label for="priceEntrada" class="input-label">Entrada Adicional (R$) - Opcional</label>
+                        <input type="number" id="priceEntrada" value="0" step="0.01" placeholder="Ex: 10000" />
+                    </div>
+                </div>
+                
+                <div class="grid grid-2 mb-6">
+                    <div class="input-group">
+                        <label for="priceTaxaJuros" class="input-label">Taxa de Juros</label>
+                        <input type="number" id="priceTaxaJuros" step="0.01" placeholder="Ex: 10" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="priceTipoTaxa" class="input-label">Tipo de Taxa</label>
+                        <select id="priceTipoTaxa">
+                            <option value="anual">Anual (% a.a.)</option>
+                            <option value="mensal">Mensal (% a.m.)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <div class="input-group">
+                        <label for="priceIdade" class="input-label">
+                            Idade do Cliente (anos)
+                            <div class="tooltip-container">
+                                <span class="tooltip-icon">?</span>
+                                <div class="tooltip-content">
+                                    Limite: 420 meses (35 anos) ou idade final de 80 anos e 6 meses.
+                                </div>
+                            </div>
+                        </label>
+                        <input type="number" id="priceIdade" min="18" max="80" placeholder="Ex: 35" required />
+                    </div>
+                </div>
+                
+                <!-- Opções de Prazo -->
+                <div id="opcoesPrazoContainer" class="mb-6 hidden">
+                    <label class="input-label mb-3">Escolha o Prazo</label>
+                    <div id="opcoesPrazo" class="grid" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.75rem;"></div>
+                </div>
+
+                <div class="grid grid-2 mb-6">
+                    <div class="input-group">
+                        <label for="pricePeriodo" class="input-label">Período (ou digite manualmente)</label>
+                        <input type="number" id="pricePeriodo" placeholder="Ex: 360" min="1" required />
+                    </div>
+                    <div class="input-group">
+                        <label for="priceTipoPeriodo" class="input-label">Tipo de Período</label>
+                        <select id="priceTipoPeriodo">
+                            <option value="meses">Meses</option>
+                            <option value="anos">Anos</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="calcularPriceSaldoTotal()" class="btn btn-primary btn-full mt-6 btn-lg">
+                    📊 Calcular Financiamento
+                </button>
+            </div>
+
+            <!-- Modo: Pós-Obra -->
+            <div id="priceModoPosObra" class="section hidden">
+                <h3 class="section-title">Dados do Financiamento</h3>
+                
+                <div class="grid grid-2 mb-6">
+                    <div class="input-group">
+                        <label for="priceEntradaPosObra" class="input-label">Entrada Adicional (R$) - Opcional</label>
+                        <input type="number" id="priceEntradaPosObra" value="0" step="0.01" placeholder="Ex: 10000" />
+                    </div>
+                    <div class="input-group">
+                        <label for="priceTaxaJurosPosObra" class="input-label">Taxa de Juros</label>
+                        <input type="number" id="priceTaxaJurosPosObra" step="0.01" placeholder="Ex: 10" required />
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="priceTipoTaxaPosObra" class="input-label">Tipo de Taxa</label>
+                    <select id="priceTipoTaxaPosObra">
+                        <option value="anual">% Anual</option>
+                        <option value="mensal">% Mensal</option>
+                    </select>
+                </div>
+
+                <button onclick="calcularPricePosObra()" class="btn btn-primary btn-full mt-6 btn-lg">
+                    📊 Calcular Financiamento com Valores do Pós-Obra
+                </button>
+            </div>
+
+            <div id="priceResults" class="hidden">
+                <div class="result-highlight">
+                    <h3 class="text-2xl font-black mb-6">💰 Resumo do Financiamento</h3>
+                    <div id="priceResumoGrid" class="grid grid-3">
+                        <div id="priceValorFinanciadoContainer">
+                            <p class="text-sm mb-2" style="opacity: 0.9;">Valor Financiado</p>
+                            <p id="priceValorFinanciado" class="text-3xl font-black">R$ 0,00</p>
+                        </div>
+                        <div>
+                            <p class="text-sm mb-2" style="opacity: 0.9;">Valor Total Pago</p>
+                            <p id="priceTotal" class="text-3xl font-black">R$ 0,00</p>
+                        </div>
+                        <div>
+                            <p class="text-sm mb-2" style="opacity: 0.9;">Total de Juros</p>
+                            <p id="priceJuros" class="text-3xl font-black">R$ 0,00</p>
+                        </div>
+                    </div>
+                    
+                    <div id="priceParcelaUnicaContainer" class="hidden" style="margin-top: 1.5rem; text-align: center; padding: 1rem; background: rgba(255,255,255,0.2); border-radius: 12px;">
+                        <p class="text-sm mb-2" style="opacity: 0.9;">Parcela Mensal Fixa</p>
+                        <p id="priceParcela" class="text-3xl font-black">R$ 0,00</p>
+                    </div>
+                    
+                    <!-- Resumo adicional para modo Pós-Obra -->
+                    <div id="priceResumoPosObra" class="hidden mt-6">
+                        <div class="grid grid-3 gap-4">
+                            <div id="priceMensalReajustadaBox" class="hidden" style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 12px;">
+                                <p class="text-sm mb-2" style="opacity: 0.9;">Mensal Reajustada</p>
+                                <p id="priceMensalReajustada" class="text-2xl font-black">R$ 0,00</p>
+                            </div>
+                            <div id="priceSemestralReajustadaBox" class="hidden" style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 12px;">
+                                <p class="text-sm mb-2" style="opacity: 0.9;">Semestral Reajustada</p>
+                                <p id="priceSemestralReajustada" class="text-2xl font-black">R$ 0,00</p>
+                            </div>
+                            <div id="priceAnualReajustadaBox" class="hidden" style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 12px;">
+                                <p class="text-sm mb-2" style="opacity: 0.9;">Anual Reajustada</p>
+                                <p id="priceAnualReajustada" class="text-2xl font-black">R$ 0,00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <p><strong>⚠️ Atenção:</strong> Esta é uma simulação. Os valores reais podem variar conforme as condições do mercado e da instituição financeira.</p>
+                </div>
+
+                <div class="result-box">
+                    <h3 class="text-2xl font-black mb-4">📊 Tabela de Amortização Completa</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nº</th>
+                                    <th>Parcela</th>
+                                    <th>Juros</th>
+                                    <th>Amortização</th>
+                                    <th>Saldo Devedor</th>
+                                </tr>
+                            </thead>
+                            <tbody id="priceTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/src/scripts/shared-utils.js"></script>
+    <script type="module">
+        import { auth } from '/src/scripts/auth.js';
+
+        // Initialize auth
+        auth.initAuth();
+
+        // Sidebar collapse functionality
+        document.getElementById('sidebarCollapseBtn')?.addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar?.classList.toggle('collapsed');
+
+            // Adjust content margin
+            const content = document.querySelector('.cash-flow-content');
+            if (content) {
+                if (sidebar?.classList.contains('collapsed')) {
+                    content.style.marginLeft = 'calc(var(--sidebar-collapsed-width) + var(--spacing-md))';
+                } else {
+                    content.style.marginLeft = 'calc(var(--sidebar-width) + var(--spacing-md))';
+                }
+            }
+        });
+
+        // Mobile menu toggle
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth <= 768 && !sidebar?.contains(e.target)) {
+                sidebar?.classList.remove('mobile-open');
+            }
+        });
+    </script>
+
+    <script>
+
+        // Estado da aplicação
+        const state = {
+            valorTotal: 0,
+            entradas: [{ id: 1, valor: 0, qtd: 1 }],
+            parcelasUnicasObra: [],
+            parcelasDuranteObra: {
+                mensais: { valor: 0, qtd: 0 },
+                semestrais: { valor: 0, qtd: 0 },
+                anuais: { valor: 0, qtd: 0 }
+            },
+            parcelaHabiteSe: 0,
+            parcelasPosObra: {
+                mensais: { valor: 0, qtd: 0 },
+                semestrais: { valor: 0, qtd: 0 },
+                anuais: { valor: 0, qtd: 0 }
+            },
+            percentualCaptacao: 0,
+            mesObra: null,
+            anoObra: null
+        };
+
+        // Variável global para o modal Price
+        let saldoRestanteGlobal = 0;
+        let modalidadeSelecionada = 'price'; // Padrão: Price
+
+        // Funções auxiliares
+        function formatCurrency(value) {
+            if (!value && value !== 0) return '';
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 2
+            }).format(value);
+        }
+
+        function parseCurrency(str) {
+            if (typeof str === 'number') return str;
+            return parseFloat(str.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+        }
+
+        function handleCurrencyInput(e) {
+            const numbers = e.target.value.replace(/\D/g, '');
+            const value = numbers ? parseFloat(numbers) / 100 : 0;
+            e.target.value = value ? formatCurrency(value) : '';
+            return value;
+        }
+
+        function calcularInfoObra() {
+            if (!state.mesObra || !state.anoObra) return null;
+            
+            const hoje = new Date();
+            const dataObra = new Date(parseInt(state.anoObra), parseInt(state.mesObra) - 1);
+            const meses = Math.max(0, (dataObra.getFullYear() - hoje.getFullYear()) * 12 + (dataObra.getMonth() - hoje.getMonth()));
+            
+            return {
+                meses,
+                maxSemestrais: Math.floor(meses / 6),
+                maxAnuais: Math.floor(meses / 12)
+            };
+        }
+
+        function calcularPercentual(valor, qtd) {
+            if (state.valorTotal === 0) return '0.00';
+            return (((valor * qtd) / state.valorTotal) * 100).toFixed(2);
+        }
+
+        function criarCampoParcela(id, label, tipo, maxQtd = null) {
+            const uniqueId = `${tipo}-${id}-${Date.now()}`;
+            const div = document.createElement('div');
+            div.className = 'result-box card-hover';
+            div.dataset.parcelaId = id;
+            div.dataset.parcelaTipo = tipo;
+            div.innerHTML = `
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="font-black text-lg">${label}</h4>
+                    <div class="flex items-center gap-3">
+                        <span class="info-valor text-sm font-bold hidden" style="color: #6b7280;"></span>
+                        <span class="info-percentual text-sm font-black hidden" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 8px;">0%</span>
+                        ${(tipo === 'entrada' || tipo === 'parcela-unica-obra') ? '<button class="btn-remover hidden" style="color: #ef4444; cursor: pointer; padding: 0.5rem; border: none; background: none; display: inline-flex;"><svg viewBox="0 0 24 24" style="width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' : ''}
+                    </div>
+                </div>
+                <div class="grid grid-2">
+                    <div class="input-group">
+                        <label for="valor-${uniqueId}" class="input-label text-sm">
+                            <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; display: inline; margin-right: 0.25rem;">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                            Valor
+                        </label>
+                        <input type="text" id="valor-${uniqueId}" class="input-valor" placeholder="R$ 0,00" />
+                    </div>
+                    <div class="input-group">
+                        <label for="qtd-${uniqueId}" class="input-label text-sm">
+                            <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; display: inline; margin-right: 0.25rem;">
+                                <line x1="8" y1="6" x2="21" y2="6"/>
+                                <line x1="8" y1="12" x2="21" y2="12"/>
+                                <line x1="8" y1="18" x2="21" y2="18"/>
+                                <line x1="3" y1="6" x2="3.01" y2="6"/>
+                                <line x1="3" y1="12" x2="3.01" y2="12"/>
+                                <line x1="3" y1="18" x2="3.01" y2="18"/>
+                            </svg>
+                            Quantidade ${maxQtd !== null ? `(máx: ${maxQtd})` : ''}
+                        </label>
+                        <input type="number" id="qtd-${uniqueId}" class="input-qtd" placeholder="0" min="1" ${maxQtd !== null ? `max="${maxQtd}"` : ''} />
+                    </div>
+                </div>
+            `;
+
+            const inputValor = div.querySelector(`#valor-${uniqueId}`);
+            const inputQtd = div.querySelector(`#qtd-${uniqueId}`);
+
+            inputValor.addEventListener('input', (e) => {
+                const valor = handleCurrencyInput(e);
+                if (tipo === 'entrada') {
+                    const index = Array.from(document.getElementById('lista-entradas').children).indexOf(div);
+                    if (state.entradas[index]) {
+                        state.entradas[index].valor = valor;
+                    }
+                } else if (tipo === 'parcela-unica-obra') {
+                    const index = Array.from(document.getElementById('lista-parcelas-unicas-obra').children).indexOf(div);
+                    if (state.parcelasUnicasObra[index]) {
+                        state.parcelasUnicasObra[index].valor = valor;
+                    }
+                } else if (tipo.includes('durante-')) {
+                    const tipoParc = tipo.split('-')[1];
+                    state.parcelasDuranteObra[tipoParc].valor = valor;
+                } else if (tipo.includes('pos-')) {
+                    const tipoParc = tipo.split('-')[1];
+                    state.parcelasPosObra[tipoParc].valor = valor;
+                }
+                calcularResultados();
+            });
+
+            inputQtd.addEventListener('input', (e) => {
+                const qtd = parseInt(e.target.value) || 0;
+                if (tipo === 'entrada') {
+                    const index = Array.from(document.getElementById('lista-entradas').children).indexOf(div);
+                    if (state.entradas[index]) {
+                        state.entradas[index].qtd = qtd;
+                    }
+                } else if (tipo === 'parcela-unica-obra') {
+                    const index = Array.from(document.getElementById('lista-parcelas-unicas-obra').children).indexOf(div);
+                    if (state.parcelasUnicasObra[index]) {
+                        state.parcelasUnicasObra[index].qtd = qtd;
+                    }
+                } else if (tipo.includes('durante-')) {
+                    const tipoParc = tipo.split('-')[1];
+                    state.parcelasDuranteObra[tipoParc].qtd = qtd;
+                } else if (tipo.includes('pos-')) {
+                    const tipoParc = tipo.split('-')[1];
+                    state.parcelasPosObra[tipoParc].qtd = qtd;
+                }
+                calcularResultados();
+            });
+
+            if (tipo === 'entrada' || tipo === 'parcela-unica-obra') {
+                const btnRemover = div.querySelector('.btn-remover');
+                if (btnRemover) {
+                    btnRemover.addEventListener('click', () => {
+                        if (tipo === 'entrada') {
+                            const index = Array.from(document.getElementById('lista-entradas').children).indexOf(div);
+                            state.entradas.splice(index, 1);
+                            renderizarEntradas();
+                        } else if (tipo === 'parcela-unica-obra') {
+                            const index = Array.from(document.getElementById('lista-parcelas-unicas-obra').children).indexOf(div);
+                            state.parcelasUnicasObra.splice(index, 1);
+                            renderizarParcelasUnicasObra();
+                        }
+                        calcularResultados();
+                    });
+                }
+            }
+
+            return div;
+        }
+
+        function renderizarEntradas() {
+            const lista = document.getElementById('lista-entradas');
+            lista.innerHTML = '';
+            
+            state.entradas.forEach((entrada, index) => {
+                const campo = criarCampoParcela(entrada.id, `Entrada ${index + 1}`, 'entrada');
+                
+                if (entrada.valor > 0) {
+                    campo.querySelector('.input-valor').value = formatCurrency(entrada.valor);
+                }
+                if (entrada.qtd > 0) {
+                    campo.querySelector('.input-qtd').value = entrada.qtd;
+                }
+
+                if (state.entradas.length > 1) {
+                    campo.querySelector('.btn-remover').classList.remove('hidden');
+                }
+
+                lista.appendChild(campo);
+            });
+        }
+
+        function adicionarEntrada() {
+            const novoId = Math.max(...state.entradas.map(e => e.id), 0) + 1;
+            state.entradas.push({ id: novoId, valor: 0, qtd: 1 });
+            renderizarEntradas();
+        }
+
+        function renderizarParcelasUnicasObra() {
+            const lista = document.getElementById('lista-parcelas-unicas-obra');
+            lista.innerHTML = '';
+            
+            if (state.parcelasUnicasObra.length === 0) {
+                lista.innerHTML = '<p style="color: #6b7280; font-style: italic; padding: 1rem;">Nenhuma parcela única adicionada</p>';
+                return;
+            }
+            
+            state.parcelasUnicasObra.forEach((parcela, index) => {
+                const campo = criarCampoParcela(parcela.id, `Parcela Única ${index + 1}`, 'parcela-unica-obra');
+                
+                if (parcela.valor > 0) {
+                    campo.querySelector('.input-valor').value = formatCurrency(parcela.valor);
+                }
+                if (parcela.qtd > 0) {
+                    campo.querySelector('.input-qtd').value = parcela.qtd;
+                }
+
+                campo.querySelector('.btn-remover').classList.remove('hidden');
+                lista.appendChild(campo);
+            });
+        }
+
+        function adicionarParcelaUnicaObra() {
+            const novoId = state.parcelasUnicasObra.length > 0 ? Math.max(...state.parcelasUnicasObra.map(p => p.id), 0) + 1 : 1;
+            state.parcelasUnicasObra.push({ id: novoId, valor: 0, qtd: 1 });
+            renderizarParcelasUnicasObra();
+        }
+
+        function renderizarDuranteObra(info) {
+            const container = document.getElementById('durante-obra-parcelas');
+            container.innerHTML = '';
+
+            if (info.meses > 0) {
+                const mensais = criarCampoParcela('mensais', 'Parcelas Mensais', 'durante-mensais', info.meses);
+                container.appendChild(mensais);
+            }
+
+            if (info.maxSemestrais > 0) {
+                const semestrais = criarCampoParcela('semestrais', 'Parcelas Semestrais', 'durante-semestrais', info.maxSemestrais);
+                container.appendChild(semestrais);
+            }
+
+            if (info.maxAnuais > 0) {
+                const anuais = criarCampoParcela('anuais', 'Parcelas Anuais', 'durante-anuais', info.maxAnuais);
+                container.appendChild(anuais);
+            }
+        }
+
+        function renderizarPosObra(info) {
+            const container = document.getElementById('pos-obra-parcelas');
+            container.innerHTML = '';
+
+            const mensais = criarCampoParcela('mensais', 'Parcelas Mensais', 'pos-mensais');
+            container.appendChild(mensais);
+
+            const semestrais = criarCampoParcela('semestrais', 'Parcelas Semestrais', 'pos-semestrais');
+            container.appendChild(semestrais);
+
+            const anuais = criarCampoParcela('anuais', 'Parcelas Anuais', 'pos-anuais');
+            container.appendChild(anuais);
+        }
+
+        function calcularTotalEntradas() {
+            return state.entradas.reduce((acc, entrada) => acc + (entrada.valor * entrada.qtd), 0);
+        }
+
+        function calcularTotalParcelasUnicasObra() {
+            return state.parcelasUnicasObra.reduce((acc, parcela) => acc + (parcela.valor * parcela.qtd), 0);
+        }
+
+        function calcularTotalDuranteObra() {
+            const mensais = state.parcelasDuranteObra.mensais.valor * state.parcelasDuranteObra.mensais.qtd;
+            const semestrais = state.parcelasDuranteObra.semestrais.valor * state.parcelasDuranteObra.semestrais.qtd;
+            const anuais = state.parcelasDuranteObra.anuais.valor * state.parcelasDuranteObra.anuais.qtd;
+            return mensais + semestrais + anuais;
+        }
+
+        function calcularTotalPosObra() {
+            const mensais = state.parcelasPosObra.mensais.valor * state.parcelasPosObra.mensais.qtd;
+            const semestrais = state.parcelasPosObra.semestrais.valor * state.parcelasPosObra.semestrais.qtd;
+            const anuais = state.parcelasPosObra.anuais.valor * state.parcelasPosObra.anuais.qtd;
+            return mensais + semestrais + anuais;
+        }
+
+        function calcularResultados() {
+            if (state.valorTotal === 0 || state.percentualCaptacao === 0) {
+                return;
+            }
+
+            const totalEntradas = calcularTotalEntradas();
+            const totalParcelasUnicasObra = calcularTotalParcelasUnicasObra();
+            const totalDuranteObra = calcularTotalDuranteObra();
+            const totalPosObra = calcularTotalPosObra();
+            
+            // Para captação: apenas Entrada + Durante Obra + Habite-se (SEM pós-obra)
+            const totalCaptacao = totalEntradas + totalParcelasUnicasObra + totalDuranteObra + state.parcelaHabiteSe;
+            
+            // Total pago considera tudo
+            const totalPago = totalCaptacao + totalPosObra;
+            
+            const valorCaptacao = (state.valorTotal * state.percentualCaptacao) / 100;
+            const valorFaltanteExcedente = valorCaptacao - totalCaptacao;
+            
+            const percentualPagoTotal = (totalPago / state.valorTotal) * 100;
+            
+            const isAprovado = valorFaltanteExcedente <= 0;
+            
+            const statusBox = document.getElementById('status-aprovacao');
+            statusBox.className = 'status-box ' + (isAprovado ? 'status-approved' : 'status-rejected');
+            
+            const statusIcon = document.getElementById('status-icon');
+            statusIcon.innerHTML = isAprovado 
+                ? '<polyline points="20 6 9 17 4 12"/>'
+                : '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>';
+            
+            document.getElementById('status-texto').textContent = isAprovado ? 'Captação Aprovada!' : 'Captação Insuficiente';
+            
+            const detalhesHTML = `
+                <div class="result-item" style="border-bottom: 1px solid rgba(255,255,255,0.2); padding: 1rem 0;">
+                    <span style="font-weight: 600; opacity: 0.9;">Valor de Captação Necessário:</span>
+                    <span style="font-weight: 900; font-size: 1.25rem;">${formatCurrency(valorCaptacao)}</span>
+                </div>
+                <div class="result-item" style="border-bottom: 1px solid rgba(255,255,255,0.2); padding: 1rem 0;">
+                    <span style="font-weight: 600; opacity: 0.9;">Valor Captado:</span>
+                    <span style="font-weight: 900; font-size: 1.25rem;">${formatCurrency(totalCaptacao)}</span>
+                </div>
+                <div class="result-item" style="padding: 1rem 0;">
+                    <span style="font-weight: 600; opacity: 0.9;">${valorFaltanteExcedente < 0 ? 'Valor Excedente' : 'Valor Faltante'}:</span>
+                    <span style="font-weight: 900; font-size: 1.5rem;">${formatCurrency(Math.abs(valorFaltanteExcedente))}</span>
+                </div>
+            `;
+            document.getElementById('status-detalhes').innerHTML = detalhesHTML;
+
+            const corFaltante = valorFaltanteExcedente < 0 ? 'from-green-400 to-emerald-500' : valorFaltanteExcedente > 0 ? 'from-red-400 to-rose-500' : 'from-blue-400 to-cyan-500';
+            
+            // Calcular valor faltante para o total do imóvel (não só captação)
+            const valorRestante = state.valorTotal - totalPago;
+            
+            document.getElementById('resumo-valores').innerHTML = `
+                <div class="result-item">
+                    <span class="result-label font-black flex items-center gap-2" style="color: #10b981;">
+                        <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2;">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                        Total Entrada
+                    </span>
+                    <div style="text-align: right;">
+                        <span class="font-black text-2xl" style="color: #10b981;">${formatCurrency(totalEntradas)}</span>
+                        <span style="display: block; font-size: 0.875rem; color: #059669; font-weight: 700;">${((totalEntradas / state.valorTotal) * 100).toFixed(2)}%</span>
+                    </div>
+                </div>
+                <div class="result-item">
+                    <span class="result-label font-black flex items-center gap-2" style="color: #3b82f6;">
+                        <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2;">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        Parcelas Únicas (Obra)
+                    </span>
+                    <div style="text-align: right;">
+                        <span class="font-black text-2xl" style="color: #3b82f6;">${formatCurrency(totalParcelasUnicasObra)}</span>
+                        <span style="display: block; font-size: 0.875rem; color: #2563eb; font-weight: 700;">${((totalParcelasUnicasObra / state.valorTotal) * 100).toFixed(2)}%</span>
+                    </div>
+                </div>
+                <div class="result-item">
+                    <span class="result-label font-black flex items-center gap-2" style="color: #3b82f6;">
+                        <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2;">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        Parcelas Recorrentes (Obra)
+                    </span>
+                    <div style="text-align: right;">
+                        <span class="font-black text-2xl" style="color: #3b82f6;">${formatCurrency(totalDuranteObra)}</span>
+                        <span style="display: block; font-size: 0.875rem; color: #2563eb; font-weight: 700;">${((totalDuranteObra / state.valorTotal) * 100).toFixed(2)}%</span>
+                    </div>
+                </div>
+                <div class="result-item">
+                    <span class="result-label font-black flex items-center gap-2" style="color: #a855f7;">
+                        <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2;">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        Habite-se
+                    </span>
+                    <div style="text-align: right;">
+                        <span class="font-black text-2xl" style="color: #a855f7;">${formatCurrency(state.parcelaHabiteSe)}</span>
+                        <span style="display: block; font-size: 0.875rem; color: #9333ea; font-weight: 700;">${((state.parcelaHabiteSe / state.valorTotal) * 100).toFixed(2)}%</span>
+                    </div>
+                </div>
+                <div class="result-item">
+                    <span class="result-label font-black flex items-center gap-2" style="color: #10b981;">
+                        <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2;">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                        Pós-Obra
+                    </span>
+                    <div style="text-align: right;">
+                        <span class="font-black text-2xl" style="color: #10b981;">${formatCurrency(totalPosObra)}</span>
+                        <span style="display: block; font-size: 0.875rem; color: #059669; font-weight: 700;">${((totalPosObra / state.valorTotal) * 100).toFixed(2)}%</span>
+                    </div>
+                </div>
+                <div class="result-item" style="padding: 1.5rem; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 1rem;">
+                    <span class="result-label font-black flex items-center gap-2" style="color: #1f2937; font-size: 1.25rem;">
+                        <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; stroke: #667eea; fill: none; stroke-width: 2;">
+                            <line x1="12" y1="1" x2="12" y2="23"/>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                        Total Pago
+                    </span>
+                    <div style="text-align: right;">
+                        <span class="font-black" style="font-size: 1.875rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${formatCurrency(totalPago)}</span>
+                        <span style="display: block; font-size: 0.875rem; color: #667eea; font-weight: 900;">${percentualPagoTotal.toFixed(2)}%</span>
+                    </div>
+                </div>
+                <div class="result-item" style="padding: 1.5rem; background: linear-gradient(135deg, ${valorRestante < 0 ? '#10b981, #059669' : valorRestante > 0 ? '#f59e0b, #d97706' : '#3b82f6, #2563eb'}); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                    <span class="result-label font-black" style="color: white; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                        ${valorRestante < 0 ? '📈 Valor Excedente' : valorRestante > 0 ? '⚠️ Valor Faltante' : '✅ Pagamento Completo'}
+                    </span>
+                    ${valorRestante !== 0 ? `
+                        <div style="text-align: right;">
+                            <div class="font-black" style="font-size: 1.875rem; color: white;">${formatCurrency(Math.abs(valorRestante))}</div>
+                            <div style="font-weight: 700; color: rgba(255,255,255,0.9); font-size: 0.875rem;">${((Math.abs(valorRestante) / state.valorTotal) * 100).toFixed(2)}%</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            document.getElementById('resultados-section').classList.remove('hidden');
+            atualizarPercentuais();
+            
+            // Atualizar saldo restante global (sem adicionar automaticamente)
+            saldoRestanteGlobal = Math.max(0, valorRestante);
+            
+            // Verificar se há valores no pós-obra
+            const temPosObra = (state.parcelasPosObra.mensais.valor > 0 && state.parcelasPosObra.mensais.qtd > 0) ||
+                              (state.parcelasPosObra.semestrais.valor > 0 && state.parcelasPosObra.semestrais.qtd > 0) ||
+                              (state.parcelasPosObra.anuais.valor > 0 && state.parcelasPosObra.anuais.qtd > 0);
+            
+            // Mostrar botão de financiamento se:
+            // 1. Houver valor faltante E NÃO houver pós-obra (para usar saldo restante total), OU
+            // 2. Houver valores no pós-obra (independente de ter valor faltante)
+            const btnContainer = document.getElementById('btn-financiamento-container');
+            if (temPosObra || valorRestante > 0) {
+                btnContainer.classList.remove('hidden');
+                
+                // Atualizar texto do botão baseado na situação
+                const btnTexto = document.querySelector('#btn-financiamento-container button');
+                if (temPosObra) {
+                    // Prioridade: se tem pós-obra, sempre mostra esse texto
+                    btnTexto.innerHTML = `
+                        <svg viewBox="0 0 24 24" style="width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 2;">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                            <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                        Simular Financiamento do Pós-Obra
+                    `;
+                } else if (valorRestante > 0) {
+                    // Só mostra "valor restante" se NÃO tiver pós-obra
+                    btnTexto.innerHTML = `
+                        <svg viewBox="0 0 24 24" style="width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 2;">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                            <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                        Simular Financiamento do Valor Restante
+                    `;
+                }
+            } else {
+                btnContainer.classList.add('hidden');
+            }
+        }
+
+        function atualizarPercentuais() {
+            document.querySelectorAll('#lista-entradas .result-box').forEach((campo, index) => {
+                const entrada = state.entradas[index];
+                if (entrada && entrada.valor && entrada.qtd) {
+                    const total = entrada.valor * entrada.qtd;
+                    const perc = calcularPercentual(entrada.valor, entrada.qtd);
+                    campo.querySelector('.info-valor').textContent = formatCurrency(total);
+                    campo.querySelector('.info-valor').classList.remove('hidden');
+                    campo.querySelector('.info-percentual').textContent = `${perc}%`;
+                    campo.querySelector('.info-percentual').classList.remove('hidden');
+                } else {
+                    campo.querySelector('.info-valor').classList.add('hidden');
+                    campo.querySelector('.info-percentual').classList.add('hidden');
+                }
+            });
+
+            document.querySelectorAll('#lista-parcelas-unicas-obra .result-box').forEach((campo, index) => {
+                const parcela = state.parcelasUnicasObra[index];
+                if (parcela && parcela.valor && parcela.qtd) {
+                    const total = parcela.valor * parcela.qtd;
+                    const perc = calcularPercentual(parcela.valor, parcela.qtd);
+                    campo.querySelector('.info-valor').textContent = formatCurrency(total);
+                    campo.querySelector('.info-valor').classList.remove('hidden');
+                    campo.querySelector('.info-percentual').textContent = `${perc}%`;
+                    campo.querySelector('.info-percentual').classList.remove('hidden');
+                } else {
+                    campo.querySelector('.info-valor').classList.add('hidden');
+                    campo.querySelector('.info-percentual').classList.add('hidden');
+                }
+            });
+
+            const habiteSePerc = document.getElementById('habite-se-percentual');
+            if (state.parcelaHabiteSe > 0) {
+                habiteSePerc.textContent = `${((state.parcelaHabiteSe / state.valorTotal) * 100).toFixed(2)}%`;
+                habiteSePerc.classList.remove('hidden');
+            } else {
+                habiteSePerc.classList.add('hidden');
+            }
+
+            ['durante-obra-parcelas', 'pos-obra-parcelas'].forEach(containerId => {
+                document.querySelectorAll(`#${containerId} .result-box`).forEach(campo => {
+                    const valorInput = campo.querySelector('.input-valor');
+                    const qtdInput = campo.querySelector('.input-qtd');
+                    
+                    if (valorInput && qtdInput) {
+                        const valor = parseCurrency(valorInput.value);
+                        const qtd = parseInt(qtdInput.value) || 0;
+                        
+                        if (valor > 0 && qtd > 0) {
+                            const total = valor * qtd;
+                            const perc = calcularPercentual(valor, qtd);
+                            campo.querySelector('.info-valor').textContent = formatCurrency(total);
+                            campo.querySelector('.info-valor').classList.remove('hidden');
+                            campo.querySelector('.info-percentual').textContent = `${perc}%`;
+                            campo.querySelector('.info-percentual').classList.remove('hidden');
+                        } else {
+                            campo.querySelector('.info-valor').classList.add('hidden');
+                            campo.querySelector('.info-percentual').classList.add('hidden');
+                        }
+                    }
+                });
+            });
+        }
+
+        // Event Listeners
+        document.getElementById('mes-obra').addEventListener('input', (e) => {
+            state.mesObra = e.target.value;
+            const info = calcularInfoObra();
+            if (info) {
+                document.getElementById('meses-faltantes').textContent = info.meses;
+                document.getElementById('meses-label').textContent = info.meses === 1 ? 'mês' : 'meses';
+                document.getElementById('info-meses').classList.remove('hidden');
+                document.getElementById('info-meses').style.display = 'flex';
+                document.getElementById('durante-meses').textContent = info.meses;
+                
+                // Só mostrar Durante a Obra se o valor total já foi preenchido
+                if (state.valorTotal > 0) {
+                    document.getElementById('durante-obra-section').classList.remove('hidden');
+                    renderizarDuranteObra(info);
+                }
+            }
+        });
+
+        document.getElementById('ano-obra').addEventListener('input', (e) => {
+            state.anoObra = e.target.value;
+            const info = calcularInfoObra();
+            if (info) {
+                document.getElementById('meses-faltantes').textContent = info.meses;
+                document.getElementById('meses-label').textContent = info.meses === 1 ? 'mês' : 'meses';
+                document.getElementById('info-meses').classList.remove('hidden');
+                document.getElementById('info-meses').style.display = 'flex';
+                document.getElementById('durante-meses').textContent = info.meses;
+                
+                // Só mostrar Durante a Obra se o valor total já foi preenchido
+                if (state.valorTotal > 0) {
+                    document.getElementById('durante-obra-section').classList.remove('hidden');
+                    renderizarDuranteObra(info);
+                }
+            }
+        });
+
+        document.getElementById('valor-total').addEventListener('input', (e) => {
+            state.valorTotal = handleCurrencyInput(e);
+            if (state.valorTotal > 0) {
+                document.getElementById('entradas-section').classList.remove('hidden');
+                document.getElementById('habite-se-section').classList.remove('hidden');
+                document.getElementById('pos-obra-section').classList.remove('hidden');
+                
+                // Se a data da obra já foi preenchida, mostrar Durante a Obra
+                const info = calcularInfoObra();
+                if (info) {
+                    document.getElementById('durante-obra-section').classList.remove('hidden');
+                    renderizarDuranteObra(info);
+                    renderizarPosObra(info);
+                }
+            } else {
+                // Se o valor total for removido, ocultar todas as seções
+                document.getElementById('entradas-section').classList.add('hidden');
+                document.getElementById('durante-obra-section').classList.add('hidden');
+                document.getElementById('habite-se-section').classList.add('hidden');
+                document.getElementById('pos-obra-section').classList.add('hidden');
+            }
+            calcularResultados();
+        });
+
+        document.getElementById('percentual-captacao').addEventListener('input', (e) => {
+            state.percentualCaptacao = parseFloat(e.target.value) || 0;
+            if (state.valorTotal > 0) {
+                calcularResultados();
+            }
+        });
+
+        document.getElementById('percentual-captacao').addEventListener('change', (e) => {
+            state.percentualCaptacao = parseFloat(e.target.value) || 0;
+            if (state.valorTotal > 0) {
+                calcularResultados();
+            }
+        });
+
+        document.getElementById('parcela-habite-se').addEventListener('input', (e) => {
+            state.parcelaHabiteSe = handleCurrencyInput(e);
+            calcularResultados();
+        });
+
+        document.getElementById('btn-adicionar-entrada').addEventListener('click', adicionarEntrada);
+
+        document.getElementById('btn-adicionar-parcela-unica-obra').addEventListener('click', adicionarParcelaUnicaObra);
+
+        renderizarEntradas();
+        renderizarParcelasUnicasObra();
+
+        // Event listeners para o formulário de financiamento
+        document.addEventListener('DOMContentLoaded', function() {
+            // Quando digitar a idade, mostrar opções em tempo real
+            const idadeInput = document.getElementById('priceIdade');
+            if (idadeInput) {
+                idadeInput.addEventListener('input', function() {
+                    const idade = parseInt(this.value);
+                    
+                    // Se digitou idade válida, mostrar opções
+                    if (idade >= 18 && idade < 80) {
+                        calcularPrazoMaximo();
+                    } else if (idade >= 80) {
+                        // Se for 80 ou mais, esconder opções (alerta vai aparecer no cálculo)
+                        document.getElementById('opcoesPrazoContainer').classList.add('hidden');
+                    } else {
+                        // Se for inválido ou vazio, esconder opções
+                        document.getElementById('opcoesPrazoContainer').classList.add('hidden');
+                    }
+                });
+            }
+            
+            // Quando mudar o tipo de período, atualizar valores dos botões
+            const tipoPeriodoSelect = document.getElementById('priceTipoPeriodo');
+            if (tipoPeriodoSelect) {
+                tipoPeriodoSelect.addEventListener('change', function() {
+                    const idade = parseInt(document.getElementById('priceIdade').value);
+                    if (idade >= 18 && idade < 80) {
+                        calcularPrazoMaximo();
+                        
+                        // Limpar seleção dos botões
+                        document.querySelectorAll('.btn-prazo').forEach(btn => {
+                            btn.classList.remove('selected');
+                            btn.style.borderColor = '#e5e7eb';
+                            btn.style.background = 'white';
+                        });
+                        
+                        // Limpar campo de período
+                        document.getElementById('pricePeriodo').value = '';
+                    }
+                });
+            }
+        });
+
+        // ==================== FUNÇÕES CALCULADORA PRICE ====================
+
+        function selecionarModalidade(modalidade) {
+            modalidadeSelecionada = modalidade;
+            
+            const btnPrice = document.getElementById('btnModalidadePrice');
+            const btnSac = document.getElementById('btnModalidadeSac');
+            
+            if (modalidade === 'price') {
+                btnPrice.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                btnPrice.style.color = 'white';
+                btnSac.style.background = '#e5e7eb';
+                btnSac.style.color = '#374151';
+            } else {
+                btnSac.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                btnSac.style.color = 'white';
+                btnPrice.style.background = '#e5e7eb';
+                btnPrice.style.color = '#374151';
+            }
+        }
+
+        function mostrarEscolhaSimulacao() {
+            // Verificar se há valores no pós-obra
+            const temPosObra = (state.parcelasPosObra.mensais.valor > 0 && state.parcelasPosObra.mensais.qtd > 0) ||
+                              (state.parcelasPosObra.semestrais.valor > 0 && state.parcelasPosObra.semestrais.qtd > 0) ||
+                              (state.parcelasPosObra.anuais.valor > 0 && state.parcelasPosObra.anuais.qtd > 0);
+            
+            const totalPago = calcularTotalEntradas() + calcularTotalParcelasUnicasObra() + calcularTotalDuranteObra() + state.parcelaHabiteSe + calcularTotalPosObra();
+            const valorRestante = state.valorTotal - totalPago;
+            const temValorRestante = valorRestante > 0;
+            
+            // REGRA: Se Pós-Obra estiver preenchido, usar APENAS valores do Pós-Obra
+            // Se Pós-Obra estiver vazio E houver valor faltante, usar Saldo Total
+            
+            if (temPosObra) {
+                // Ir direto para pós-obra (não importa se tem valor faltante)
+                abrirSimulacaoPosObra();
+            } else if (temValorRestante) {
+                // Só usa saldo total se NÃO tiver pós-obra preenchido
+                abrirSimulacaoSaldoTotal();
+            }
+        }
+
+        function fecharModalEscolha() {
+            document.getElementById('modalEscolha').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        function abrirSimulacaoSaldoTotal() {
+            fecharModalEscolha();
+            
+            // Resetar para Price por padrão
+            modalidadeSelecionada = 'price';
+            selecionarModalidade('price');
+            
+            document.getElementById('priceTituloSimulacao').textContent = 'Simulação de Financiamento - Tabela Price/SAC (Saldo Total)';
+            document.getElementById('priceInfoTexto').textContent = 'Escolha entre Tabela Price (parcelas fixas) ou SAC (parcelas decrescentes) para financiar o saldo restante total.';
+            
+            document.getElementById('priceIdade').value = '';
+            document.getElementById('priceValorFinanciar').value = saldoRestanteGlobal.toFixed(2);
+            document.getElementById('priceEntrada').value = 0;
+            document.getElementById('priceTaxaJuros').value = '';
+            document.getElementById('pricePeriodo').value = '';
+            document.getElementById('priceTipoPeriodo').value = 'meses';
+            document.getElementById('priceTipoTaxa').value = 'anual';
+            
+            // Remover atributo max do período inicialmente
+            document.getElementById('pricePeriodo').removeAttribute('max');
+            
+            document.getElementById('priceModoSaldoTotal').classList.remove('hidden');
+            document.getElementById('priceModoPosObra').classList.add('hidden');
+            document.getElementById('priceResults').classList.add('hidden');
+            document.getElementById('priceSection').classList.remove('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('priceSection').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100);
+        }
+
+        function calcularPrazoMaximo() {
+            const idade = parseInt(document.getElementById('priceIdade').value) || 0;
+            
+            // Se idade inválida, apenas esconder opções (sem alertas durante digitação)
+            if (idade === 0 || idade < 18 || idade >= 80) {
+                document.getElementById('opcoesPrazoContainer').classList.add('hidden');
+                return;
+            }
+            
+            // Idade final máxima: 80 anos e 6 meses = 80.5 anos
+            const prazoMaximoAnos = Math.floor((80.5 - idade) * 10) / 10;
+            let prazoMaximoMeses = Math.floor(prazoMaximoAnos * 12);
+            
+            // LIMITE MÁXIMO: 420 meses (35 anos)
+            if (prazoMaximoMeses > 420) {
+                prazoMaximoMeses = 420;
+            }
+            
+            const prazoMaximoAnosLimitado = Math.floor(prazoMaximoMeses / 12);
+            
+            // Atualizar o campo de período
+            const campoPeriodo = document.getElementById('pricePeriodo');
+            const tipoPeriodo = document.getElementById('priceTipoPeriodo').value;
+            
+            if (tipoPeriodo === 'meses') {
+                campoPeriodo.setAttribute('max', prazoMaximoMeses);
+            } else {
+                campoPeriodo.setAttribute('max', prazoMaximoAnosLimitado);
+            }
+            
+            // Gerar opções de prazo
+            gerarOpcoesPrazo(prazoMaximoAnosLimitado, prazoMaximoMeses);
+        }
+
+        function gerarOpcoesPrazo(prazoMaximoAnos, prazoMaximoMeses) {
+            const container = document.getElementById('opcoesPrazo');
+            const tipoPeriodo = document.getElementById('priceTipoPeriodo').value;
+            container.innerHTML = '';
+            
+            // Definir opções comuns de prazo em anos (máximo 35 anos = 420 meses)
+            const opcoesAnos = [5, 10, 15, 20, 25, 30, 35];
+            const opcoesFiltradas = opcoesAnos.filter(anos => anos <= prazoMaximoAnos);
+            
+            // Se o prazo máximo não está nas opções e é menor que 35, adicionar
+            const prazoMaxAnos = Math.floor(prazoMaximoAnos);
+            if (!opcoesFiltradas.includes(prazoMaxAnos) && prazoMaxAnos > 0 && prazoMaxAnos < 35) {
+                opcoesFiltradas.push(prazoMaxAnos);
+                opcoesFiltradas.sort((a, b) => a - b);
+            }
+            
+            // Criar botões para cada opção
+            opcoesFiltradas.forEach(anos => {
+                const meses = anos * 12;
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'btn-prazo';
+                button.style.cssText = `
+                    background: white;
+                    border: 2px solid #e5e7eb;
+                    border-radius: 12px;
+                    padding: 0.75rem 1rem;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    font-weight: 700;
+                    color: #374151;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 0.25rem;
+                `;
+                
+                button.innerHTML = `
+                    <span style="font-size: 1.25rem;">${anos}</span>
+                    <span style="font-size: 0.75rem; opacity: 0.7;">${anos === 1 ? 'ano' : 'anos'}</span>
+                    <span style="font-size: 0.65rem; opacity: 0.5;">(${meses} meses)</span>
+                `;
+                
+                button.addEventListener('mouseenter', function() {
+                    this.style.borderColor = '#667eea';
+                    this.style.background = 'linear-gradient(135deg, #eff6ff, #dbeafe)';
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 5px 15px rgba(102, 126, 234, 0.2)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('selected')) {
+                        this.style.borderColor = '#e5e7eb';
+                        this.style.background = 'white';
+                        this.style.transform = 'translateY(0)';
+                        this.style.boxShadow = 'none';
+                    }
+                });
+                
+                button.addEventListener('click', function() {
+                    // Remover seleção de todos os botões
+                    document.querySelectorAll('.btn-prazo').forEach(btn => {
+                        btn.classList.remove('selected');
+                        btn.style.borderColor = '#e5e7eb';
+                        btn.style.background = 'white';
+                    });
+                    
+                    // Selecionar este botão
+                    this.classList.add('selected');
+                    this.style.borderColor = '#667eea';
+                    this.style.background = 'linear-gradient(135deg, #eff6ff, #dbeafe)';
+                    this.style.boxShadow = '0 5px 15px rgba(102, 126, 234, 0.2)';
+                    
+                    // Atualizar campo de período
+                    const campoPeriodo = document.getElementById('pricePeriodo');
+                    const tipoPeriodo = document.getElementById('priceTipoPeriodo').value;
+                    
+                    if (tipoPeriodo === 'meses') {
+                        campoPeriodo.value = meses;
+                    } else {
+                        campoPeriodo.value = anos;
+                    }
+                });
+                
+                container.appendChild(button);
+            });
+            
+            // Mostrar container de opções
+            document.getElementById('opcoesPrazoContainer').classList.remove('hidden');
+        }
+
+        function abrirSimulacaoPosObra() {
+            fecharModalEscolha();
+            
+            // Verificar se há valores no pós-obra
+            if (state.parcelasPosObra.mensais.qtd === 0 && 
+                state.parcelasPosObra.semestrais.qtd === 0 && 
+                state.parcelasPosObra.anuais.qtd === 0) {
+                alert('Por favor, preencha os valores do Pós-Obra antes de usar esta opção.');
+                return;
+            }
+            
+            document.getElementById('priceTituloSimulacao').textContent = 'Simulação de Financiamento - Valores do Pós-Obra';
+            document.getElementById('priceInfoTexto').textContent = 'Esta simulação calcula as parcelas reajustadas com base nos valores já preenchidos no Pós-Obra.';
+            
+            document.getElementById('priceEntradaPosObra').value = 0;
+            document.getElementById('priceTaxaJurosPosObra').value = '';
+            document.getElementById('priceTipoTaxaPosObra').value = 'anual';
+            
+            document.getElementById('priceModoSaldoTotal').classList.add('hidden');
+            document.getElementById('priceModoPosObra').classList.remove('hidden');
+            document.getElementById('priceResults').classList.add('hidden');
+            document.getElementById('priceSection').classList.remove('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('priceSection').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100);
+        }
+
+        function calcularPriceSaldoTotal() {
+            try {
+                const idade = parseInt(document.getElementById('priceIdade').value) || 0;
+                let valorFinanciar = parseFloat(document.getElementById('priceValorFinanciar').value);
+                const entradaAdicional = parseFloat(document.getElementById('priceEntrada').value) || 0;
+                let taxaJuros = parseFloat(document.getElementById('priceTaxaJuros').value);
+                let periodo = parseInt(document.getElementById('pricePeriodo').value);
+                const tipoTaxa = document.getElementById('priceTipoTaxa').value;
+                const tipoPeriodo = document.getElementById('priceTipoPeriodo').value;
+
+                // Validação de idade
+                if (idade < 18) {
+                    alert('❌ Idade mínima para financiamento: 18 anos');
+                    return;
+                }
+
+                if (idade >= 80) {
+                    alert('❌ Não é possível realizar financiamento devido à idade.\n\nA idade máxima permitida pelos bancos é de 79 anos, pois a idade final (idade + prazo mínimo) não pode ultrapassar 80 anos e 6 meses.');
+                    return;
+                }
+
+                // Validar idade final
+                const periodoAnos = tipoPeriodo === 'anos' ? periodo : periodo / 12;
+                const idadeFinal = idade + periodoAnos;
+                
+                // Calcular prazo máximo considerando idade e limite de 420 meses
+                let prazoMaximoMeses = Math.floor((80.5 - idade) * 12);
+                if (prazoMaximoMeses > 420) {
+                    prazoMaximoMeses = 420;
+                }
+                const prazoMaximoAnos = Math.floor(prazoMaximoMeses / 12);
+                
+                // Validar se não ultrapassa 420 meses
+                const periodoMeses = tipoPeriodo === 'anos' ? periodo * 12 : periodo;
+                if (periodoMeses > 420) {
+                    alert(`❌ O prazo máximo permitido é de 420 meses (35 anos)!\n\nPrazo informado: ${Math.round(periodoMeses)} meses (${Math.round(periodoAnos)} anos)`);
+                    return;
+                }
+                
+                if (idadeFinal > 80.5) {
+                    alert(`❌ A soma da sua idade (${idade} anos) + prazo (${Math.round(periodoAnos)} anos) ultrapassa o limite de 80 anos e 6 meses!\n\nIdade final seria: ${idadeFinal.toFixed(1)} anos\nPrazo máximo permitido: ${prazoMaximoAnos} anos (${prazoMaximoMeses} meses)`);
+                    return;
+                }
+
+                if (isNaN(valorFinanciar) || valorFinanciar <= 0) {
+                    alert('Valor a financiar inválido.');
+                    return;
+                }
+
+                if (isNaN(taxaJuros) || taxaJuros <= 0) {
+                    alert('Por favor, insira uma taxa de juros válida.');
+                    return;
+                }
+
+                if (isNaN(periodo) || periodo <= 0) {
+                    alert('Por favor, insira um período válido.');
+                    return;
+                }
+
+                valorFinanciar -= entradaAdicional;
+
+                if (valorFinanciar <= 0) {
+                    alert('A entrada adicional não pode ser maior ou igual ao valor a financiar.');
+                    return;
+                }
+
+                if (tipoPeriodo === 'anos') {
+                    periodo = periodo * 12;
+                }
+
+                if (tipoTaxa === 'anual') {
+                    taxaJuros = Math.pow(1 + taxaJuros/100, 1/12) - 1;
+                } else {
+                    taxaJuros = taxaJuros / 100;
+                }
+
+                let primeiraParcela = 0;
+                let ultimaParcela = 0;
+                let totalJuros = 0;
+                const tableBody = document.getElementById('priceTableBody');
+                tableBody.innerHTML = '';
+
+                if (modalidadeSelecionada === 'price') {
+                    // TABELA PRICE - Parcelas Fixas
+                    const parcela = valorFinanciar * (taxaJuros * Math.pow(1 + taxaJuros, periodo)) / 
+                                   (Math.pow(1 + taxaJuros, periodo) - 1);
+
+                    primeiraParcela = parcela;
+                    ultimaParcela = parcela;
+
+                    let saldoDevedor = valorFinanciar;
+
+                    for (let i = 1; i <= periodo; i++) {
+                        const juros = saldoDevedor * taxaJuros;
+                        const amortizacao = parcela - juros;
+                        saldoDevedor -= amortizacao;
+                        totalJuros += juros;
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${i}</td>
+                            <td>${formatCurrency(parcela)}</td>
+                            <td>${formatCurrency(juros)}</td>
+                            <td>${formatCurrency(amortizacao)}</td>
+                            <td>${formatCurrency(Math.max(0, saldoDevedor))}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    }
+
+                    document.getElementById('priceParcela').textContent = formatCurrency(primeiraParcela);
+                    
+                } else {
+                    // TABELA SAC - Parcelas Decrescentes
+                    const amortizacaoFixa = valorFinanciar / periodo;
+                    let saldoDevedor = valorFinanciar;
+
+                    for (let i = 1; i <= periodo; i++) {
+                        const juros = saldoDevedor * taxaJuros;
+                        const parcela = amortizacaoFixa + juros;
+                        saldoDevedor -= amortizacaoFixa;
+                        totalJuros += juros;
+
+                        if (i === 1) primeiraParcela = parcela;
+                        if (i === periodo) ultimaParcela = parcela;
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${i}</td>
+                            <td style="font-weight: ${i === 1 || i === periodo ? '900' : '600'}; color: ${i === 1 ? '#059669' : i === periodo ? '#dc2626' : 'inherit'};">${formatCurrency(parcela)}</td>
+                            <td>${formatCurrency(juros)}</td>
+                            <td>${formatCurrency(amortizacaoFixa)}</td>
+                            <td>${formatCurrency(Math.max(0, saldoDevedor))}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    }
+
+                    document.getElementById('priceParcela').innerHTML = `
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div>
+                                <div style="font-size: 0.875rem; opacity: 0.9;">Primeira</div>
+                                <div style="font-size: 1.5rem; font-weight: 900; color: white;">${formatCurrency(primeiraParcela)}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.875rem; opacity: 0.9;">Última</div>
+                                <div style="font-size: 1.5rem; font-weight: 900; color: white;">${formatCurrency(ultimaParcela)}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const totalPago = valorFinanciar + totalJuros;
+
+                // Resetar layout para modo saldo total
+                document.getElementById('priceParcelaUnicaContainer').classList.remove('hidden');
+                document.getElementById('priceResumoPosObra').classList.add('hidden');
+                
+                document.getElementById('priceValorFinanciado').textContent = formatCurrency(valorFinanciar);
+                document.getElementById('priceTotal').textContent = formatCurrency(totalPago + entradaAdicional);
+                document.getElementById('priceJuros').textContent = formatCurrency(totalJuros);
+
+                document.getElementById('priceResults').classList.remove('hidden');
+                document.getElementById('priceResults').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            } catch (error) {
+                alert('Erro ao calcular financiamento: ' + error.message);
+            }
+        }
+
+        function calcularPricePosObra() {
+            try {
+                const entradaAdicional = parseFloat(document.getElementById('priceEntradaPosObra').value) || 0;
+                let taxaJurosInput = parseFloat(document.getElementById('priceTaxaJurosPosObra').value);
+                const tipoTaxa = document.getElementById('priceTipoTaxaPosObra').value;
+
+                if (isNaN(taxaJurosInput) || taxaJurosInput <= 0) {
+                    alert('Por favor, insira uma taxa de juros válida.');
+                    return;
+                }
+
+                // Converter taxa para mensal se necessário
+                let taxaJurosMensal;
+                if (tipoTaxa === 'anual') {
+                    taxaJurosMensal = Math.pow(1 + taxaJurosInput/100, 1/12) - 1;
+                } else {
+                    taxaJurosMensal = taxaJurosInput / 100;
+                }
+
+                const totalPosObra = calcularTotalPosObra();
+                
+                if (totalPosObra === 0) {
+                    alert('Por favor, preencha os valores do Pós-Obra antes de calcular.');
+                    return;
+                }
+                
+                let valorFinanciar = totalPosObra - entradaAdicional;
+
+                if (valorFinanciar <= 0) {
+                    alert('A entrada adicional não pode ser maior ou igual ao valor total do pós-obra.');
+                    return;
+                }
+
+                // Coletar dados do pós-obra
+                const mensais = state.parcelasPosObra.mensais;
+                const semestrais = state.parcelasPosObra.semestrais;
+                const anuais = state.parcelasPosObra.anuais;
+
+                let totalJuros = 0;
+                let totalPago = entradaAdicional;
+                const resultados = {
+                    mensal: null,
+                    semestral: null,
+                    anual: null
+                };
+
+                // Calcular taxas compostas
+                const taxaSemestral = Math.pow(1 + taxaJurosMensal, 6) - 1;
+                const taxaAnual = Math.pow(1 + taxaJurosMensal, 12) - 1;
+
+                // Calcular para mensais
+                if (mensais.qtd > 0 && mensais.valor > 0) {
+                    const valorMensais = mensais.valor * mensais.qtd;
+                    const parcelaMensalReajustada = valorMensais * (taxaJurosMensal * Math.pow(1 + taxaJurosMensal, mensais.qtd)) / 
+                                                    (Math.pow(1 + taxaJurosMensal, mensais.qtd) - 1);
+                    const totalMensais = parcelaMensalReajustada * mensais.qtd;
+                    const jurosMensais = totalMensais - valorMensais;
+                    
+                    resultados.mensal = {
+                        parcela: parcelaMensalReajustada,
+                        total: totalMensais,
+                        juros: jurosMensais,
+                        qtd: mensais.qtd,
+                        valorOriginal: mensais.valor
+                    };
+                    
+                    totalPago += totalMensais;
+                    totalJuros += jurosMensais;
+                }
+
+                // Calcular para semestrais
+                if (semestrais.qtd > 0 && semestrais.valor > 0) {
+                    const valorSemestrais = semestrais.valor * semestrais.qtd;
+                    const periodoSemestral = semestrais.qtd * 6; // em meses
+                    const taxaSemestral = Math.pow(1 + taxaJurosMensal, 6) - 1;
+                    const parcelaSemestralReajustada = valorSemestrais * (taxaSemestral * Math.pow(1 + taxaSemestral, semestrais.qtd)) / 
+                                                       (Math.pow(1 + taxaSemestral, semestrais.qtd) - 1);
+                    const totalSemestrais = parcelaSemestralReajustada * semestrais.qtd;
+                    const jurosSemestrais = totalSemestrais - valorSemestrais;
+                    
+                    resultados.semestral = {
+                        parcela: parcelaSemestralReajustada,
+                        total: totalSemestrais,
+                        juros: jurosSemestrais,
+                        qtd: semestrais.qtd,
+                        valorOriginal: semestrais.valor
+                    };
+                    
+                    totalPago += totalSemestrais;
+                    totalJuros += jurosSemestrais;
+                }
+
+                // Calcular para anuais
+                if (anuais.qtd > 0 && anuais.valor > 0) {
+                    const valorAnuais = anuais.valor * anuais.qtd;
+                    const periodoAnual = anuais.qtd * 12; // em meses
+                    const taxaAnual = Math.pow(1 + taxaJurosMensal, 12) - 1;
+                    const parcelaAnualReajustada = valorAnuais * (taxaAnual * Math.pow(1 + taxaAnual, anuais.qtd)) / 
+                                                   (Math.pow(1 + taxaAnual, anuais.qtd) - 1);
+                    const totalAnuais = parcelaAnualReajustada * anuais.qtd;
+                    const jurosAnuais = totalAnuais - valorAnuais;
+                    
+                    resultados.anual = {
+                        parcela: parcelaAnualReajustada,
+                        total: totalAnuais,
+                        juros: jurosAnuais,
+                        qtd: anuais.qtd,
+                        valorOriginal: anuais.valor
+                    };
+                    
+                    totalPago += totalAnuais;
+                    totalJuros += jurosAnuais;
+                }
+
+                // Exibir resultados principais
+                document.getElementById('priceValorFinanciado').textContent = formatCurrency(valorFinanciar);
+                document.getElementById('priceTotal').textContent = formatCurrency(totalPago);
+                document.getElementById('priceJuros').textContent = formatCurrency(totalJuros);
+                
+                // Esconder parcela única fixa
+                document.getElementById('priceParcelaUnicaContainer').classList.add('hidden');
+
+                // Mostrar resumo do pós-obra
+                document.getElementById('priceResumoPosObra').classList.remove('hidden');
+                
+                // Mostrar valores reajustados
+                if (resultados.mensal) {
+                    document.getElementById('priceMensalReajustada').textContent = formatCurrency(resultados.mensal.parcela);
+                    document.getElementById('priceMensalReajustadaBox').classList.remove('hidden');
+                } else {
+                    document.getElementById('priceMensalReajustadaBox').classList.add('hidden');
+                }
+                
+                if (resultados.semestral) {
+                    document.getElementById('priceSemestralReajustada').textContent = formatCurrency(resultados.semestral.parcela);
+                    document.getElementById('priceSemestralReajustadaBox').classList.remove('hidden');
+                } else {
+                    document.getElementById('priceSemestralReajustadaBox').classList.add('hidden');
+                }
+                
+                if (resultados.anual) {
+                    document.getElementById('priceAnualReajustada').textContent = formatCurrency(resultados.anual.parcela);
+                    document.getElementById('priceAnualReajustadaBox').classList.remove('hidden');
+                } else {
+                    document.getElementById('priceAnualReajustadaBox').classList.add('hidden');
+                }
+
+                // Gerar tabela de amortização na sequência cronológica correta
+                const tableBody = document.getElementById('priceTableBody');
+                tableBody.innerHTML = '';
+
+                // Determinar o período total em meses baseado no maior prazo
+                let periodoTotal = 0;
+                if (resultados.mensal) periodoTotal = Math.max(periodoTotal, resultados.mensal.qtd);
+                if (resultados.semestral) periodoTotal = Math.max(periodoTotal, resultados.semestral.qtd * 6);
+                if (resultados.anual) periodoTotal = Math.max(periodoTotal, resultados.anual.qtd * 12);
+
+                // Inicializar saldos devedores
+                let saldoMensal = resultados.mensal ? mensais.valor * mensais.qtd : 0;
+                let saldoSemestral = resultados.semestral ? semestrais.valor * semestrais.qtd : 0;
+                let saldoAnual = resultados.anual ? anuais.valor * anuais.qtd : 0;
+
+                let contadorMensal = 0;
+                let contadorSemestral = 0;
+                let contadorAnual = 0;
+
+                // Percorrer mês a mês e adicionar as parcelas correspondentes
+                for (let mes = 1; mes <= periodoTotal; mes++) {
+                    // Verificar se há pagamento mensal neste mês
+                    if (resultados.mensal && contadorMensal < resultados.mensal.qtd) {
+                        contadorMensal++;
+                        const juros = saldoMensal * taxaJurosMensal;
+                        const amortizacao = resultados.mensal.parcela - juros;
+                        saldoMensal = Math.max(0, saldoMensal - amortizacao);
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td style="font-weight: 700;">Mês ${mes} - Mensal ${contadorMensal}</td>
+                            <td style="font-weight: 700;">${formatCurrency(resultados.mensal.parcela)}</td>
+                            <td>${formatCurrency(juros)}</td>
+                            <td>${formatCurrency(amortizacao)}</td>
+                            <td style="font-weight: 700;">${formatCurrency(saldoMensal)}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    }
+                    
+                    // Verificar se há pagamento semestral neste mês (a cada 6 meses)
+                    if (resultados.semestral && mes % 6 === 0 && contadorSemestral < resultados.semestral.qtd) {
+                        contadorSemestral++;
+                        const juros = saldoSemestral * taxaSemestral;
+                        const amortizacao = resultados.semestral.parcela - juros;
+                        saldoSemestral = Math.max(0, saldoSemestral - amortizacao);
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td style="font-weight: 700;">Mês ${mes} - Semestral ${contadorSemestral}</td>
+                            <td style="font-weight: 700; color: #2563eb;">${formatCurrency(resultados.semestral.parcela)}</td>
+                            <td style="color: #2563eb;">${formatCurrency(juros)}</td>
+                            <td style="color: #2563eb;">${formatCurrency(amortizacao)}</td>
+                            <td style="font-weight: 700; color: #2563eb;">${formatCurrency(saldoSemestral)}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    }
+                    
+                    // Verificar se há pagamento anual neste mês (a cada 12 meses)
+                    if (resultados.anual && mes % 12 === 0 && contadorAnual < resultados.anual.qtd) {
+                        contadorAnual++;
+                        const juros = saldoAnual * taxaAnual;
+                        const amortizacao = resultados.anual.parcela - juros;
+                        saldoAnual = Math.max(0, saldoAnual - amortizacao);
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td style="font-weight: 700;">Mês ${mes} - Anual ${contadorAnual}</td>
+                            <td style="font-weight: 700; color: #7c3aed;">${formatCurrency(resultados.anual.parcela)}</td>
+                            <td style="color: #7c3aed;">${formatCurrency(juros)}</td>
+                            <td style="color: #7c3aed;">${formatCurrency(amortizacao)}</td>
+                            <td style="font-weight: 700; color: #7c3aed;">${formatCurrency(saldoAnual)}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    }
+                }
+
+                document.getElementById('priceResults').classList.remove('hidden');
+                document.getElementById('priceResults').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            } catch (error) {
+                alert('Erro ao calcular financiamento: ' + error.message);
+            }
+        }
+    
+    </script>
+</body>
+</html>
