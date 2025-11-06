@@ -18,6 +18,9 @@ function initUtils() {
   return true;
 }
 
+// Import Calculator API client
+import { calculatorAPI, APIError } from './calculator-api.js';
+
 // ===== UTILITY FUNCTIONS =====
 function toggleSubmenu(buttonId, submenuId) {
   const button = document.getElementById(buttonId);
@@ -573,28 +576,11 @@ const CalculatorModule = {
     try {
       const formData = this.collectFormData();
 
-      // Add userId (for now, use a guest ID with random component to prevent race conditions)
-      let userId;
-      try {
-        userId = localStorage.getItem('userId');
-        if (!userId) {
-          const array = new Uint8Array(5);
-          crypto.getRandomValues(array);
-          const randomPart = Array.from(array, (byte) => byte.toString(36))
-            .join('')
-            .substring(0, 7);
-          userId = `guest-${Date.now()}-${randomPart}`;
-          localStorage.setItem('userId', userId);
-        }
-      } catch (error) {
-        // Fallback if localStorage is not available
-        logger.warn('localStorage not available, using temporary guest ID');
-        const array = new Uint8Array(5);
-        crypto.getRandomValues(array);
-        const randomPart = Array.from(array, (byte) => byte.toString(36))
-          .join('')
-          .substring(0, 7);
-        userId = `guest-${Date.now()}-${randomPart}`;
+      // Use temporary guest ID for demo (auth will be added later)
+      let userId = sessionStorage.getItem('userId');
+      if (!userId) {
+        userId = 'guest-' + Date.now();
+        sessionStorage.setItem('userId', userId);
       }
 
       const requestData = {
@@ -626,28 +612,21 @@ const CalculatorModule = {
   },
 
   async saveCalculation(data) {
-    // Simulate API call for now
-    // In production, this will call: await calculatorAPI.create(data);
+    // Call Calculator API to create calculation
+    try {
+      const result = await calculatorAPI.create(data);
 
-    // Calculate approval status
-    const requiredCaptation = data.propertyValue * (data.captationPercentage / 100);
-    const actualCaptation = this.calculateTotalPayments(data);
-    const difference = actualCaptation - requiredCaptation;
-    const percentagePaid = (actualCaptation / requiredCaptation) * 100;
-    const approved = actualCaptation >= requiredCaptation;
-
-    return {
-      id: `calc-${Date.now()}`,
-      ...data,
-      approvalStatus: {
-        approved,
-        requiredCaptation,
-        actualCaptation,
-        difference,
-        percentagePaid,
-      },
-      createdAt: new Date().toISOString(),
-    };
+      // The API returns the calculation with approval status already calculated
+      return result;
+    } catch (error) {
+      if (error instanceof APIError) {
+        logger.error('API Error saving calculation:', error.message);
+        throw new Error(`Erro ao salvar: ${error.message}`);
+      } else {
+        logger.error('Network error saving calculation:', error);
+        throw new Error('Erro de rede. Tente novamente.');
+      }
+    }
   },
 
   calculateTotalPayments(data) {
@@ -861,36 +840,50 @@ const CalculatorModule = {
         return;
       }
 
-      // Simulate generating share link
-      const shortCode = this.generateShortCode();
-      const shareUrl = `${window.location.origin}/c/${shortCode}`;
+      const userId = sessionStorage.getItem('userId');
+      if (!userId) {
+        this.showErrorMessage('Usuário não identificado');
+        return;
+      }
 
-      // Update current calculation
+      // Call API to generate shareable link
+      const shareUrl = await calculatorAPI.generateShareableLink(
+        this.currentCalculatorId,
+        userId
+      );
+
+      // Update current calculation with shortCode
       const calc = this.userCalculations.find((c) => c.id === this.currentCalculatorId);
       if (calc) {
-        calc.shortCode = shortCode;
+        // Extract shortCode from shareUrl
+        const urlParts = shareUrl.split('code=');
+        if (urlParts.length > 1) {
+          calc.shortCode = urlParts[1];
+        }
         this.updateStatistics();
       }
 
-      // Show share modal/alert
+      // Show share modal with the URL
       this.showShareModal(shareUrl);
+
+      // Copy to clipboard
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        showToast('Link copiado para área de transferência!', 'success');
+      } catch (clipboardError) {
+        logger.warn('Could not copy to clipboard', clipboardError);
+      }
     } catch (error) {
-      logger.error('Error generating share link', error);
-      this.showErrorMessage('Falha ao gerar link de compartilhamento');
+      if (error instanceof APIError) {
+        logger.error('API Error generating share link:', error.message);
+        this.showErrorMessage(`Erro ao gerar link: ${error.message}`);
+      } else {
+        logger.error('Error generating share link', error);
+        this.showErrorMessage('Falha ao gerar link de compartilhamento');
+      }
     }
   },
 
-  generateShortCode() {
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    const array = new Uint8Array(6);
-    crypto.getRandomValues(array);
-
-    let code = '';
-    for (let i = 0; i < 6; i++) {
-      code += chars.charAt(array[i] % chars.length);
-    }
-    return code;
-  },
 
   showShareModal(url) {
     // Clean up any existing modal to prevent memory leaks
@@ -1052,44 +1045,36 @@ const CalculatorModule = {
     document.getElementById('btnShare').classList.add('hidden');
   },
 
-  loadUserCalculations() {
-    // Load from localStorage for demo
+  async loadUserCalculations() {
     try {
-      const saved = localStorage.getItem('userCalculations');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        // Validate parsed data is an array
-        if (Array.isArray(parsed)) {
-          this.userCalculations = parsed;
-          this.updateStatistics();
-          this.updateCalculationsTable();
-        } else {
-          logger.warn('Invalid userCalculations data in localStorage');
-          this.userCalculations = [];
-        }
+      const userId = sessionStorage.getItem('userId');
+      if (!userId) {
+        logger.warn('No userId found, skipping load');
+        return;
       }
+
+      const response = await calculatorAPI.list(userId, 10, 0);
+      this.userCalculations = response.calculators || [];
+
+      // Update table
+      this.updateCalculationsTable();
+
+      // Update statistics
+      this.updateStatistics();
+
+      logger.info('Loaded calculations:', this.userCalculations.length);
     } catch (error) {
-      logger.error('Error loading userCalculations from localStorage', error);
+      if (error instanceof APIError) {
+        logger.error('Failed to load calculations:', error.message);
+        showToast('Erro ao carregar cálculos anteriores', 'error');
+      } else {
+        logger.error('Network error loading calculations:', error);
+      }
+      // Keep empty array on error
       this.userCalculations = [];
     }
   },
 
-  saveToLocalStorage() {
-    try {
-      localStorage.setItem('userCalculations', JSON.stringify(this.userCalculations));
-    } catch (error) {
-      logger.error('Error saving to localStorage', error);
-
-      // Handle quota exceeded error specifically
-      if (error.name === 'QuotaExceededError' || error.code === 22 || error.code === 1014) {
-        this.showErrorMessage(
-          'Armazenamento local cheio. Por favor, exporte seus dados e limpe alguns cálculos antigos.'
-        );
-      } else {
-        this.showErrorMessage('Falha ao salvar dados localmente');
-      }
-    }
-  },
 
   showLoadingState(loading) {
     const submitBtn = document.querySelector('.btn-primary-form');
@@ -1104,7 +1089,6 @@ const CalculatorModule = {
 
   showSuccessMessage(message) {
     showToast(message, 'success');
-    this.saveToLocalStorage();
   },
 
   showErrorMessage(message) {
