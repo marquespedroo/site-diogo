@@ -5,19 +5,39 @@
  * NOTE: This file requires shared-utils.js to be loaded first
  */
 
-// Use shared utilities from ImobiUtils
-const { formatCurrency, formatNumber, showToast, logger, COLORS, CHART_CONFIG } = window.ImobiUtils;
+// Access shared utilities from global scope (loaded by shared-utils.js)
+// These are available globally: formatCurrency, formatNumber, showToast, logger, COLORS, CHART_CONFIG
+
+// Verify utilities are available
+function initUtils() {
+  if (!window.ImobiUtils) {
+    console.error('ImobiUtils not loaded! Make sure shared-utils.js is loaded before dashboard.js');
+    return false;
+  }
+  console.log('ImobiUtils loaded successfully');
+  return true;
+}
+
+// Import Calculator API client
+import { calculatorAPI, APIError } from './calculator-api';
+
+// Import Auth functions
+import { auth } from './auth.js';
 
 // ===== UTILITY FUNCTIONS =====
 function toggleSubmenu(buttonId, submenuId) {
   const button = document.getElementById(buttonId);
   const submenu = document.getElementById(submenuId);
-  const arrow = button.querySelector('.arrow-icon');
 
-  if (submenu) {
+  // Check if both button and submenu exist before proceeding
+  if (button && submenu) {
+    const arrow = button.querySelector('.arrow-icon');
+
     button.addEventListener('click', () => {
       submenu.classList.toggle('show');
-      arrow.classList.toggle('rotated');
+      if (arrow) {
+        arrow.classList.toggle('rotated');
+      }
     });
   }
 }
@@ -30,9 +50,39 @@ function initSidebar() {
   // When adding more submenus, add them here like:
   // toggleSubmenu('pages-toggle', 'pages-submenu');
 
+  // Sidebar collapse functionality
+  const collapseBtn = document.getElementById('sidebarCollapseBtn');
+  const sidebar = document.getElementById('sidebar');
+
+  if (collapseBtn && sidebar) {
+    // Load saved state from localStorage
+    try {
+      const savedState = localStorage.getItem('sidebarCollapsed');
+      if (savedState === 'true') {
+        sidebar.classList.add('collapsed');
+      }
+    } catch (error) {
+      logger.warn('Could not load sidebar state from localStorage', error);
+    }
+
+    collapseBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+
+      // Save state to localStorage
+      try {
+        const isCollapsed = sidebar.classList.contains('collapsed');
+        localStorage.setItem('sidebarCollapsed', isCollapsed);
+      } catch (error) {
+        logger.warn('Could not save sidebar state to localStorage', error);
+      }
+
+      // Trigger window resize to update any responsive elements
+      window.dispatchEvent(new Event('resize'));
+    });
+  }
+
   // Mobile menu toggle
   const menuToggle = document.getElementById('menu-toggle');
-  const sidebar = document.getElementById('sidebar');
 
   if (menuToggle && sidebar) {
     menuToggle.addEventListener('click', () => {
@@ -52,6 +102,53 @@ function initSidebar() {
       }
     });
   }
+}
+
+// ===== BREADCRUMB NAVIGATION =====
+function initBreadcrumb() {
+  // Handle breadcrumb navigation
+  const breadcrumbLinks = document.querySelectorAll('.breadcrumb-link');
+
+  breadcrumbLinks.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      const href = link.getAttribute('href');
+
+      // Handle "Ferramentas" link - open sidebar on mobile or highlight tools section
+      if (href === '#ferramentas') {
+        e.preventDefault();
+
+        const sidebar = document.getElementById('sidebar');
+
+        // On mobile, open the sidebar
+        if (window.innerWidth <= 1024 && sidebar) {
+          sidebar.classList.add('open');
+
+          // Scroll to the tools section in sidebar
+          const toolsSection = sidebar.querySelector('.nav-header');
+          if (toolsSection) {
+            toolsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        } else {
+          // On desktop, just highlight the tools section in sidebar
+          const toolsSection = sidebar?.querySelector('.nav-section');
+          if (toolsSection) {
+            // Add a temporary highlight effect
+            toolsSection.style.transition = 'background-color 0.3s ease';
+            toolsSection.style.backgroundColor = 'rgba(102, 126, 234, 0.1)';
+
+            setTimeout(() => {
+              toolsSection.style.backgroundColor = '';
+            }, 1000);
+          }
+        }
+
+        logger.info('Breadcrumb: Navigated to Ferramentas section');
+      }
+      // For other links, allow default navigation
+    });
+  });
+
+  logger.info('Breadcrumb navigation initialized');
 }
 
 // ===== SALES CHART =====
@@ -199,22 +296,6 @@ function animateProgressBars() {
   progressBars.forEach((bar) => observer.observe(bar));
 }
 
-// ===== STAT CARDS ANIMATION =====
-function animateStatCards() {
-  const statCards = document.querySelectorAll('.stat-card');
-
-  statCards.forEach((card, index) => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-
-    setTimeout(() => {
-      card.style.transition = 'all 0.4s ease';
-      card.style.opacity = '1';
-      card.style.transform = 'translateY(0)';
-    }, 100 * index);
-  });
-}
-
 // ===== RESPONSIVE CHART RESIZE =====
 function handleChartResize() {
   let resizeTimeout;
@@ -246,11 +327,17 @@ function initSmoothScrolling() {
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize utilities first
+  if (!initUtils()) {
+    console.error('Failed to initialize ImobiUtils. Dashboard functionality will be limited.');
+    return; // Exit early if utils not available
+  }
+
   initSidebar();
+  initBreadcrumb();
   initSalesChart();
   initTodoList();
   animateProgressBars();
-  animateStatCards();
   handleChartResize();
   initSmoothScrolling();
 
@@ -490,31 +577,41 @@ const CalculatorModule = {
 
   async handleFormSubmit() {
     try {
-      const formData = this.collectFormData();
+      // Check feature access before processing
+      const user = auth.getCurrentUser();
+      const userId = user?.id || null;
 
-      // Add userId (for now, use a guest ID with random component to prevent race conditions)
-      let userId;
-      try {
-        userId = localStorage.getItem('userId');
-        if (!userId) {
-          const array = new Uint8Array(5);
-          crypto.getRandomValues(array);
-          const randomPart = Array.from(array, (byte) => byte.toString(36))
-            .join('')
-            .substring(0, 7);
-          userId = `guest-${Date.now()}-${randomPart}`;
-          localStorage.setItem('userId', userId);
+      // Check if user can access calculator feature
+      const accessCheck = await auth.canAccessFeature('calculadora-imoveis');
+
+      if (!accessCheck.canAccess) {
+        this.showLoadingState(false);
+
+        // Handle different denial reasons
+        if (accessCheck.requiresLogin) {
+          this.showQuotaExceededMessage(
+            'Limite de uso atingido!',
+            `Você atingiu o limite de ${accessCheck.remainingUses || 0} cálculos gratuitos. Faça login para continuar.`,
+            'login'
+          );
+          return;
         }
-      } catch (error) {
-        // Fallback if localStorage is not available
-        logger.warn('localStorage not available, using temporary guest ID');
-        const array = new Uint8Array(5);
-        crypto.getRandomValues(array);
-        const randomPart = Array.from(array, (byte) => byte.toString(36))
-          .join('')
-          .substring(0, 7);
-        userId = `guest-${Date.now()}-${randomPart}`;
+
+        if (accessCheck.requiresSubscription) {
+          this.showQuotaExceededMessage(
+            'Limite de uso atingido!',
+            `Você atingiu o limite de ${accessCheck.remainingUses || 0} cálculos. Faça upgrade para continuar usando.`,
+            'upgrade'
+          );
+          return;
+        }
+
+        this.showErrorMessage('Você não tem acesso a esta funcionalidade.');
+        return;
       }
+
+      // Collect form data
+      const formData = this.collectFormData();
 
       const requestData = {
         userId,
@@ -524,8 +621,15 @@ const CalculatorModule = {
       // Show loading state
       this.showLoadingState(true);
 
-      // Make API call (simulated for now - will integrate with real API)
+      // Make API call
       const result = await this.saveCalculation(requestData);
+
+      // Record feature usage after successful calculation
+      await auth.recordFeatureUsage('calculadora-imoveis', 'calculate', {
+        propertyValue: formData.propertyValue,
+        captationPercentage: formData.captationPercentage,
+        calculationId: result.id
+      });
 
       // Update UI
       this.updateApprovalStatus(result);
@@ -534,8 +638,14 @@ const CalculatorModule = {
       this.updateStatistics();
       this.updateCalculationsTable();
 
-      // Show success message
-      this.showSuccessMessage('Cálculo salvo com sucesso!');
+      // Show success message with remaining uses
+      const remainingUses = accessCheck.remainingUses - 1;
+      let successMessage = 'Cálculo salvo com sucesso!';
+      if (remainingUses >= 0) {
+        successMessage += ` (${remainingUses} cálculos restantes)`;
+      }
+      this.showSuccessMessage(successMessage);
+
     } catch (error) {
       logger.error('Error submitting calculation', error);
       this.showErrorMessage('Falha ao salvar cálculo. Por favor, tente novamente.');
@@ -545,28 +655,21 @@ const CalculatorModule = {
   },
 
   async saveCalculation(data) {
-    // Simulate API call for now
-    // In production, this will call: await calculatorAPI.create(data);
+    // Call Calculator API to create calculation
+    try {
+      const result = await calculatorAPI.create(data);
 
-    // Calculate approval status
-    const requiredCaptation = data.propertyValue * (data.captationPercentage / 100);
-    const actualCaptation = this.calculateTotalPayments(data);
-    const difference = actualCaptation - requiredCaptation;
-    const percentagePaid = (actualCaptation / requiredCaptation) * 100;
-    const approved = actualCaptation >= requiredCaptation;
-
-    return {
-      id: `calc-${Date.now()}`,
-      ...data,
-      approvalStatus: {
-        approved,
-        requiredCaptation,
-        actualCaptation,
-        difference,
-        percentagePaid,
-      },
-      createdAt: new Date().toISOString(),
-    };
+      // The API returns the calculation with approval status already calculated
+      return result;
+    } catch (error) {
+      if (error instanceof APIError) {
+        logger.error('API Error saving calculation:', error.message);
+        throw new Error(`Erro ao salvar: ${error.message}`);
+      } else {
+        logger.error('Network error saving calculation:', error);
+        throw new Error('Erro de rede. Tente novamente.');
+      }
+    }
   },
 
   calculateTotalPayments(data) {
@@ -662,20 +765,7 @@ const CalculatorModule = {
   },
 
   updateStatistics() {
-    const total = this.userCalculations.length;
-    const approved = this.userCalculations.filter((c) => c.approvalStatus.approved).length;
-    const approvalRate = total > 0 ? ((approved / total) * 100).toFixed(0) : 0;
-
-    const avgPropertyValue =
-      total > 0 ? this.userCalculations.reduce((sum, c) => sum + c.propertyValue, 0) / total : 0;
-
-    const sharedLinks = this.userCalculations.filter((c) => c.shortCode).length;
-
-    document.getElementById('totalCalculations').textContent = total;
-    document.getElementById('approvedCalculations').textContent = approved;
-    document.getElementById('approvalRate').textContent = `${approvalRate}%`;
-    document.getElementById('avgPropertyValue').textContent = formatCurrency(avgPropertyValue);
-    document.getElementById('sharedLinks').textContent = sharedLinks;
+    // Stats cards removed from dashboard - function kept for compatibility
   },
 
   updateCalculationsTable() {
@@ -793,36 +883,50 @@ const CalculatorModule = {
         return;
       }
 
-      // Simulate generating share link
-      const shortCode = this.generateShortCode();
-      const shareUrl = `${window.location.origin}/c/${shortCode}`;
+      const userId = sessionStorage.getItem('userId');
+      if (!userId) {
+        this.showErrorMessage('Usuário não identificado');
+        return;
+      }
 
-      // Update current calculation
+      // Call API to generate shareable link
+      const shareUrl = await calculatorAPI.generateShareableLink(
+        this.currentCalculatorId,
+        userId
+      );
+
+      // Update current calculation with shortCode
       const calc = this.userCalculations.find((c) => c.id === this.currentCalculatorId);
       if (calc) {
-        calc.shortCode = shortCode;
+        // Extract shortCode from shareUrl
+        const urlParts = shareUrl.split('code=');
+        if (urlParts.length > 1) {
+          calc.shortCode = urlParts[1];
+        }
         this.updateStatistics();
       }
 
-      // Show share modal/alert
+      // Show share modal with the URL
       this.showShareModal(shareUrl);
+
+      // Copy to clipboard
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        showToast('Link copiado para área de transferência!', 'success');
+      } catch (clipboardError) {
+        logger.warn('Could not copy to clipboard', clipboardError);
+      }
     } catch (error) {
-      logger.error('Error generating share link', error);
-      this.showErrorMessage('Falha ao gerar link de compartilhamento');
+      if (error instanceof APIError) {
+        logger.error('API Error generating share link:', error.message);
+        this.showErrorMessage(`Erro ao gerar link: ${error.message}`);
+      } else {
+        logger.error('Error generating share link', error);
+        this.showErrorMessage('Falha ao gerar link de compartilhamento');
+      }
     }
   },
 
-  generateShortCode() {
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    const array = new Uint8Array(6);
-    crypto.getRandomValues(array);
-
-    let code = '';
-    for (let i = 0; i < 6; i++) {
-      code += chars.charAt(array[i] % chars.length);
-    }
-    return code;
-  },
 
   showShareModal(url) {
     // Clean up any existing modal to prevent memory leaks
@@ -984,44 +1088,36 @@ const CalculatorModule = {
     document.getElementById('btnShare').classList.add('hidden');
   },
 
-  loadUserCalculations() {
-    // Load from localStorage for demo
+  async loadUserCalculations() {
     try {
-      const saved = localStorage.getItem('userCalculations');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        // Validate parsed data is an array
-        if (Array.isArray(parsed)) {
-          this.userCalculations = parsed;
-          this.updateStatistics();
-          this.updateCalculationsTable();
-        } else {
-          logger.warn('Invalid userCalculations data in localStorage');
-          this.userCalculations = [];
-        }
+      const userId = sessionStorage.getItem('userId');
+      if (!userId) {
+        logger.warn('No userId found, skipping load');
+        return;
       }
+
+      const response = await calculatorAPI.list(userId, 10, 0);
+      this.userCalculations = response.calculators || [];
+
+      // Update table
+      this.updateCalculationsTable();
+
+      // Update statistics
+      this.updateStatistics();
+
+      logger.info('Loaded calculations:', this.userCalculations.length);
     } catch (error) {
-      logger.error('Error loading userCalculations from localStorage', error);
+      if (error instanceof APIError) {
+        logger.error('Failed to load calculations:', error.message);
+        showToast('Erro ao carregar cálculos anteriores', 'error');
+      } else {
+        logger.error('Network error loading calculations:', error);
+      }
+      // Keep empty array on error
       this.userCalculations = [];
     }
   },
 
-  saveToLocalStorage() {
-    try {
-      localStorage.setItem('userCalculations', JSON.stringify(this.userCalculations));
-    } catch (error) {
-      logger.error('Error saving to localStorage', error);
-
-      // Handle quota exceeded error specifically
-      if (error.name === 'QuotaExceededError' || error.code === 22 || error.code === 1014) {
-        this.showErrorMessage(
-          'Armazenamento local cheio. Por favor, exporte seus dados e limpe alguns cálculos antigos.'
-        );
-      } else {
-        this.showErrorMessage('Falha ao salvar dados localmente');
-      }
-    }
-  },
 
   showLoadingState(loading) {
     const submitBtn = document.querySelector('.btn-primary-form');
@@ -1036,11 +1132,37 @@ const CalculatorModule = {
 
   showSuccessMessage(message) {
     showToast(message, 'success');
-    this.saveToLocalStorage();
   },
 
   showErrorMessage(message) {
     showToast(message, 'error');
+  },
+
+  showQuotaExceededMessage(title, message, action) {
+    // Create modal HTML
+    const modalHTML = `
+      <div class="quota-modal-overlay" id="quotaModal">
+        <div class="quota-modal">
+          <div class="quota-modal-header">
+            <h3>${title}</h3>
+            <button class="quota-modal-close" onclick="document.getElementById('quotaModal').remove()">&times;</button>
+          </div>
+          <div class="quota-modal-body">
+            <p>${message}</p>
+          </div>
+          <div class="quota-modal-footer">
+            ${action === 'login' ?
+              '<button class="btn-primary" onclick="window.location.href=\'/login.html\'">Fazer Login</button>' :
+              '<button class="btn-primary" onclick="alert(\'Upgrades em breve!\')">Fazer Upgrade</button>'
+            }
+            <button class="btn-secondary" onclick="document.getElementById('quotaModal').remove()">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Append to body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
   },
 
   viewCalculation(id) {
@@ -1058,8 +1180,8 @@ window.CalculatorModule = CalculatorModule;
 
 // ===== EXPORT FOR USE IN OTHER SCRIPTS =====
 window.dashboardUtils = {
-  formatCurrency,
-  formatNumber,
+  formatCurrency: window.ImobiUtils.formatCurrency,
+  formatNumber: window.ImobiUtils.formatNumber,
   initSalesChart,
 };
 

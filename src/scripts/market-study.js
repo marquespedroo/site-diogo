@@ -8,6 +8,9 @@
 // Use shared utilities from ImobiUtils
 const { formatCurrency, showToast, logger, COLORS } = window.ImobiUtils;
 
+// Import Market Study API client
+import { marketStudyAPI, APIError } from './market-study-api';
+
 const MarketStudyModule = {
   sampleCounter: 0,
   samples: [],
@@ -259,21 +262,112 @@ const MarketStudyModule = {
 
       this.showLoadingState(true);
 
-      // Simulate market study calculation (will integrate with real API)
-      const result = await this.calculateValuation(formData);
+      // Get or create user ID
+      const userId = sessionStorage.getItem('userId') || 'guest-' + Date.now();
+      if (!sessionStorage.getItem('userId')) {
+        sessionStorage.setItem('userId', userId);
+      }
 
-      // Update UI
-      this.displayValuationResults(result);
-      this.displayStatistics(result.statistics);
+      // Call Market Study API
+      const result = await marketStudyAPI.create({
+        userId: userId,
+        propertyAddress: {
+          street: formData.subjectProperty.address.street,
+          number: formData.subjectProperty.address.number,
+          neighborhood: formData.subjectProperty.address.neighborhood,
+          city: formData.subjectProperty.address.city,
+          state: formData.subjectProperty.address.state,
+        },
+        propertyArea: formData.subjectProperty.area,
+        propertyCharacteristics: {
+          bedrooms: formData.subjectProperty.characteristics.bedrooms,
+          bathrooms: formData.subjectProperty.characteristics.bathrooms,
+          parkingSpots: formData.subjectProperty.characteristics.parkingSpots,
+        },
+        samples: formData.samples.map(s => ({
+          address: s.address,
+          area: s.area,
+          price: s.price,
+          characteristics: {
+            bedrooms: s.bedrooms,
+            bathrooms: s.bathrooms,
+            parkingSpots: s.parkingSpots,
+          }
+        }))
+      });
+
+      // Store study ID for PDF generation
+      this.currentStudyId = result.id;
+
+      // Display results
+      this.displayResults(result.valuation, result.statisticalAnalysis, formData.samples.length);
 
       // Show success message
       this.showSuccessMessage('Estudo de mercado concluído com sucesso!');
+
+      // Show PDF button
+      document.getElementById('btnGeneratePDF').classList.remove('hidden');
+
     } catch (error) {
-      logger.error('Error calculating valuation', error);
-      this.showErrorMessage('Falha ao calcular avaliação. Por favor, tente novamente.');
+      if (error instanceof APIError) {
+        showToast(`Erro: ${error.message}`, 'error');
+        logger.error('API Error:', error);
+      } else {
+        showToast('Erro de rede. Tente novamente.', 'error');
+        logger.error('Network error:', error);
+      }
     } finally {
       this.showLoadingState(false);
     }
+  },
+
+  /**
+   * Display results from Market Study API response
+   * Transforms API response format into UI-compatible format
+   */
+  displayResults(valuation, statisticalAnalysis, sampleCount) {
+    // Transform API response to match existing display format
+    const transformedResult = {
+      id: this.currentStudyId,
+      samples: { length: sampleCount },
+      valuations: {
+        minValue: {
+          name: 'Minimum Value',
+          pricePerSqm: valuation.averagePricePerSqm * 0.9,
+          totalValue: valuation.minValue,
+        },
+        averageValue: {
+          name: 'Average Value',
+          pricePerSqm: valuation.averagePricePerSqm,
+          totalValue: valuation.averageValue,
+        },
+        recommendedValue: {
+          name: 'Recommended Value',
+          pricePerSqm: valuation.averagePricePerSqm,
+          totalValue: valuation.recommendedValue,
+        },
+        maxValue: {
+          name: 'Maximum Value',
+          pricePerSqm: valuation.averagePricePerSqm * 1.1,
+          totalValue: valuation.maxValue,
+        },
+      },
+    };
+
+    const transformedStats = {
+      mean: valuation.averagePricePerSqm,
+      median: valuation.averagePricePerSqm, // API doesn't provide median, use average as approximation
+      min: valuation.minValue / (valuation.averageValue / valuation.averagePricePerSqm), // Calculate min price per sqm
+      max: valuation.maxValue / (valuation.averageValue / valuation.averagePricePerSqm), // Calculate max price per sqm
+      stdDev: statisticalAnalysis.standardDeviation,
+      cv: statisticalAnalysis.coefficientOfVariation,
+      sampleSize: statisticalAnalysis.sampleCount,
+      precision: statisticalAnalysis.coefficientOfVariation < 30 ? 'High' : 'Medium',
+    };
+
+    // Call existing display methods
+    this.displayValuationResults(transformedResult);
+    this.displayStatistics(transformedStats);
   },
 
   async calculateValuation(data) {
@@ -447,39 +541,48 @@ const MarketStudyModule = {
   },
 
   async generatePDF() {
+    if (!this.currentStudyId) {
+      showToast('Nenhum estudo de mercado para exportar', 'warning');
+      return;
+    }
+
     try {
-      if (!this.currentStudyId) {
-        this.showErrorMessage('Nenhum estudo de mercado para exportar');
+      // Call Market Study API to generate PDF
+      await marketStudyAPI.generatePDF(this.currentStudyId);
+      showToast('PDF gerado! Verifique a nova aba.', 'success');
+    } catch (error) {
+      showToast('Erro ao gerar PDF', 'error');
+      logger.error('PDF generation error:', error);
+    }
+  },
+
+  /**
+   * Load saved market studies for the current user
+   * This is optional - can be used if UI has a "Load Previous" feature
+   */
+  async loadSavedStudies() {
+    try {
+      const userId = sessionStorage.getItem('userId');
+      if (!userId) {
+        logger.info('No userId found, skipping load of saved studies');
         return;
       }
 
-      this.showLoadingState(true);
+      const response = await marketStudyAPI.list(userId, 10, 0);
 
-      // Simulate PDF generation with timeout handling (will integrate with real API)
-      const pdfGeneration = new Promise((resolve) => setTimeout(resolve, 2000));
-      const timeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('PDF generation timeout')), 30000)
-      );
+      // Log the loaded studies for debugging
+      logger.info('Loaded market studies:', response.studies.length);
 
-      // Race between PDF generation and timeout
-      await Promise.race([pdfGeneration, timeout]);
+      // Return studies for potential UI display
+      return response.studies;
 
-      this.showSuccessMessage('Relatório PDF gerado com sucesso!');
-
-      // In production, this would download the PDF
-      // window.open(`/api/market-study/generate-pdf?id=${this.currentStudyId}`, '_blank');
     } catch (error) {
-      logger.error('Error generating PDF', error);
-
-      if (error.message === 'PDF generation timeout') {
-        this.showErrorMessage(
-          'Tempo limite excedido ao gerar relatório PDF. Por favor, tente novamente.'
-        );
+      if (error instanceof APIError) {
+        logger.error('Failed to load market studies:', error.message);
       } else {
-        this.showErrorMessage('Falha ao gerar relatório PDF.');
+        logger.error('Network error loading market studies:', error);
       }
-    } finally {
-      this.showLoadingState(false);
+      return [];
     }
   },
 

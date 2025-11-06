@@ -1813,10 +1813,23 @@
 
         // Event listeners para o formulário de financiamento
         document.addEventListener('DOMContentLoaded', function() {
-            // Quando mudar a idade, recalcular prazo máximo
+            // Quando digitar a idade, mostrar opções em tempo real
             const idadeInput = document.getElementById('priceIdade');
             if (idadeInput) {
-                idadeInput.addEventListener('blur', calcularPrazoMaximo);
+                idadeInput.addEventListener('input', function() {
+                    const idade = parseInt(this.value);
+                    
+                    // Se digitou idade válida, mostrar opções
+                    if (idade >= 18 && idade < 80) {
+                        calcularPrazoMaximo();
+                    } else if (idade >= 80) {
+                        // Se for 80 ou mais, esconder opções (alerta vai aparecer no cálculo)
+                        document.getElementById('opcoesPrazoContainer').classList.add('hidden');
+                    } else {
+                        // Se for inválido ou vazio, esconder opções
+                        document.getElementById('opcoesPrazoContainer').classList.add('hidden');
+                    }
+                });
             }
             
             // Quando mudar o tipo de período, atualizar valores dos botões
@@ -1824,7 +1837,7 @@
             if (tipoPeriodoSelect) {
                 tipoPeriodoSelect.addEventListener('change', function() {
                     const idade = parseInt(document.getElementById('priceIdade').value);
-                    if (idade >= 18 && idade <= 80) {
+                    if (idade >= 18 && idade < 80) {
                         calcularPrazoMaximo();
                         
                         // Limpar seleção dos botões
@@ -1926,21 +1939,8 @@
         function calcularPrazoMaximo() {
             const idade = parseInt(document.getElementById('priceIdade').value) || 0;
             
-            if (idade === 0) {
-                document.getElementById('opcoesPrazoContainer').classList.add('hidden');
-                return;
-            }
-            
-            if (idade < 18) {
-                alert('❌ Idade mínima para financiamento: 18 anos');
-                document.getElementById('priceIdade').value = '';
-                document.getElementById('opcoesPrazoContainer').classList.add('hidden');
-                return;
-            }
-            
-            if (idade >= 80) {
-                alert('❌ Não é possível realizar financiamento devido à idade.\n\nA idade máxima permitida pelos bancos é de 79 anos, pois a idade final (idade + prazo mínimo) não pode ultrapassar 80 anos e 6 meses.');
-                document.getElementById('priceIdade').value = '';
+            // Se idade inválida, apenas esconder opções (sem alertas durante digitação)
+            if (idade === 0 || idade < 18 || idade >= 80) {
                 document.getElementById('opcoesPrazoContainer').classList.add('hidden');
                 return;
             }

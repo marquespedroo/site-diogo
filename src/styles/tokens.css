@@ -100,7 +100,7 @@
      GRADIENTS
      ======================================================================== */
 
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-primary: #677AE5;
   --gradient-success: linear-gradient(135deg, #2dce89 0%, #2dcecc 100%);
   --gradient-info: linear-gradient(135deg, #11cdef 0%, #1171ef 100%);
   --gradient-warning: linear-gradient(135deg, #fb6340 0%, #fbb140 100%);
