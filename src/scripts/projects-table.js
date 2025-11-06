@@ -6,75 +6,92 @@
  */
 
 // Use shared utilities from ImobiUtils
-const { formatCurrency, showToast, COLORS } = window.ImobiUtils;
+const { formatCurrency, showToast, COLORS, logger } = window.ImobiUtils;
+
+// Import Projects API
+import { projectsAPI, APIError } from './projects-api.js';
 
 const ProjectsTableModule = {
   units: [],
   filteredUnits: [],
 
-  init() {
-    this.loadDemoData();
+  async init() {
+    await this.loadUnits();
     this.initFilterButtons();
     this.initActionButtons();
     this.updateStatistics();
     this.renderTable();
   },
 
-  loadDemoData() {
-    // Demo units
-    this.units = [
-      {
-        id: 1,
-        tower: 'A',
-        number: '101',
-        area: 85.5,
-        price: 450000,
-        parking: '2',
-        origin: 'real',
-        status: 'available',
-      },
-      {
-        id: 2,
-        tower: 'A',
-        number: '102',
-        area: 92.3,
-        price: 520000,
-        parking: '2',
-        origin: 'real',
-        status: 'sold',
-      },
-      {
-        id: 3,
-        tower: 'A',
-        number: '201',
-        area: 85.5,
-        price: 465000,
-        parking: '2',
-        origin: 'permutante',
-        status: 'available',
-      },
-      {
-        id: 4,
-        tower: 'B',
-        number: '101',
-        area: 78.2,
-        price: 420000,
-        parking: '1',
-        origin: 'real',
-        status: 'reserved',
-      },
-      {
-        id: 5,
-        tower: 'B',
-        number: '102',
-        area: 78.2,
-        price: 430000,
-        parking: '1',
-        origin: 'real',
-        status: 'available',
-      },
-    ];
-    this.filteredUnits = [...this.units];
+  async loadUnits() {
+    try {
+      // Get or create default project
+      const projectId = sessionStorage.getItem('currentProjectId') || await this.getOrCreateDefaultProject();
+
+      const response = await projectsAPI.listUnits({
+        projectId: projectId,
+        limit: 100,
+        offset: 0,
+      });
+
+      // Map API response to display format
+      this.units = response.units.map(u => ({
+        id: u.id,
+        tower: u.tower,
+        number: u.number,
+        area: u.area,
+        price: u.price,
+        parking: u.parkingSpots,
+        origin: u.origin,
+        status: u.status,
+      }));
+
+      this.filteredUnits = [...this.units];
+
+      logger.info('Loaded units:', this.units.length);
+
+    } catch (error) {
+      if (error instanceof APIError) {
+        showToast(`Erro ao carregar unidades: ${error.message}`, 'error');
+        logger.error('API Error:', error);
+      } else {
+        showToast('Erro de rede. Tente novamente.', 'error');
+        logger.error('Network error:', error);
+      }
+      this.units = [];
+      this.filteredUnits = [];
+    }
+  },
+
+  async getOrCreateDefaultProject() {
+    const userId = sessionStorage.getItem('userId') || 'guest-' + Date.now();
+    sessionStorage.setItem('userId', userId);
+
+    try {
+      // Try to get existing projects
+      const response = await projectsAPI.listProjects({ userId, limit: 1 });
+
+      if (response.projects.length > 0) {
+        const projectId = response.projects[0].id;
+        sessionStorage.setItem('currentProjectId', projectId);
+        return projectId;
+      }
+
+      // Create default project if none exists
+      const project = await projectsAPI.createProject({
+        userId,
+        name: 'Meu Projeto',
+        location: { city: 'São Paulo', neighborhood: 'Centro', state: 'SP' },
+        description: 'Projeto padrão',
+      });
+
+      sessionStorage.setItem('currentProjectId', project.id);
+      return project.id;
+
+    } catch (error) {
+      logger.error('Failed to get/create project:', error);
+      throw error;
+    }
   },
 
   initFilterButtons() {
@@ -108,43 +125,160 @@ const ProjectsTableModule = {
     const btnImportCSV = document.getElementById('btnImportCSV');
 
     if (btnAddUnit) {
-      btnAddUnit.addEventListener('click', () => {
-        this.showAddUnitModal();
+      btnAddUnit.addEventListener('click', async () => {
+        // Show prompts to collect unit data (replace with proper modal in future)
+        const tower = prompt('Torre:');
+        const number = prompt('Número:');
+        const area = parseFloat(prompt('Área (m²):') || '0');
+        const price = parseFloat(prompt('Preço (R$):') || '0');
+        const parking = prompt('Vagas de estacionamento:');
+        const origin = prompt('Origem (real/permutante):');
+
+        if (!tower || !number || !area || !price || !origin) {
+          showToast('Preencha todos os campos', 'warning');
+          return;
+        }
+
+        if (origin !== 'real' && origin !== 'permutante') {
+          showToast('Origem deve ser "real" ou "permutante"', 'warning');
+          return;
+        }
+
+        try {
+          const projectId = sessionStorage.getItem('currentProjectId');
+
+          await projectsAPI.createUnit({
+            projectId,
+            tower,
+            number,
+            area,
+            price,
+            parkingSpots: parking || '0',
+            origin: origin,
+            status: 'available',
+          });
+
+          showToast('Unidade adicionada com sucesso!', 'success');
+
+          // Reload table
+          await this.loadUnits();
+          this.renderTable();
+          this.updateStatistics();
+
+        } catch (error) {
+          if (error instanceof APIError) {
+            showToast(`Erro: ${error.message}`, 'error');
+          } else {
+            showToast('Erro ao adicionar unidade', 'error');
+          }
+          logger.error('Create unit error:', error);
+        }
       });
     }
 
     if (btnExportCSV) {
-      btnExportCSV.addEventListener('click', () => {
-        this.exportToCSV();
+      btnExportCSV.addEventListener('click', async () => {
+        try {
+          const projectId = sessionStorage.getItem('currentProjectId');
+          const blob = await projectsAPI.exportUnitsCSV(projectId);
+
+          // Download file
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `units-${projectId}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+
+          showToast('CSV exportado com sucesso!', 'success');
+
+        } catch (error) {
+          showToast('Erro ao exportar CSV', 'error');
+          logger.error('Export error:', error);
+        }
       });
     }
 
     if (btnImportCSV) {
       btnImportCSV.addEventListener('click', () => {
-        this.showImportModal();
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.csv';
+
+        input.onchange = async (e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+
+          try {
+            const projectId = sessionStorage.getItem('currentProjectId');
+            const result = await projectsAPI.importUnitsCSV(projectId, file);
+
+            showToast(`${result.added} unidades importadas!`, 'success');
+
+            if (result.errors.length > 0) {
+              logger.warn('Import errors:', result.errors);
+              showToast(`${result.errors.length} erros encontrados. Verifique o console.`, 'warning');
+            }
+
+            // Reload table
+            await this.loadUnits();
+            this.renderTable();
+            this.updateStatistics();
+
+          } catch (error) {
+            showToast('Erro ao importar CSV', 'error');
+            logger.error('Import error:', error);
+          }
+        };
+
+        input.click();
       });
     }
   },
 
-  applyFilters() {
+  async applyFilters() {
     const filterStatus = document.getElementById('filterStatus');
     const filterOrigin = document.getElementById('filterOrigin');
     const filterTower = document.getElementById('filterTower');
 
     const status = filterStatus ? filterStatus.value : '';
     const origin = filterOrigin ? filterOrigin.value : '';
-    const tower = filterTower ? filterTower.value.toLowerCase() : '';
+    const tower = filterTower ? filterTower.value : '';
 
-    this.filteredUnits = this.units.filter((unit) => {
-      const statusMatch = !status || unit.status === status;
-      const originMatch = !origin || unit.origin === origin;
-      const towerMatch = !tower || unit.tower.toLowerCase().includes(tower);
+    try {
+      const projectId = sessionStorage.getItem('currentProjectId');
 
-      return statusMatch && originMatch && towerMatch;
-    });
+      const response = await projectsAPI.listUnits({
+        projectId,
+        status: status || undefined,
+        origin: origin || undefined,
+        tower: tower || undefined,
+        limit: 100,
+        offset: 0,
+      });
 
-    this.renderTable();
-    this.updateStatistics();
+      // Map API response to display format
+      this.units = response.units.map(u => ({
+        id: u.id,
+        tower: u.tower,
+        number: u.number,
+        area: u.area,
+        price: u.price,
+        parking: u.parkingSpots,
+        origin: u.origin,
+        status: u.status,
+      }));
+
+      this.filteredUnits = [...this.units];
+      this.renderTable();
+      this.updateStatistics();
+
+    } catch (error) {
+      showToast('Erro ao aplicar filtros', 'error');
+      logger.error('Filter error:', error);
+    }
   },
 
   clearFilters() {
@@ -286,11 +420,33 @@ const ProjectsTableModule = {
 
       // Actions column
       const tdActions = document.createElement('td');
-      const button = document.createElement('button');
-      button.className = 'btn-menu';
-      button.textContent = '⋮';
-      button.addEventListener('click', () => this.editUnit(unit.id));
-      tdActions.appendChild(button);
+
+      // Delete button
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'action-btn delete';
+      deleteBtn.innerHTML = '🗑️';
+      deleteBtn.title = 'Excluir unidade';
+      deleteBtn.addEventListener('click', async () => {
+        if (!confirm('Deseja realmente excluir esta unidade?')) return;
+
+        try {
+          const projectId = sessionStorage.getItem('currentProjectId');
+          await projectsAPI.deleteUnit(projectId, unit.id);
+
+          showToast('Unidade excluída com sucesso!', 'success');
+
+          // Reload table
+          await this.loadUnits();
+          this.renderTable();
+          this.updateStatistics();
+
+        } catch (error) {
+          showToast('Erro ao excluir unidade', 'error');
+          logger.error('Delete error:', error);
+        }
+      });
+
+      tdActions.appendChild(deleteBtn);
       tr.appendChild(tdActions);
 
       tbody.appendChild(tr);
@@ -322,68 +478,6 @@ const ProjectsTableModule = {
     if (soldRateEl) soldRateEl.textContent = `${soldRate}%`;
   },
 
-  editUnit(id) {
-    const unit = this.units.find((u) => u.id === id);
-    if (unit) {
-      alert(
-        `Editar unidade: ${unit.tower}-${unit.number}\n\nEste recurso abrirá um modal de edição.`
-      );
-    }
-  },
-
-  showAddUnitModal() {
-    alert(
-      'O recurso Adicionar Unidade abrirá um formulário modal para criar novas unidades.\n\nEste recurso será integrado com a API backend.'
-    );
-  },
-
-  showImportModal() {
-    alert(
-      'O recurso Importar CSV permitirá upload em massa de unidades.\n\nFormato suportado: Torre, Unidade, Área, Preço, Vagas, Origem, Status'
-    );
-  },
-
-  exportToCSV() {
-    const headers = [
-      'Torre',
-      'Unidade',
-      'Área (m²)',
-      'Preço',
-      'Preço/m²',
-      'Vagas',
-      'Origem',
-      'Status',
-    ];
-    const rows = this.filteredUnits.map((unit) => {
-      // Fix division by zero risk
-      const pricePerSqm = unit.area > 0 ? unit.price / unit.area : 0;
-      return [
-        unit.tower,
-        unit.number,
-        unit.area.toFixed(2),
-        unit.price.toFixed(2),
-        pricePerSqm.toFixed(2),
-        unit.parking,
-        unit.origin,
-        unit.status,
-      ];
-    });
-
-    const csv = [headers, ...rows].map((row) => row.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `units_export_${Date.now()}.csv`;
-    a.click();
-
-    // Revoke URL after a delay to ensure download starts
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-    }, 100);
-
-    showToast('CSV exportado com sucesso!', 'success');
-  },
 };
 
 // Make globally accessible
