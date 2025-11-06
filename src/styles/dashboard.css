@@ -496,7 +496,7 @@ body {
 }
 
 .menu-toggle {
-  display: flex;
+  display: none; /* Hidden by default, only shown on mobile */
   align-items: center;
   justify-content: center;
   background: transparent;
@@ -1638,6 +1638,11 @@ body {
 }
 
 @media (max-width: 1024px) {
+  /* Hide collapse button on mobile/tablet - uses slide-in behavior instead */
+  .sidebar-collapse-btn {
+    display: none;
+  }
+
   .sidebar {
     transform: translateX(calc(-100% - var(--spacing-lg)));
     z-index: 1100;
@@ -1647,8 +1652,14 @@ body {
     transform: translateX(0);
   }
 
+  /* Collapse functionality disabled on mobile - sidebar uses slide-in behavior instead */
   .sidebar.collapsed {
     width: var(--sidebar-width);
+    transform: translateX(calc(-100% - var(--spacing-lg)));
+  }
+
+  .sidebar.collapsed.open {
+    transform: translateX(0);
   }
 
   .main-content {

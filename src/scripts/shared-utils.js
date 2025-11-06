@@ -15,7 +15,9 @@ const logger = {
    * @param {Object} context - Optional context
    */
   debug(message, context) {
-    if (process.env.NODE_ENV !== 'production') {
+    // Check if running in development mode (browser-safe check)
+    const isDev = typeof process === 'undefined' || (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production');
+    if (isDev) {
       const timestamp = new Date().toISOString();
       const contextStr = context ? ` ${JSON.stringify(context)}` : '';
       console.debug(`[${timestamp}] [ImobiTools] [DEBUG] ${message}${contextStr}`);

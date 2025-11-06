@@ -5,19 +5,33 @@
  * NOTE: This file requires shared-utils.js to be loaded first
  */
 
-// Use shared utilities from ImobiUtils
-const { formatCurrency, formatNumber, showToast, logger, COLORS, CHART_CONFIG } = window.ImobiUtils;
+// Access shared utilities from global scope (loaded by shared-utils.js)
+// These are available globally: formatCurrency, formatNumber, showToast, logger, COLORS, CHART_CONFIG
+
+// Verify utilities are available
+function initUtils() {
+  if (!window.ImobiUtils) {
+    console.error('ImobiUtils not loaded! Make sure shared-utils.js is loaded before dashboard.js');
+    return false;
+  }
+  console.log('ImobiUtils loaded successfully');
+  return true;
+}
 
 // ===== UTILITY FUNCTIONS =====
 function toggleSubmenu(buttonId, submenuId) {
   const button = document.getElementById(buttonId);
   const submenu = document.getElementById(submenuId);
-  const arrow = button.querySelector('.arrow-icon');
 
-  if (submenu) {
+  // Check if both button and submenu exist before proceeding
+  if (button && submenu) {
+    const arrow = button.querySelector('.arrow-icon');
+
     button.addEventListener('click', () => {
       submenu.classList.toggle('show');
-      arrow.classList.toggle('rotated');
+      if (arrow) {
+        arrow.classList.toggle('rotated');
+      }
     });
   }
 }
@@ -307,6 +321,12 @@ function initSmoothScrolling() {
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize utilities first
+  if (!initUtils()) {
+    console.error('Failed to initialize ImobiUtils. Dashboard functionality will be limited.');
+    return; // Exit early if utils not available
+  }
+
   initSidebar();
   initBreadcrumb();
   initSalesChart();
@@ -1106,8 +1126,8 @@ window.CalculatorModule = CalculatorModule;
 
 // ===== EXPORT FOR USE IN OTHER SCRIPTS =====
 window.dashboardUtils = {
-  formatCurrency,
-  formatNumber,
+  formatCurrency: window.ImobiUtils.formatCurrency,
+  formatNumber: window.ImobiUtils.formatNumber,
   initSalesChart,
 };
 
