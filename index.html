@@ -680,7 +680,7 @@
                     <li>Análise de aprovação</li>
                     <li>Relatórios detalhados</li>
                 </ul>
-                <button class="btn-product" onclick="location.href='/login.html'">Assinar para Acessar</button>
+                <button class="btn-product" data-redirect="/login.html">Assinar para Acessar</button>
             </div>
 
             <!-- Financing Simulator -->
@@ -694,7 +694,7 @@
                     <li>Validação de idade</li>
                     <li>Limite de prazo automático</li>
                 </ul>
-                <button class="btn-product" onclick="location.href='/login.html'">Assinar para Acessar</button>
+                <button class="btn-product" data-redirect="/login.html">Assinar para Acessar</button>
             </div>
 
             <!-- Market Study -->
@@ -708,7 +708,7 @@
                     <li>Relatórios profissionais</li>
                     <li>Múltiplas amostras</li>
                 </ul>
-                <button class="btn-product" onclick="location.href='/login.html'">Assinar para Acessar</button>
+                <button class="btn-product" data-redirect="/login.html">Assinar para Acessar</button>
             </div>
 
             <!-- Projects Table -->
@@ -722,7 +722,7 @@
                     <li>Filtros avançados</li>
                     <li>Exportação de dados</li>
                 </ul>
-                <button class="btn-product" onclick="location.href='/login.html'">Assinar para Acessar</button>
+                <button class="btn-product" data-redirect="/login.html">Assinar para Acessar</button>
             </div>
         </div>
     </section>
@@ -914,6 +914,13 @@
                 if (target) {
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
+            });
+        });
+
+        // Product redirect buttons (replace onclick attributes)
+        document.querySelectorAll('[data-redirect]').forEach(button => {
+            button.addEventListener('click', function() {
+                window.location.href = this.getAttribute('data-redirect');
             });
         });
     </script>
