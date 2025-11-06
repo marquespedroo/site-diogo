@@ -48,8 +48,7 @@ export class PaymentGatewayFactory {
       throw new Error('ASAAS_API_KEY environment variable not set');
     }
 
-    const environment =
-      (process.env.ASAAS_ENVIRONMENT as 'production' | 'sandbox') || 'production';
+    const environment = (process.env.ASAAS_ENVIRONMENT as 'production' | 'sandbox') || 'production';
     const webhookSecret = process.env.ASAAS_WEBHOOK_SECRET;
 
     return new AsaasGateway(apiKey, environment, webhookSecret);

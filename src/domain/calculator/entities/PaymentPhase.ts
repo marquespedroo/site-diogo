@@ -138,9 +138,7 @@ export class PaymentPhase {
       description: string;
     }>;
   }): PaymentPhase {
-    const installments = json.installments.map(inst =>
-      Installment.fromJSON(inst)
-    );
+    const installments = json.installments.map((inst) => Installment.fromJSON(inst));
     return new PaymentPhase(json.name, installments);
   }
 
@@ -158,7 +156,7 @@ export class PaymentPhase {
   } {
     return {
       name: this.name,
-      installments: this.installments.map(inst => inst.toJSON()),
+      installments: this.installments.map((inst) => inst.toJSON()),
     };
   }
 

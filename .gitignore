@@ -4,6 +4,10 @@ node_modules/
 # Build outputs
 dist/
 build/
+*.tsbuildinfo
+
+# Deployment
+.vercel
 
 # Environment variables
 .env
@@ -26,3 +30,9 @@ npm-debug.log*
 *.tmp
 .cache/
 coverage/
+
+# Test artifacts
+test-results/
+*.spec.js.snap
+__snapshots__/
+.vitest/

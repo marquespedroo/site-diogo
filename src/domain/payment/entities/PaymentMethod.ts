@@ -191,11 +191,6 @@ export class PaymentMethod {
       };
     }
 
-    return new PaymentMethod(
-      json.id,
-      json.type,
-      details,
-      new Date(json.createdAt)
-    );
+    return new PaymentMethod(json.id, json.type, details, new Date(json.createdAt));
   }
 }

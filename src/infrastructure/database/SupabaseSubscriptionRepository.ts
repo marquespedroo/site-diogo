@@ -2,6 +2,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { ISubscriptionRepository } from '@/domain/payment/repositories/ISubscriptionRepository';
 import { Subscription } from '@/domain/payment/entities/Subscription';
 import { NotFoundError, DatabaseError } from '@/lib/errors';
+import { PAGINATION } from '@/lib/constants';
 
 /**
  * Database row type for subscriptions table
@@ -187,7 +188,7 @@ export class SupabaseSubscriptionRepository implements ISubscriptionRepository {
   /**
    * Find all subscriptions for a user
    */
-  async findByUserId(userId: string, limit = 50): Promise<Subscription[]> {
+  async findByUserId(userId: string, limit = PAGINATION.DEFAULT_LIMIT): Promise<Subscription[]> {
     try {
       const { data, error } = await this.supabase
         .from('subscriptions')
@@ -204,9 +205,7 @@ export class SupabaseSubscriptionRepository implements ISubscriptionRepository {
         );
       }
 
-      return (data || []).map((row) =>
-        this.mapRowToSubscription(row as SubscriptionRow)
-      );
+      return (data || []).map((row) => this.mapRowToSubscription(row as SubscriptionRow));
     } catch (error) {
       if (error instanceof DatabaseError) throw error;
       throw new DatabaseError(
@@ -252,8 +251,7 @@ export class SupabaseSubscriptionRepository implements ISubscriptionRepository {
 
       return this.mapRowToSubscription(data as SubscriptionRow);
     } catch (error) {
-      if (error instanceof NotFoundError || error instanceof DatabaseError)
-        throw error;
+      if (error instanceof NotFoundError || error instanceof DatabaseError) throw error;
       throw new DatabaseError(
         `Unexpected error updating subscription: ${(error as Error).message}`,
         'update',
@@ -284,8 +282,7 @@ export class SupabaseSubscriptionRepository implements ISubscriptionRepository {
         throw new NotFoundError('Subscription', id);
       }
     } catch (error) {
-      if (error instanceof NotFoundError || error instanceof DatabaseError)
-        throw error;
+      if (error instanceof NotFoundError || error instanceof DatabaseError) throw error;
       throw new DatabaseError(
         `Unexpected error deleting subscription: ${(error as Error).message}`,
         'delete',
@@ -317,9 +314,7 @@ export class SupabaseSubscriptionRepository implements ISubscriptionRepository {
         );
       }
 
-      return (data || []).map((row) =>
-        this.mapRowToSubscription(row as SubscriptionRow)
-      );
+      return (data || []).map((row) => this.mapRowToSubscription(row as SubscriptionRow));
     } catch (error) {
       if (error instanceof DatabaseError) throw error;
       throw new DatabaseError(
@@ -348,9 +343,7 @@ export class SupabaseSubscriptionRepository implements ISubscriptionRepository {
         );
       }
 
-      return (data || []).map((row) =>
-        this.mapRowToSubscription(row as SubscriptionRow)
-      );
+      return (data || []).map((row) => this.mapRowToSubscription(row as SubscriptionRow));
     } catch (error) {
       if (error instanceof DatabaseError) throw error;
       throw new DatabaseError(

@@ -9,11 +9,11 @@ import { ValidationError } from '@/lib/errors';
  * Each standard has a different multiplier on the base valuation.
  */
 export type PropertyStandard =
-  | 'original'      // Original condition, no renovations (0.9x)
-  | 'basic'         // Basic renovations (0.95x)
-  | 'renovated'     // Fully renovated (1.0x - baseline)
-  | 'modernized'    // Modern finishes and upgrades (1.05x)
-  | 'high_end';     // High-end luxury finishes (1.1x)
+  | 'original' // Original condition, no renovations (0.9x)
+  | 'basic' // Basic renovations (0.95x)
+  | 'renovated' // Fully renovated (1.0x - baseline)
+  | 'modernized' // Modern finishes and upgrades (1.05x)
+  | 'high_end'; // High-end luxury finishes (1.1x)
 
 /**
  * Property Valuation Entity
@@ -33,11 +33,7 @@ export class PropertyValuation {
   private readonly pricePerSqM: Money;
   private readonly totalValue: Money;
 
-  constructor(
-    standardType: PropertyStandard,
-    pricePerSqM: Money,
-    totalValue: Money
-  ) {
+  constructor(standardType: PropertyStandard, pricePerSqM: Money, totalValue: Money) {
     this.standardType = standardType;
     this.pricePerSqM = pricePerSqM;
     this.totalValue = totalValue;
@@ -140,8 +136,7 @@ export class PropertyValuation {
    */
   getPercentageDifferenceFrom(other: PropertyValuation): number {
     const diff = this.compareWith(other);
-    const percentage =
-      (diff.getAmount() / other.totalValue.getAmount()) * 100;
+    const percentage = (diff.getAmount() / other.totalValue.getAmount()) * 100;
     return Math.round(percentage * 100) / 100; // Round to 2 decimals
   }
 

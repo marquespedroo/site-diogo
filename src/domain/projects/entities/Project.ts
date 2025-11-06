@@ -140,9 +140,7 @@ export class Project {
    * @param units - Array of units to add
    * @returns Object with success count and errors
    */
-  addUnits(
-    units: Unit[]
-  ): { added: number; errors: Array<{ unit: Unit; error: string }> } {
+  addUnits(units: Unit[]): { added: number; errors: Array<{ unit: Unit; error: string }> } {
     const errors: Array<{ unit: Unit; error: string }> = [];
     let added = 0;
 
@@ -191,11 +189,7 @@ export class Project {
    *
    * @param updates - Fields to update
    */
-  update(updates: {
-    name?: string;
-    location?: ProjectLocation;
-    description?: string;
-  }): void {
+  update(updates: { name?: string; location?: ProjectLocation; description?: string }): void {
     if (updates.name !== undefined) {
       if (!updates.name || updates.name.trim().length === 0) {
         throw new Error('Project name cannot be empty');
@@ -229,10 +223,7 @@ export class Project {
    */
   shareWith(userId: string): void {
     if (userId === this.userId) {
-      throw new BusinessRuleError(
-        'Cannot share project with yourself',
-        'SHARE_WITH_OWNER'
-      );
+      throw new BusinessRuleError('Cannot share project with yourself', 'SHARE_WITH_OWNER');
     }
 
     this.sharedWith.add(userId);
@@ -277,9 +268,7 @@ export class Project {
    * Get all available units
    */
   getAvailableUnits(): Unit[] {
-    return Array.from(this.units.values()).filter(
-      (u) => u.getStatus() === 'available'
-    );
+    return Array.from(this.units.values()).filter((u) => u.getStatus() === 'available');
   }
 
   /**
@@ -299,9 +288,7 @@ export class Project {
    * @param status - Unit status to filter by
    */
   getUnitsByStatus(status: string): Unit[] {
-    return Array.from(this.units.values()).filter(
-      (u) => u.getStatus() === status
-    );
+    return Array.from(this.units.values()).filter((u) => u.getStatus() === status);
   }
 
   /**
@@ -313,10 +300,7 @@ export class Project {
       return Money.zero();
     }
 
-    return units.reduce(
-      (sum, unit) => sum.add(unit.getPrice()),
-      Money.zero()
-    );
+    return units.reduce((sum, unit) => sum.add(unit.getPrice()), Money.zero());
   }
 
   /**
@@ -359,8 +343,7 @@ export class Project {
 
     return {
       totalUnits: units.length,
-      availableUnits: units.filter((u) => u.getStatus() === 'available')
-        .length,
+      availableUnits: units.filter((u) => u.getStatus() === 'available').length,
       soldUnits: units.filter((u) => u.getStatus() === 'sold').length,
       reservedUnits: units.filter((u) => u.getStatus() === 'reserved').length,
       totalValue: this.getTotalValue(),
@@ -465,8 +448,11 @@ export class Project {
    * Generate unique ID (timestamp-based)
    */
   private generateId(): string {
-    return (
-      Date.now().toString(36) + Math.random().toString(36).substring(2, 15)
-    );
+    const array = new Uint8Array(8);
+    crypto.getRandomValues(array);
+    const randomPart = Array.from(array, (byte) => byte.toString(36))
+      .join('')
+      .substring(0, 13);
+    return Date.now().toString(36) + randomPart;
   }
 }

@@ -349,10 +349,7 @@ export class UnitCSVImporter {
     );
 
     if (missingHeaders.length > 0) {
-      throw new CSVParseError(
-        `Missing required columns: ${missingHeaders.join(', ')}`,
-        1
-      );
+      throw new CSVParseError(`Missing required columns: ${missingHeaders.join(', ')}`, 1);
     }
 
     return true;

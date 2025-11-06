@@ -3,6 +3,7 @@ import { IPaymentRepository } from '@/domain/payment/repositories/IPaymentReposi
 import { Transaction } from '@/domain/payment/entities/Transaction';
 import { Invoice } from '@/domain/payment/entities/Invoice';
 import { NotFoundError, DatabaseError } from '@/lib/errors';
+import { PAGINATION } from '@/lib/constants';
 
 /**
  * Supabase Payment Repository
@@ -91,9 +92,7 @@ export class SupabasePaymentRepository implements IPaymentRepository {
     }
   }
 
-  async findTransactionByExternalId(
-    externalId: string
-  ): Promise<Transaction | null> {
+  async findTransactionByExternalId(externalId: string): Promise<Transaction | null> {
     try {
       const { data, error } = await this.supabase
         .from('transactions')
@@ -123,7 +122,7 @@ export class SupabasePaymentRepository implements IPaymentRepository {
 
   async findTransactionsByUserId(
     userId: string,
-    limit = 50
+    limit = PAGINATION.DEFAULT_LIMIT
   ): Promise<Transaction[]> {
     try {
       const { data, error } = await this.supabase
@@ -179,8 +178,7 @@ export class SupabasePaymentRepository implements IPaymentRepository {
 
       return Transaction.fromJSON((data as any).state);
     } catch (error) {
-      if (error instanceof NotFoundError || error instanceof DatabaseError)
-        throw error;
+      if (error instanceof NotFoundError || error instanceof DatabaseError) throw error;
       throw new DatabaseError(
         `Unexpected error updating transaction: ${(error as Error).message}`,
         'updateTransaction',
@@ -259,7 +257,7 @@ export class SupabasePaymentRepository implements IPaymentRepository {
     }
   }
 
-  async findInvoicesByUserId(userId: string, limit = 50): Promise<Invoice[]> {
+  async findInvoicesByUserId(userId: string, limit = PAGINATION.DEFAULT_LIMIT): Promise<Invoice[]> {
     try {
       const { data, error } = await this.supabase
         .from('invoices')
@@ -287,9 +285,7 @@ export class SupabasePaymentRepository implements IPaymentRepository {
     }
   }
 
-  async findInvoicesBySubscriptionId(
-    subscriptionId: string
-  ): Promise<Invoice[]> {
+  async findInvoicesBySubscriptionId(subscriptionId: string): Promise<Invoice[]> {
     try {
       const { data, error } = await this.supabase
         .from('invoices')
@@ -371,8 +367,7 @@ export class SupabasePaymentRepository implements IPaymentRepository {
 
       return Invoice.fromJSON((data as any).state);
     } catch (error) {
-      if (error instanceof NotFoundError || error instanceof DatabaseError)
-        throw error;
+      if (error instanceof NotFoundError || error instanceof DatabaseError) throw error;
       throw new DatabaseError(
         `Unexpected error updating invoice: ${(error as Error).message}`,
         'updateInvoice',

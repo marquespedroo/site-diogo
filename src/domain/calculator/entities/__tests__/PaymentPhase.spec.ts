@@ -12,10 +12,7 @@ describe('PaymentPhase', () => {
 
   describe('constructor', () => {
     it('should create payment phase with valid parameters', () => {
-      const installments = [
-        createInstallment('1', 5000),
-        createInstallment('2', 3000),
-      ];
+      const installments = [createInstallment('1', 5000), createInstallment('2', 3000)];
       const phase = new PaymentPhase('Entry Payments', installments);
 
       expect(phase.getName()).toBe('Entry Payments');
@@ -30,19 +27,22 @@ describe('PaymentPhase', () => {
 
     it('should throw error for empty name', () => {
       const installments = [createInstallment('1', 5000)];
-      expect(() => new PaymentPhase('', installments))
-        .toThrow('Payment phase name cannot be empty');
+      expect(() => new PaymentPhase('', installments)).toThrow(
+        'Payment phase name cannot be empty'
+      );
     });
 
     it('should throw error for whitespace-only name', () => {
       const installments = [createInstallment('1', 5000)];
-      expect(() => new PaymentPhase('   ', installments))
-        .toThrow('Payment phase name cannot be empty');
+      expect(() => new PaymentPhase('   ', installments)).toThrow(
+        'Payment phase name cannot be empty'
+      );
     });
 
     it('should throw error for non-array installments', () => {
-      expect(() => new PaymentPhase('Entry', 'not an array' as any))
-        .toThrow('Installments must be an array');
+      expect(() => new PaymentPhase('Entry', 'not an array' as any)).toThrow(
+        'Installments must be an array'
+      );
     });
 
     it('should trim phase name', () => {
@@ -65,9 +65,7 @@ describe('PaymentPhase', () => {
     });
 
     it('should create with many installments', () => {
-      const installments = Array.from({ length: 50 }, (_, i) =>
-        createInstallment(`${i}`, 1000)
-      );
+      const installments = Array.from({ length: 50 }, (_, i) => createInstallment(`${i}`, 1000));
       const phase = new PaymentPhase('Construction', installments);
       expect(phase.getInstallmentCount()).toBe(50);
     });
@@ -82,10 +80,7 @@ describe('PaymentPhase', () => {
 
   describe('getInstallments', () => {
     it('should return all installments', () => {
-      const installments = [
-        createInstallment('1', 5000),
-        createInstallment('2', 3000),
-      ];
+      const installments = [createInstallment('1', 5000), createInstallment('2', 3000)];
       const phase = new PaymentPhase('Entry', installments);
       const retrieved = phase.getInstallments();
 
@@ -153,10 +148,7 @@ describe('PaymentPhase', () => {
     });
 
     it('should handle decimal amounts', () => {
-      const installments = [
-        createInstallment('1', 1000.50),
-        createInstallment('2', 2000.75),
-      ];
+      const installments = [createInstallment('1', 1000.5), createInstallment('2', 2000.75)];
       const phase = new PaymentPhase('Entry', installments);
       const total = phase.getTotalAmount();
 
@@ -166,10 +158,7 @@ describe('PaymentPhase', () => {
 
   describe('getInstallmentCount', () => {
     it('should return correct count', () => {
-      const installments = [
-        createInstallment('1', 5000),
-        createInstallment('2', 3000),
-      ];
+      const installments = [createInstallment('1', 5000), createInstallment('2', 3000)];
       const phase = new PaymentPhase('Entry', installments);
       expect(phase.getInstallmentCount()).toBe(2);
     });
@@ -180,9 +169,7 @@ describe('PaymentPhase', () => {
     });
 
     it('should return correct count for many installments', () => {
-      const installments = Array.from({ length: 100 }, (_, i) =>
-        createInstallment(`${i}`, 1000)
-      );
+      const installments = Array.from({ length: 100 }, (_, i) => createInstallment(`${i}`, 1000));
       const phase = new PaymentPhase('Construction', installments);
       expect(phase.getInstallmentCount()).toBe(100);
     });
@@ -439,9 +426,7 @@ describe('PaymentPhase', () => {
 
     it('should round-trip through JSON', () => {
       const dueDate = new Date('2025-06-01');
-      const installments = [
-        new Installment('1', new Money(5000), dueDate, 'Inst 1'),
-      ];
+      const installments = [new Installment('1', new Money(5000), dueDate, 'Inst 1')];
       const original = new PaymentPhase('Entry', installments);
 
       const json = original.toJSON();

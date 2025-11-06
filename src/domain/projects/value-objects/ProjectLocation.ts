@@ -75,11 +75,7 @@ export class ProjectLocation {
   /**
    * Create ProjectLocation from JSON
    */
-  static fromJSON(json: {
-    city: string;
-    neighborhood: string;
-    state: string;
-  }): ProjectLocation {
+  static fromJSON(json: { city: string; neighborhood: string; state: string }): ProjectLocation {
     return new ProjectLocation(json.city, json.neighborhood, json.state);
   }
 
@@ -89,9 +85,7 @@ export class ProjectLocation {
   static fromString(str: string): ProjectLocation {
     const match = str.match(/^(.+),\s*(.+)-([A-Z]{2})$/);
     if (!match) {
-      throw new Error(
-        'Invalid location string format. Expected: "Neighborhood, City-ST"'
-      );
+      throw new Error('Invalid location string format. Expected: "Neighborhood, City-ST"');
     }
 
     const [, neighborhood, city, state] = match;

@@ -278,19 +278,11 @@ export class Unit {
     if (json.metadata && typeof json.metadata === 'object') {
       Object.entries(json.metadata).forEach(([key, value]) => {
         // Reconstruct Money objects
-        if (
-          value &&
-          typeof value === 'object' &&
-          'amount' in value &&
-          'currency' in value
-        ) {
+        if (value && typeof value === 'object' && 'amount' in value && 'currency' in value) {
           metadataMap.set(key, Money.fromJSON(value as any));
         }
         // Reconstruct Date objects
-        else if (
-          typeof value === 'string' &&
-          /^\d{4}-\d{2}-\d{2}T/.test(value)
-        ) {
+        else if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
           metadataMap.set(key, new Date(value));
         }
         // Keep other values as-is
@@ -319,8 +311,11 @@ export class Unit {
    * Generate unique ID (timestamp-based)
    */
   private generateId(): string {
-    return (
-      Date.now().toString(36) + Math.random().toString(36).substring(2, 15)
-    );
+    const array = new Uint8Array(8);
+    crypto.getRandomValues(array);
+    const randomPart = Array.from(array, (byte) => byte.toString(36))
+      .join('')
+      .substring(0, 13);
+    return Date.now().toString(36) + randomPart;
   }
 }

@@ -40,11 +40,7 @@ export interface IMarketStudyRepository {
    * @returns Array of market studies, ordered by creation date (newest first)
    * @throws {DatabaseError} if query fails
    */
-  findByUserId(
-    userId: string,
-    limit?: number,
-    offset?: number
-  ): Promise<MarketStudy[]>;
+  findByUserId(userId: string, limit?: number, offset?: number): Promise<MarketStudy[]>;
 
   /**
    * Update existing market study
@@ -100,9 +96,5 @@ export interface IMarketStudyRepository {
    * @returns Array of market studies in the specified location
    * @throws {DatabaseError} if query fails
    */
-  searchByLocation(
-    userId: string,
-    city: string,
-    neighborhood?: string
-  ): Promise<MarketStudy[]>;
+  searchByLocation(userId: string, city: string, neighborhood?: string): Promise<MarketStudy[]>;
 }

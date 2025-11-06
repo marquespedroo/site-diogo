@@ -61,9 +61,7 @@ export const CreateMarketStudySchema = z
     evaluationType: z.enum(['sale', 'rent'], {
       errorMap: () => ({ message: 'Evaluation type must be sale or rent' }),
     }),
-    factorNames: z
-      .array(z.string())
-      .min(1, 'At least one comparison factor is required'),
+    factorNames: z.array(z.string()).min(1, 'At least one comparison factor is required'),
     samples: z
       .array(MarketSampleSchema)
       .min(3, 'Minimum 3 samples required for reliable valuation')

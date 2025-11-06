@@ -80,9 +80,7 @@ export interface IPaymentGateway {
   /**
    * Create a recurring subscription
    */
-  createSubscription(
-    input: CreateSubscriptionInput
-  ): Promise<CreateSubscriptionOutput>;
+  createSubscription(input: CreateSubscriptionInput): Promise<CreateSubscriptionOutput>;
 
   /**
    * Cancel a subscription
@@ -116,11 +114,7 @@ export interface IPaymentGateway {
   /**
    * Create a new customer
    */
-  createCustomer(customer: {
-    name: string;
-    email: string;
-    cpfCnpj: string;
-  }): Promise<Customer>;
+  createCustomer(customer: { name: string; email: string; cpfCnpj: string }): Promise<Customer>;
 
   /**
    * Get gateway name

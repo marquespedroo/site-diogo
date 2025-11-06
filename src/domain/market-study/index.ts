@@ -13,15 +13,8 @@ export { PropertyCharacteristics } from './value-objects/PropertyCharacteristics
 // Entities
 export { MarketSample, type MarketSampleStatus } from './entities/MarketSample';
 export { StatisticalAnalysis } from './entities/StatisticalAnalysis';
-export {
-  PropertyValuation,
-  type PropertyStandard,
-} from './entities/PropertyValuation';
-export {
-  MarketStudy,
-  type EvaluationType,
-  type MarketStudyParams,
-} from './entities/MarketStudy';
+export { PropertyValuation, type PropertyStandard } from './entities/PropertyValuation';
+export { MarketStudy, type EvaluationType, type MarketStudyParams } from './entities/MarketStudy';
 
 // Services
 export { ValuationService } from './services/ValuationService';

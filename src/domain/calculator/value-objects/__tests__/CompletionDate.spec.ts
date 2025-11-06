@@ -30,12 +30,16 @@ describe('CompletionDate', () => {
 
     it('should throw error for year in the past', () => {
       const pastYear = new Date().getFullYear() - 1;
-      expect(() => new CompletionDate(6, pastYear)).toThrow('Completion date cannot be in the past');
+      expect(() => new CompletionDate(6, pastYear)).toThrow(
+        'Completion date cannot be in the past'
+      );
     });
 
     it('should throw error for year too far in future', () => {
       const futureYear = new Date().getFullYear() + 51;
-      expect(() => new CompletionDate(6, futureYear)).toThrow('Completion date cannot be more than 50 years in the future');
+      expect(() => new CompletionDate(6, futureYear)).toThrow(
+        'Completion date cannot be more than 50 years in the future'
+      );
     });
 
     it('should accept year exactly 50 years in future', () => {
@@ -95,7 +99,8 @@ describe('CompletionDate', () => {
       const currentYear = now.getFullYear();
       const futureMonth = 12; // December
 
-      if (now.getMonth() < 11) { // If not already December
+      if (now.getMonth() < 11) {
+        // If not already December
         const date = new CompletionDate(futureMonth, currentYear);
         const months = date.getMonthsUntilCompletion();
         expect(months).toBeGreaterThanOrEqual(0);
@@ -165,8 +170,18 @@ describe('CompletionDate', () => {
 
     it('should format all months correctly', () => {
       const monthNames = [
-        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+        'Janeiro',
+        'Fevereiro',
+        'Março',
+        'Abril',
+        'Maio',
+        'Junho',
+        'Julho',
+        'Agosto',
+        'Setembro',
+        'Outubro',
+        'Novembro',
+        'Dezembro',
       ];
 
       for (let month = 1; month <= 12; month++) {

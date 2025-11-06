@@ -66,9 +66,7 @@ export class UnitIdentifier {
   static fromString(str: string): UnitIdentifier {
     const parts = str.split('-');
     if (parts.length !== 2) {
-      throw new Error(
-        'Invalid unit identifier format. Expected: "Tower-Number"'
-      );
+      throw new Error('Invalid unit identifier format. Expected: "Tower-Number"');
     }
 
     const [tower, number] = parts;

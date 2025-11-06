@@ -27,7 +27,7 @@
     },
     {
       "src": "/c/([^/]+)",
-      "dest": "/calculator-shared.html?code=$1"
+      "dest": "/public/calculator-shared.html?code=$1"
     },
     {
       "src": "/(.*)",
@@ -39,6 +39,10 @@
     {
       "source": "/(.*)",
       "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co; frame-ancestors 'none';"
+        },
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
@@ -84,15 +88,15 @@
   "rewrites": [
     {
       "source": "/calculadora",
-      "destination": "/calculadora-fluxo.html"
+      "destination": "/index.html"
     },
     {
       "source": "/simulador",
-      "destination": "/simulador-financiamento.html"
+      "destination": "/public/simulador-financiamento.html"
     },
     {
       "source": "/dashboard",
-      "destination": "/public/dashboard.html"
+      "destination": "/index.html"
     }
   ]
 }

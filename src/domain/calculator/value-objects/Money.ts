@@ -99,10 +99,7 @@ export class Money {
    * Check if equal to another Money object
    */
   equals(other: Money): boolean {
-    return (
-      this.amount === other.amount &&
-      this.currency === other.currency
-    );
+    return this.amount === other.amount && this.currency === other.currency;
   }
 
   /**
@@ -142,9 +139,7 @@ export class Money {
    */
   private assertSameCurrency(other: Money): void {
     if (this.currency !== other.currency) {
-      throw new Error(
-        `Currency mismatch: ${this.currency} !== ${other.currency}`
-      );
+      throw new Error(`Currency mismatch: ${this.currency} !== ${other.currency}`);
     }
   }
 

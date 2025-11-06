@@ -4,92 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tabela de Empreendimentos - ImobiTools</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Gerencie unidades e empreendimentos imobiliários. Controle disponibilidade, vendas, reservas e valores de forma profissional.">
+    <link rel="canonical" href="https://imobitools.vercel.app/projects-table.html">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Tabela de Empreendimentos - ImobiTools">
+    <meta property="og:description" content="Gerencie unidades e empreendimentos imobiliários de forma profissional.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://imobitools.vercel.app/projects-table.html">
+    <meta property="og:image" content="https://imobitools.vercel.app/assets/og-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
     <link rel="stylesheet" href="/src/styles/dashboard.css">
-    <style>
-        .projects-table-wrapper {
-            overflow-x: auto;
-            margin: var(--spacing-lg) 0;
-        }
-
-        .projects-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .projects-table thead {
-            background: var(--gradient-primary);
-            color: var(--white);
-        }
-
-        .projects-table th {
-            padding: var(--spacing-md);
-            text-align: left;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .projects-table td {
-            padding: var(--spacing-md);
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .projects-table tbody tr:hover {
-            background: var(--gray-100);
-        }
-
-        .unit-status {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .unit-status.available {
-            background: rgba(45, 206, 137, 0.15);
-            color: var(--success);
-        }
-
-        .unit-status.reserved {
-            background: rgba(251, 99, 64, 0.15);
-            color: var(--warning);
-        }
-
-        .unit-status.sold {
-            background: rgba(139, 92, 246, 0.15);
-            color: #8b5cf6;
-        }
-
-        .filter-controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .origin-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 600;
-        }
-
-        .origin-badge.real {
-            color: var(--success);
-        }
-
-        .origin-badge.permutante {
-            color: var(--danger);
-        }
-    </style>
+    <link rel="stylesheet" href="/src/styles/projects-table.css">
 </head>
 <body>
+    <!-- Skip to content link for accessibility -->
+    <a href="#main-content" class="skip-link" style="position: absolute; left: -9999px; z-index: 9999; padding: 1rem; background: #667eea; color: white; text-decoration: none; border-radius: 4px;">Pular para o conteúdo principal</a>
+
     <!-- Sidebar Navigation -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -166,8 +110,8 @@
                     <input type="text" placeholder="Buscar unidades..." class="search-input" id="searchInput">
                 </div>
 
-                <a href="#" class="sign-in-link">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <a href="javascript:void(0)" class="sign-in-link" role="button">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                         <path d="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-3 0-6 1.5-6 3v1h12v-1c0-1.5-3-3-6-3z"/>
                     </svg>
                     <span>Entrar</span>

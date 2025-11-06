@@ -34,32 +34,26 @@ export class CalculatorAPI {
    * Creates a new calculator with the provided data
    */
   async create(data: CreateCalculatorRequest): Promise<CreateCalculatorResponse> {
-    return this.fetchWithRetry<CreateCalculatorResponse>(
-      `${this.baseUrl}/create`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    return this.fetchWithRetry<CreateCalculatorResponse>(`${this.baseUrl}/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
   }
 
   /**
    * Updates an existing calculator
    */
   async update(data: UpdateCalculatorRequest): Promise<CreateCalculatorResponse> {
-    return this.fetchWithRetry<CreateCalculatorResponse>(
-      `${this.baseUrl}/update`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    return this.fetchWithRetry<CreateCalculatorResponse>(`${this.baseUrl}/update`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
   }
 
   /**
@@ -83,10 +77,7 @@ export class CalculatorAPI {
    * Generates a shareable link for a calculator
    * Returns the full shareable URL
    */
-  async generateShareableLink(
-    calculatorId: string,
-    userId: string
-  ): Promise<string> {
+  async generateShareableLink(calculatorId: string, userId: string): Promise<string> {
     const requestData: GenerateShareableLinkRequest = {
       calculatorId,
       userId,
@@ -163,10 +154,7 @@ export class CalculatorAPI {
       return successData.data;
     } catch (error) {
       // Retry on network errors
-      if (
-        retryCount < this.maxRetries &&
-        this.isRetryableError(error)
-      ) {
+      if (retryCount < this.maxRetries && this.isRetryableError(error)) {
         await this.sleep(this.retryDelay * Math.pow(2, retryCount));
         return this.fetchWithRetry<T>(url, options, retryCount + 1);
       }
@@ -194,7 +182,7 @@ export class CalculatorAPI {
       return (
         error.statusCode >= 500 ||
         error.statusCode === 429 || // Rate limit
-        error.statusCode === 408    // Request timeout
+        error.statusCode === 408 // Request timeout
       );
     }
 

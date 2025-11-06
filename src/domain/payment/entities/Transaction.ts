@@ -106,10 +106,7 @@ export class Transaction {
    */
   markAsRefunded(): void {
     if (this.status !== 'completed') {
-      throw new BusinessRuleError(
-        'Can only refund completed transactions',
-        'REFUND_NOT_COMPLETED'
-      );
+      throw new BusinessRuleError('Can only refund completed transactions', 'REFUND_NOT_COMPLETED');
     }
     this.status = 'refunded';
     this.refundedAt = new Date();

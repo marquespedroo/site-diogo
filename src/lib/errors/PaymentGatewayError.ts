@@ -11,12 +11,7 @@ export class PaymentGatewayError extends BaseError {
   public readonly operation: string;
   public readonly originalError?: Error;
 
-  constructor(
-    message: string,
-    gateway: string,
-    operation: string,
-    originalError?: Error
-  ) {
+  constructor(message: string, gateway: string, operation: string, originalError?: Error) {
     super(message, 'PAYMENT_GATEWAY_ERROR', 502, true);
     this.gateway = gateway;
     this.operation = operation;

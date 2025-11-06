@@ -74,7 +74,7 @@ describe('Money', () => {
     });
 
     it('should add decimal amounts correctly', () => {
-      const m1 = new Money(10.50);
+      const m1 = new Money(10.5);
       const m2 = new Money(20.75);
       const result = m1.add(m2);
       expect(result.getAmount()).toBe(31.25);
@@ -156,7 +156,7 @@ describe('Money', () => {
 
     it('should handle percentage calculations', () => {
       const money = new Money(1000);
-      const result = money.multiply(0.30); // 30%
+      const result = money.multiply(0.3); // 30%
       expect(result.getAmount()).toBe(300);
     });
   });
@@ -411,10 +411,10 @@ describe('Money', () => {
     });
 
     it('should handle precision in arithmetic operations', () => {
-      const m1 = new Money(10.10);
-      const m2 = new Money(20.20);
+      const m1 = new Money(10.1);
+      const m2 = new Money(20.2);
       const result = m1.add(m2);
-      expect(result.getAmount()).toBe(30.30);
+      expect(result.getAmount()).toBe(30.3);
     });
 
     it('should maintain immutability through multiple operations', () => {
@@ -429,10 +429,7 @@ describe('Money', () => {
 
     it('should chain operations correctly', () => {
       const money = new Money(1000);
-      const result = money
-        .add(new Money(500))
-        .multiply(2)
-        .subtract(new Money(1000));
+      const result = money.add(new Money(500)).multiply(2).subtract(new Money(1000));
 
       expect(result.getAmount()).toBe(2000);
     });

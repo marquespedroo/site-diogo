@@ -2,6 +2,8 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { IMarketStudyRepository } from '@/domain/market-study/repositories/IMarketStudyRepository';
 import { MarketStudy } from '@/domain/market-study/entities/MarketStudy';
 import { NotFoundError, DatabaseError } from '@/lib/errors';
+import { isValidUUID } from '@/lib/utils/uuid';
+import { PAGINATION } from '@/lib/constants';
 
 /**
  * Database row type for market_studies table
@@ -59,7 +61,7 @@ export class SupabaseMarketStudyRepository implements IMarketStudyRepository {
 
       // Ensure ID is a valid UUID, generate one if not
       let id = marketStudy.getId();
-      if (!this.isValidUUID(id)) {
+      if (!isValidUUID(id)) {
         id = crypto.randomUUID();
       }
 
@@ -86,10 +88,7 @@ export class SupabaseMarketStudyRepository implements IMarketStudyRepository {
       }
 
       if (!data) {
-        throw new DatabaseError(
-          'Failed to save market study: No data returned',
-          'save'
-        );
+        throw new DatabaseError('Failed to save market study: No data returned', 'save');
       }
 
       // Return market study with database ID
@@ -159,8 +158,8 @@ export class SupabaseMarketStudyRepository implements IMarketStudyRepository {
    */
   async findByUserId(
     userId: string,
-    limit: number = 50,
-    offset: number = 0
+    limit: number = PAGINATION.DEFAULT_LIMIT,
+    offset: number = PAGINATION.DEFAULT_OFFSET
   ): Promise<MarketStudy[]> {
     try {
       const { data, error } = await this.supabase
@@ -370,10 +369,7 @@ export class SupabaseMarketStudyRepository implements IMarketStudyRepository {
     neighborhood?: string
   ): Promise<MarketStudy[]> {
     try {
-      let query = this.supabase
-        .from(this.tableName)
-        .select('*')
-        .eq('user_id', userId);
+      let query = this.supabase.from(this.tableName).select('*').eq('user_id', userId);
 
       // Use JSONB query operators to search within the state column
       query = query.eq('state->>propertyAddress->>city', city);
@@ -426,18 +422,5 @@ export class SupabaseMarketStudyRepository implements IMarketStudyRepository {
     state.updatedAt = row.updated_at;
 
     return MarketStudy.fromJSON(state);
-  }
-
-  /**
-   * Check if a string is a valid UUID
-   *
-   * @private
-   * @param str - String to check
-   * @returns true if valid UUID, false otherwise
-   */
-  private isValidUUID(str: string): boolean {
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(str);
   }
 }

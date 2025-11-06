@@ -78,9 +78,7 @@ export class StripeGateway implements IPaymentGateway {
   /**
    * Create a recurring subscription
    */
-  async createSubscription(
-    input: CreateSubscriptionInput
-  ): Promise<CreateSubscriptionOutput> {
+  async createSubscription(input: CreateSubscriptionInput): Promise<CreateSubscriptionOutput> {
     try {
       // 1. Create or get customer
       let customerId = input.customerId;
@@ -97,26 +95,22 @@ export class StripeGateway implements IPaymentGateway {
       const price = await this.createPrice(input.amount, input.description);
 
       // 3. Create subscription
-      const subscription = await this.makeRequest<StripeSubscription>(
-        '/subscriptions',
-        {
-          method: 'POST',
-          body: this.encodeFormData({
-            customer: customerId,
-            'items[0][price]': price.id,
-            payment_behavior: 'default_incomplete',
-            'expand[]': 'latest_invoice.payment_intent',
-          }),
-        }
-      );
+      const subscription = await this.makeRequest<StripeSubscription>('/subscriptions', {
+        method: 'POST',
+        body: this.encodeFormData({
+          customer: customerId,
+          'items[0][price]': price.id,
+          payment_behavior: 'default_incomplete',
+          'expand[]': 'latest_invoice.payment_intent',
+        }),
+      });
 
       return {
         subscriptionId: subscription.id,
         customerId: subscription.customer,
         status: this.mapStripeStatus(subscription.status),
         nextBillingDate: new Date(subscription.current_period_end * 1000),
-        clientSecret:
-          subscription.latest_invoice?.payment_intent?.client_secret,
+        clientSecret: subscription.latest_invoice?.payment_intent?.client_secret,
       };
     } catch (error) {
       throw new PaymentGatewayError(
@@ -182,23 +176,18 @@ export class StripeGateway implements IPaymentGateway {
   /**
    * Process a one-time payment
    */
-  async processPayment(
-    input: ProcessPaymentInput
-  ): Promise<ProcessPaymentOutput> {
+  async processPayment(input: ProcessPaymentInput): Promise<ProcessPaymentOutput> {
     try {
-      const paymentIntent = await this.makeRequest<StripePaymentIntent>(
-        '/payment_intents',
-        {
-          method: 'POST',
-          body: this.encodeFormData({
-            amount: Math.round(input.amount * 100), // Convert to cents
-            currency: 'brl',
-            customer: input.customerId,
-            description: input.description,
-            automatic_payment_methods: 'enabled',
-          }),
-        }
-      );
+      const paymentIntent = await this.makeRequest<StripePaymentIntent>('/payment_intents', {
+        method: 'POST',
+        body: this.encodeFormData({
+          amount: Math.round(input.amount * 100), // Convert to cents
+          currency: 'brl',
+          customer: input.customerId,
+          description: input.description,
+          automatic_payment_methods: 'enabled',
+        }),
+      });
 
       return {
         transactionId: paymentIntent.id,
@@ -239,17 +228,14 @@ export class StripeGateway implements IPaymentGateway {
     cpfCnpj: string;
   }): Promise<Customer> {
     try {
-      const stripeCustomer = await this.makeRequest<StripeCustomer>(
-        '/customers',
-        {
-          method: 'POST',
-          body: this.encodeFormData({
-            name: customer.name,
-            email: customer.email,
-            'metadata[cpfCnpj]': customer.cpfCnpj,
-          }),
-        }
-      );
+      const stripeCustomer = await this.makeRequest<StripeCustomer>('/customers', {
+        method: 'POST',
+        body: this.encodeFormData({
+          name: customer.name,
+          email: customer.email,
+          'metadata[cpfCnpj]': customer.cpfCnpj,
+        }),
+      });
 
       return {
         id: stripeCustomer.id,
@@ -272,10 +258,9 @@ export class StripeGateway implements IPaymentGateway {
    */
   async getCustomer(customerId: string): Promise<Customer> {
     try {
-      const stripeCustomer = await this.makeRequest<StripeCustomer>(
-        `/customers/${customerId}`,
-        { method: 'GET' }
-      );
+      const stripeCustomer = await this.makeRequest<StripeCustomer>(`/customers/${customerId}`, {
+        method: 'GET',
+      });
 
       return {
         id: stripeCustomer.id,
@@ -334,14 +319,11 @@ export class StripeGateway implements IPaymentGateway {
   /**
    * Create a price for subscription
    */
-  private async createPrice(
-    amount: number,
-    description: string
-  ): Promise<{ id: string }> {
+  private async createPrice(amount: number, description: string): Promise<{ id: string }> {
     return this.makeRequest('/prices', {
       method: 'POST',
       body: this.encodeFormData({
-        'unit_amount': Math.round(amount * 100).toString(), // Convert to cents
+        unit_amount: Math.round(amount * 100).toString(), // Convert to cents
         currency: 'brl',
         'recurring[interval]': 'month',
         'product_data[name]': description,
@@ -352,10 +334,7 @@ export class StripeGateway implements IPaymentGateway {
   /**
    * Make HTTP request to Stripe API
    */
-  private async makeRequest<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+  private async makeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
     const headers: HeadersInit = {
       Authorization: `Bearer ${this.apiKey}`,
@@ -371,9 +350,7 @@ export class StripeGateway implements IPaymentGateway {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(
-        data.error?.message || `HTTP ${response.status}: ${response.statusText}`
-      );
+      throw new Error(data.error?.message || `HTTP ${response.status}: ${response.statusText}`);
     }
 
     return data;

@@ -43,9 +43,7 @@ export class MercadoPagoGateway implements IPaymentGateway {
   /**
    * Create a recurring subscription
    */
-  async createSubscription(
-    input: CreateSubscriptionInput
-  ): Promise<CreateSubscriptionOutput> {
+  async createSubscription(input: CreateSubscriptionInput): Promise<CreateSubscriptionOutput> {
     try {
       // MercadoPago uses preapproval plans for subscriptions
       const response = await this.makeRequest('/preapproval', {
@@ -136,9 +134,7 @@ export class MercadoPagoGateway implements IPaymentGateway {
   /**
    * Process a one-time payment
    */
-  async processPayment(
-    input: ProcessPaymentInput
-  ): Promise<ProcessPaymentOutput> {
+  async processPayment(input: ProcessPaymentInput): Promise<ProcessPaymentOutput> {
     try {
       const response = await this.makeRequest('/v1/payments', {
         method: 'POST',
@@ -240,10 +236,7 @@ export class MercadoPagoGateway implements IPaymentGateway {
   /**
    * Make HTTP request to MercadoPago API
    */
-  private async makeRequest<T = any>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+  private async makeRequest<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
@@ -259,9 +252,7 @@ export class MercadoPagoGateway implements IPaymentGateway {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(
-        data.message || `HTTP ${response.status}: ${response.statusText}`
-      );
+      throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
     }
 
     return data;

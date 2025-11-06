@@ -11,7 +11,8 @@ import { PaymentGatewayError } from '@/lib/errors';
 import { PaymentGateway } from '@/domain/payment';
 import { SubscriptionStatus } from '@/domain/payment';
 import { PaymentMethod } from '@/domain/payment';
-import crypto from 'crypto';
+// Note: Webhook validation using Node.js crypto has been removed.
+// Webhook signature validation MUST be performed server-side for security.
 
 /**
  * Asaas API Response Types
@@ -86,9 +87,7 @@ export class AsaasGateway implements IPaymentGateway {
   /**
    * Create a recurring subscription
    */
-  async createSubscription(
-    input: CreateSubscriptionInput
-  ): Promise<CreateSubscriptionOutput> {
+  async createSubscription(input: CreateSubscriptionInput): Promise<CreateSubscriptionOutput> {
     try {
       // 1. Create or get customer
       let customerId = input.customerId;
@@ -102,19 +101,16 @@ export class AsaasGateway implements IPaymentGateway {
       }
 
       // 2. Create subscription
-      const response = await this.makeRequest<AsaasSubscriptionResponse>(
-        '/subscriptions',
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            customer: customerId,
-            billingType: this.mapBillingType(input.billingType),
-            value: input.amount,
-            cycle: 'MONTHLY',
-            description: input.description,
-          }),
-        }
-      );
+      const response = await this.makeRequest<AsaasSubscriptionResponse>('/subscriptions', {
+        method: 'POST',
+        body: JSON.stringify({
+          customer: customerId,
+          billingType: this.mapBillingType(input.billingType),
+          value: input.amount,
+          cycle: 'MONTHLY',
+          description: input.description,
+        }),
+      });
 
       return {
         subscriptionId: response.id,
@@ -191,23 +187,18 @@ export class AsaasGateway implements IPaymentGateway {
   /**
    * Process a one-time payment
    */
-  async processPayment(
-    input: ProcessPaymentInput
-  ): Promise<ProcessPaymentOutput> {
+  async processPayment(input: ProcessPaymentInput): Promise<ProcessPaymentOutput> {
     try {
-      const response = await this.makeRequest<AsaasPaymentResponse>(
-        '/payments',
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            customer: input.customerId,
-            billingType: this.mapBillingType(input.billingType),
-            value: input.amount,
-            dueDate: input.dueDate || new Date().toISOString().split('T')[0],
-            description: input.description,
-          }),
-        }
-      );
+      const response = await this.makeRequest<AsaasPaymentResponse>('/payments', {
+        method: 'POST',
+        body: JSON.stringify({
+          customer: input.customerId,
+          billingType: this.mapBillingType(input.billingType),
+          value: input.amount,
+          dueDate: input.dueDate || new Date().toISOString().split('T')[0],
+          description: input.description,
+        }),
+      });
 
       return {
         transactionId: response.id,
@@ -237,17 +228,14 @@ export class AsaasGateway implements IPaymentGateway {
     cpfCnpj: string;
   }): Promise<Customer> {
     try {
-      const response = await this.makeRequest<AsaasCustomerResponse>(
-        '/customers',
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            name: customer.name,
-            email: customer.email,
-            cpfCnpj: customer.cpfCnpj.replace(/[^\d]/g, ''),
-          }),
-        }
-      );
+      const response = await this.makeRequest<AsaasCustomerResponse>('/customers', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: customer.name,
+          email: customer.email,
+          cpfCnpj: customer.cpfCnpj.replace(/[^\d]/g, ''),
+        }),
+      });
 
       return {
         id: response.id,
@@ -270,10 +258,9 @@ export class AsaasGateway implements IPaymentGateway {
    */
   async getCustomer(customerId: string): Promise<Customer> {
     try {
-      const response = await this.makeRequest<AsaasCustomerResponse>(
-        `/customers/${customerId}`,
-        { method: 'GET' }
-      );
+      const response = await this.makeRequest<AsaasCustomerResponse>(`/customers/${customerId}`, {
+        method: 'GET',
+      });
 
       return {
         id: response.id,
@@ -324,25 +311,23 @@ export class AsaasGateway implements IPaymentGateway {
 
   /**
    * Validate webhook signature
+   *
+   * SECURITY WARNING: Webhook signature validation cannot be performed securely
+   * in client-side code. This validation MUST be performed server-side using
+   * Node.js crypto module or equivalent server-side cryptography library.
+   *
+   * Client-side validation would expose the webhook secret and provide no
+   * security benefit, as malicious actors could simply bypass the validation.
    */
   private validateWebhookSignature(payload: any, signature: string): boolean {
-    if (!this.webhookSecret) {
-      return true; // Skip validation if no secret configured
-    }
+    console.warn(
+      'Webhook signature validation is disabled in client-side code. ' +
+        'Webhook validation MUST be performed on the server-side for security.'
+    );
 
-    try {
-      const computedSignature = crypto
-        .createHmac('sha256', this.webhookSecret)
-        .update(JSON.stringify(payload))
-        .digest('hex');
-
-      return crypto.timingSafeEqual(
-        Buffer.from(signature),
-        Buffer.from(computedSignature)
-      );
-    } catch (error) {
-      return false;
-    }
+    // Always return false in client-side context to prevent false sense of security
+    // Webhook processing should be handled by a secure backend service
+    return false;
   }
 
   // ============================================================================
@@ -352,10 +337,7 @@ export class AsaasGateway implements IPaymentGateway {
   /**
    * Make HTTP request to Asaas API
    */
-  private async makeRequest<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+  private async makeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
     const headers: HeadersInit = {
       'Content-Type': 'application/json',

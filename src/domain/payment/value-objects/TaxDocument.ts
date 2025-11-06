@@ -119,9 +119,7 @@ export class TaxDocument {
    * Check equality with another TaxDocument
    */
   equals(other: TaxDocument): boolean {
-    return (
-      this.type === other.type && this.getValue() === other.getValue()
-    );
+    return this.type === other.type && this.getValue() === other.getValue();
   }
 
   /**

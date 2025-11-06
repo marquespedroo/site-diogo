@@ -8,9 +8,11 @@ import { Project } from '../../domain/projects/entities/Project';
 import { Unit } from '../../domain/projects/entities/Unit';
 import { ProjectLocation } from '../../domain/projects/value-objects/ProjectLocation';
 import { UnitIdentifier } from '../../domain/projects/value-objects/UnitIdentifier';
+import { isValidUUID } from '@/lib/utils/uuid';
 import { PropertyArea } from '../../domain/calculator/value-objects/PropertyArea';
 import { Money } from '../../domain/calculator/value-objects/Money';
 import { NotFoundError, DatabaseError } from '../../lib/errors';
+import { PAGINATION } from '@/lib/constants';
 
 /**
  * Database row type for projects table
@@ -85,7 +87,7 @@ export class SupabaseProjectRepository implements IProjectRepository {
 
       // Ensure ID is a valid UUID
       let id = json.id;
-      if (!this.isValidUUID(id)) {
+      if (!isValidUUID(id)) {
         id = crypto.randomUUID();
       }
 
@@ -114,7 +116,7 @@ export class SupabaseProjectRepository implements IProjectRepository {
       // Insert units if any
       if (json.units && json.units.length > 0) {
         const unitsToInsert = json.units.map((unit: any) => ({
-          id: this.isValidUUID(unit.id) ? unit.id : crypto.randomUUID(),
+          id: isValidUUID(unit.id) ? unit.id : crypto.randomUUID(),
           project_id: id,
           tower: unit.identifier.tower,
           unit_number: unit.identifier.number,
@@ -126,9 +128,7 @@ export class SupabaseProjectRepository implements IProjectRepository {
           metadata: unit.metadata || {},
         }));
 
-        const { error: unitsError } = await this.supabase
-          .from('units')
-          .insert(unitsToInsert);
+        const { error: unitsError } = await this.supabase.from('units').insert(unitsToInsert);
 
         if (unitsError) {
           // Rollback project
@@ -142,7 +142,7 @@ export class SupabaseProjectRepository implements IProjectRepository {
       }
 
       // Fetch complete project with units
-      return await this.findById(id) as Project;
+      return (await this.findById(id)) as Project;
     } catch (error) {
       if (error instanceof DatabaseError) {
         throw error;
@@ -208,9 +208,7 @@ export class SupabaseProjectRepository implements IProjectRepository {
    */
   async findAll(filters: ProjectFilterOptions = {}): Promise<Project[]> {
     try {
-      let query = this.supabase
-        .from('projects')
-        .select('*, units(*)');
+      let query = this.supabase.from('projects').select('*, units(*)');
 
       // Apply filters
       if (filters.userId) {
@@ -238,12 +236,13 @@ export class SupabaseProjectRepository implements IProjectRepository {
       // Sorting
       const sortBy = filters.sortBy || 'createdAt';
       const sortOrder = filters.sortOrder || 'desc';
-      const sortColumn = sortBy === 'createdAt' ? 'created_at' : sortBy === 'updatedAt' ? 'updated_at' : sortBy;
+      const sortColumn =
+        sortBy === 'createdAt' ? 'created_at' : sortBy === 'updatedAt' ? 'updated_at' : sortBy;
       query = query.order(sortColumn, { ascending: sortOrder === 'asc' });
 
       // Pagination
-      const limit = filters.limit || 50;
-      const offset = filters.offset || 0;
+      const limit = filters.limit || PAGINATION.DEFAULT_LIMIT;
+      const offset = filters.offset || PAGINATION.DEFAULT_OFFSET;
       query = query.range(offset, offset + limit - 1);
 
       const { data, error } = await query;
@@ -281,20 +280,13 @@ export class SupabaseProjectRepository implements IProjectRepository {
    * @returns Array of projects
    * @throws {DatabaseError} if query fails
    */
-  async findByUserId(
-    userId: string,
-    includeShared: boolean = true
-  ): Promise<Project[]> {
+  async findByUserId(userId: string, includeShared: boolean = true): Promise<Project[]> {
     try {
-      let query = this.supabase
-        .from('projects')
-        .select('*, units(*)');
+      let query = this.supabase.from('projects').select('*, units(*)');
 
       if (includeShared) {
         // Find projects where user is owner OR user is in shared_with array
-        query = query.or(
-          `user_id.eq.${userId},shared_with.cs.{${userId}}`
-        );
+        query = query.or(`user_id.eq.${userId},shared_with.cs.{${userId}}`);
       } else {
         // Only owned projects
         query = query.eq('user_id', userId);
@@ -374,7 +366,7 @@ export class SupabaseProjectRepository implements IProjectRepository {
 
       if (json.units && json.units.length > 0) {
         const unitsToInsert = json.units.map((unit: any) => ({
-          id: this.isValidUUID(unit.id) ? unit.id : crypto.randomUUID(),
+          id: isValidUUID(unit.id) ? unit.id : crypto.randomUUID(),
           project_id: id,
           tower: unit.identifier.tower,
           unit_number: unit.identifier.number,
@@ -386,9 +378,7 @@ export class SupabaseProjectRepository implements IProjectRepository {
           metadata: unit.metadata || {},
         }));
 
-        const { error: unitsError } = await this.supabase
-          .from('units')
-          .insert(unitsToInsert);
+        const { error: unitsError } = await this.supabase.from('units').insert(unitsToInsert);
 
         if (unitsError) {
           throw new DatabaseError(
@@ -400,7 +390,7 @@ export class SupabaseProjectRepository implements IProjectRepository {
       }
 
       // Fetch complete updated project
-      return await this.findById(id) as Project;
+      return (await this.findById(id)) as Project;
     } catch (error) {
       if (error instanceof NotFoundError || error instanceof DatabaseError) {
         throw error;
@@ -496,9 +486,7 @@ export class SupabaseProjectRepository implements IProjectRepository {
    */
   async count(filters: ProjectFilterOptions = {}): Promise<number> {
     try {
-      let query = this.supabase
-        .from('projects')
-        .select('id', { count: 'exact', head: true });
+      let query = this.supabase.from('projects').select('id', { count: 'exact', head: true });
 
       // Apply filters
       if (filters.userId) {
@@ -543,10 +531,7 @@ export class SupabaseProjectRepository implements IProjectRepository {
    * @param callback - Callback function for updates
    * @returns RealtimeChannel for managing subscription
    */
-  subscribeToProject(
-    projectId: string,
-    callback: (event: RealtimeEvent) => void
-  ): RealtimeChannel {
+  subscribeToProject(projectId: string, callback: (event: RealtimeEvent) => void): RealtimeChannel {
     const channel = this.supabase
       .channel(`project:${projectId}`)
       .on(
@@ -639,19 +624,11 @@ export class SupabaseProjectRepository implements IProjectRepository {
     if (row.metadata && typeof row.metadata === 'object') {
       Object.entries(row.metadata).forEach(([key, value]) => {
         // Reconstruct Money objects
-        if (
-          value &&
-          typeof value === 'object' &&
-          'amount' in value &&
-          'currency' in value
-        ) {
+        if (value && typeof value === 'object' && 'amount' in value && 'currency' in value) {
           metadata.set(key, Money.fromJSON(value as any));
         }
         // Reconstruct Date objects
-        else if (
-          typeof value === 'string' &&
-          /^\d{4}-\d{2}-\d{2}T/.test(value)
-        ) {
+        else if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
           metadata.set(key, new Date(value));
         }
         // Keep other values as-is
@@ -674,18 +651,5 @@ export class SupabaseProjectRepository implements IProjectRepository {
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
     });
-  }
-
-  /**
-   * Check if a string is a valid UUID
-   *
-   * @private
-   * @param str - String to check
-   * @returns true if valid UUID
-   */
-  private isValidUUID(str: string): boolean {
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(str);
   }
 }

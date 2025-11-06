@@ -2,6 +2,9 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { ICalculatorRepository } from '../../domain/calculator/repositories/ICalculatorRepository';
 import { PaymentCalculator } from '../../domain/calculator/entities/PaymentCalculator';
 import { NotFoundError, DatabaseError } from '../../lib/errors';
+import { isValidUUID } from '@/lib/utils/uuid';
+import { PAGINATION } from '@/lib/constants';
+import { logger } from '@/lib/utils/logger';
 
 /**
  * Database row type for calculators table
@@ -56,7 +59,7 @@ export class SupabaseCalculatorRepository implements ICalculatorRepository {
 
       // Ensure ID is a valid UUID, generate one if not
       let id = calculator.getId();
-      if (!this.isValidUUID(id)) {
+      if (!isValidUUID(id)) {
         id = crypto.randomUUID();
       }
 
@@ -85,10 +88,7 @@ export class SupabaseCalculatorRepository implements ICalculatorRepository {
       }
 
       if (!data) {
-        throw new DatabaseError(
-          'Failed to save calculator: No data returned',
-          'save'
-        );
+        throw new DatabaseError('Failed to save calculator: No data returned', 'save');
       }
 
       // Return calculator with database ID
@@ -183,7 +183,7 @@ export class SupabaseCalculatorRepository implements ICalculatorRepository {
       // Increment view count asynchronously (don't wait)
       const row = data as CalculatorRow;
       this.incrementViewCount(row.id).catch((err) => {
-        console.error('Failed to increment view count:', err);
+        logger.error('Failed to increment view count', err as Error, { calculatorId: row.id });
       });
 
       return this.mapRowToCalculator(row);
@@ -206,7 +206,10 @@ export class SupabaseCalculatorRepository implements ICalculatorRepository {
    * @param limit - Maximum number of results (default: 50)
    * @returns Array of calculators
    */
-  async findByUserId(userId: string, limit = 50): Promise<PaymentCalculator[]> {
+  async findByUserId(
+    userId: string,
+    limit = PAGINATION.DEFAULT_LIMIT
+  ): Promise<PaymentCalculator[]> {
     try {
       const { data, error } = await this.supabase
         .from('calculators')
@@ -411,18 +414,5 @@ export class SupabaseCalculatorRepository implements ICalculatorRepository {
     state.id = row.id;
 
     return PaymentCalculator.fromJSON(state);
-  }
-
-  /**
-   * Check if a string is a valid UUID
-   *
-   * @private
-   * @param str - String to check
-   * @returns true if valid UUID, false otherwise
-   */
-  private isValidUUID(str: string): boolean {
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(str);
   }
 }

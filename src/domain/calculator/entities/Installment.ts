@@ -20,12 +20,7 @@ export class Installment {
   private readonly dueDate: Date;
   private readonly description: string;
 
-  constructor(
-    id: string,
-    amount: Money,
-    dueDate: Date,
-    description: string
-  ) {
+  constructor(id: string, amount: Money, dueDate: Date, description: string) {
     if (!id || id.trim().length === 0) {
       throw new Error('Installment ID cannot be empty');
     }

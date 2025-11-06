@@ -66,10 +66,7 @@ export class ProjectRealtimeSync {
    * @param handler - Event handler function
    * @returns Channel ID for managing subscription
    */
-  subscribeToProject(
-    projectId: string,
-    handler: RealtimeEventHandler
-  ): string {
+  subscribeToProject(projectId: string, handler: RealtimeEventHandler): string {
     const channelId = `project:${projectId}`;
 
     // Check if already subscribed
@@ -100,9 +97,7 @@ export class ProjectRealtimeSync {
         }
       )
       .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log(`Subscribed to project ${projectId}`);
-        } else if (status === 'CHANNEL_ERROR') {
+        if (status === 'CHANNEL_ERROR') {
           console.error(`Failed to subscribe to project ${projectId}`);
         }
       });
@@ -123,10 +118,7 @@ export class ProjectRealtimeSync {
    * @param handler - Event handler function
    * @returns Channel ID for managing subscription
    */
-  subscribeToUnits(
-    projectId: string,
-    handler: RealtimeEventHandler
-  ): string {
+  subscribeToUnits(projectId: string, handler: RealtimeEventHandler): string {
     const channelId = `units:${projectId}`;
 
     // Check if already subscribed
@@ -157,9 +149,7 @@ export class ProjectRealtimeSync {
         }
       )
       .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log(`Subscribed to units for project ${projectId}`);
-        } else if (status === 'CHANNEL_ERROR') {
+        if (status === 'CHANNEL_ERROR') {
           console.error(`Failed to subscribe to units for project ${projectId}`);
         }
       });
@@ -180,10 +170,7 @@ export class ProjectRealtimeSync {
    * @param handler - Event handler function
    * @returns Channel ID for managing subscription
    */
-  subscribeToUserProjects(
-    userId: string,
-    handler: RealtimeEventHandler
-  ): string {
+  subscribeToUserProjects(userId: string, handler: RealtimeEventHandler): string {
     const channelId = `user-projects:${userId}`;
 
     // Check if already subscribed
@@ -214,9 +201,7 @@ export class ProjectRealtimeSync {
         }
       )
       .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log(`Subscribed to projects for user ${userId}`);
-        } else if (status === 'CHANNEL_ERROR') {
+        if (status === 'CHANNEL_ERROR') {
           console.error(`Failed to subscribe to projects for user ${userId}`);
         }
       });
@@ -237,10 +222,7 @@ export class ProjectRealtimeSync {
    * @param handler - Event handler function (receives events from both sources)
    * @returns Array of channel IDs [projectChannelId, unitsChannelId]
    */
-  subscribeToProjectAndUnits(
-    projectId: string,
-    handler: RealtimeEventHandler
-  ): string[] {
+  subscribeToProjectAndUnits(projectId: string, handler: RealtimeEventHandler): string[] {
     const projectChannelId = this.subscribeToProject(projectId, handler);
     const unitsChannelId = this.subscribeToUnits(projectId, handler);
     return [projectChannelId, unitsChannelId];

@@ -352,8 +352,15 @@
         </div>
     </div>
 
+    <!--
+        NOTE: Build Process Required
+        This application requires TypeScript compilation before deployment.
+        Run 'npm run build' to compile TypeScript files to JavaScript.
+        The import below references the compiled .js file.
+    -->
     <script type="module">
-        import { calculatorAPI, APIError } from '/src/scripts/calculator-api.ts';
+        import { calculatorAPI, APIError } from '/src/scripts/calculator-api.js';
+        import DOMPurify from 'https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.es.mjs';
 
         // Format currency in Brazilian Real
         function formatCurrency(value) {
@@ -387,7 +394,7 @@
             // Display approval status
             const statusBox = document.getElementById('statusBox');
             if (approvalStatus.approved) {
-                statusBox.innerHTML = `
+                statusBox.innerHTML = DOMPurify.sanitize(`
                     <div class="status-box status-approved">
                         <div class="status-icon">✅</div>
                         <div class="status-title">Aprovado!</div>
@@ -396,9 +403,9 @@
                             ${formatPercentage(approvalStatus.percentagePaid)} do valor necessário já está comprometido.
                         </div>
                     </div>
-                `;
+                `);
             } else {
-                statusBox.innerHTML = `
+                statusBox.innerHTML = DOMPurify.sanitize(`
                     <div class="status-box status-rejected">
                         <div class="status-icon">⚠️</div>
                         <div class="status-title">Não Aprovado</div>
@@ -407,12 +414,12 @@
                             necessários até a data de entrega.
                         </div>
                     </div>
-                `;
+                `);
             }
 
             // Display main info
             const mainInfo = document.getElementById('mainInfo');
-            mainInfo.innerHTML = `
+            mainInfo.innerHTML = DOMPurify.sanitize(`
                 <div class="info-item">
                     <div class="info-label">Valor do Imóvel</div>
                     <div class="info-value large">${formatCurrency(calculator.propertyValue)}</div>
@@ -439,7 +446,7 @@
                         ${String(calculator.completionDate.month).padStart(2, '0')}/${calculator.completionDate.year}
                     </div>
                 </div>
-            `;
+            `);
 
             // Display payment details
             const paymentDetails = document.getElementById('paymentDetails');
@@ -505,7 +512,7 @@
                 `;
             }
 
-            paymentDetails.innerHTML = paymentsHTML;
+            paymentDetails.innerHTML = DOMPurify.sanitize(paymentsHTML);
 
             // Display view count
             const viewCount = document.getElementById('viewCount');

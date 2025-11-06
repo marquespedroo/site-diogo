@@ -59,7 +59,10 @@ export const GenerateShortCodeSchema = z.object({
 
 // Load Calculator by Short Code Schema
 export const LoadByShortCodeSchema = z.object({
-  shortCode: z.string().length(6).regex(/^[a-z0-9]+$/),
+  shortCode: z
+    .string()
+    .length(6)
+    .regex(/^[a-z0-9]+$/),
 });
 
 // Type exports for TypeScript

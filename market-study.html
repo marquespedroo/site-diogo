@@ -4,114 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estudo de Mercado - ImobiTools</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Ferramenta profissional de estudo de mercado imobiliário. Avalie imóveis comparando com amostras similares conforme NBR 14653-2.">
+    <link rel="canonical" href="https://imobitools.vercel.app/market-study.html">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Estudo de Mercado - ImobiTools">
+    <meta property="og:description" content="Ferramenta profissional de estudo de mercado imobiliário conforme NBR 14653-2.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://imobitools.vercel.app/market-study.html">
+    <meta property="og:image" content="https://imobitools.vercel.app/assets/og-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
     <link rel="stylesheet" href="/src/styles/dashboard.css">
-    <style>
-        .market-study-form {
-            padding: var(--spacing-md) 0;
-        }
-
-        .samples-section {
-            margin: var(--spacing-xl) 0;
-        }
-
-        .sample-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-md);
-        }
-
-        .sample-item {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr auto;
-            gap: var(--spacing-md);
-            padding: var(--spacing-md);
-            background: var(--gray-100);
-            border-radius: var(--radius-md);
-            align-items: end;
-        }
-
-        .valuation-results {
-            margin-top: var(--spacing-xl);
-        }
-
-        .valuation-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--spacing-lg);
-            margin: var(--spacing-lg) 0;
-        }
-
-        .valuation-card {
-            padding: var(--spacing-lg);
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            text-align: center;
-            transition: transform 0.2s ease;
-        }
-
-        .valuation-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .valuation-card h4 {
-            font-size: 14px;
-            color: var(--secondary);
-            margin-bottom: var(--spacing-sm);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .valuation-card .price {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
-            margin: var(--spacing-sm) 0;
-        }
-
-        .valuation-card .price-per-sqm {
-            font-size: 14px;
-            color: var(--gray-600);
-        }
-
-        .statistics-card {
-            padding: var(--spacing-lg);
-            background: var(--gray-100);
-            border-radius: var(--radius-lg);
-            margin: var(--spacing-lg) 0;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: var(--spacing-md);
-            margin-top: var(--spacing-md);
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-item .label {
-            font-size: 12px;
-            color: var(--gray-600);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-item .value {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-top: 4px;
-        }
-    </style>
+    <link rel="stylesheet" href="/src/styles/market-study.css">
 </head>
 <body>
+    <!-- Skip to content link for accessibility -->
+    <a href="#main-content" class="skip-link" style="position: absolute; left: -9999px; z-index: 9999; padding: 1rem; background: #667eea; color: white; text-decoration: none; border-radius: 4px;">Pular para o conteúdo principal</a>
+
     <!-- Sidebar Navigation (same as calculator) -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -188,8 +110,8 @@
                     <input type="text" placeholder="Digite aqui..." class="search-input">
                 </div>
 
-                <a href="#" class="sign-in-link">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <a href="javascript:void(0)" class="sign-in-link" role="button">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                         <path d="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-3 0-6 1.5-6 3v1h12v-1c0-1.5-3-3-6-3z"/>
                     </svg>
                     <span>Entrar</span>

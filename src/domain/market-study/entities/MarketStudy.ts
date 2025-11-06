@@ -370,9 +370,7 @@ export class MarketStudy {
       userId: json.userId,
       propertyAddress: PropertyAddress.fromJSON(json.propertyAddress),
       propertyArea: new PropertyArea(json.propertyArea),
-      propertyCharacteristics: PropertyCharacteristics.fromJSON(
-        json.propertyCharacteristics
-      ),
+      propertyCharacteristics: PropertyCharacteristics.fromJSON(json.propertyCharacteristics),
       evaluationType: json.evaluationType,
       factorNames: json.factorNames || [],
       samples: (json.samples || []).map((s: any) => MarketSample.fromJSON(s)),
@@ -391,8 +389,11 @@ export class MarketStudy {
    * Generate unique ID (UUID-like)
    */
   private generateId(): string {
-    return (
-      Date.now().toString(36) + Math.random().toString(36).substring(2, 15)
-    );
+    const array = new Uint8Array(8);
+    crypto.getRandomValues(array);
+    const randomPart = Array.from(array, (byte) => byte.toString(36))
+      .join('')
+      .substring(0, 13);
+    return Date.now().toString(36) + randomPart;
   }
 }

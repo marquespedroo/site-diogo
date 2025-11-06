@@ -135,8 +135,7 @@ export class PaymentCalculator {
       difference = required.subtract(actual);
     }
 
-    const percentagePaid =
-      (actual.getAmount() / this.propertyValue.getAmount()) * 100;
+    const percentagePaid = (actual.getAmount() / this.propertyValue.getAmount()) * 100;
 
     return {
       approved,
@@ -151,9 +150,7 @@ export class PaymentCalculator {
    * Get required captation amount (% of property value)
    */
   getRequiredCaptation(): Money {
-    return this.propertyValue.multiply(
-      this.captationPercentage.toDecimal()
-    );
+    return this.propertyValue.multiply(this.captationPercentage.toDecimal());
   }
 
   /**
@@ -211,9 +208,12 @@ export class PaymentCalculator {
 
     // Generate random alphanumeric code (6 characters)
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const array = new Uint8Array(6);
+    crypto.getRandomValues(array);
+
     let code = '';
     for (let i = 0; i < 6; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length));
+      code += chars.charAt(array[i] % chars.length);
     }
 
     this.shortCode = code;
@@ -327,13 +327,9 @@ export class PaymentCalculator {
       captationPercentage: new Percentage(json.captationPercentage),
       completionDate: CompletionDate.fromJSON(json.completionDate),
       entryPayments: PaymentPhase.fromJSON(json.entryPayments),
-      duringConstructionPayments: PaymentPhase.fromJSON(
-        json.duringConstructionPayments
-      ),
+      duringConstructionPayments: PaymentPhase.fromJSON(json.duringConstructionPayments),
       habiteSe: new Money(json.habiteSe),
-      postConstructionPayments: PaymentPhase.fromJSON(
-        json.postConstructionPayments
-      ),
+      postConstructionPayments: PaymentPhase.fromJSON(json.postConstructionPayments),
       shortCode: json.shortCode,
       viewCount: json.viewCount,
       createdAt: new Date(json.createdAt),
@@ -344,9 +340,11 @@ export class PaymentCalculator {
    * Generate unique ID (UUID-like)
    */
   private generateId(): string {
-    return (
-      Date.now().toString(36) +
-      Math.random().toString(36).substring(2, 15)
-    );
+    const array = new Uint8Array(8);
+    crypto.getRandomValues(array);
+    const randomPart = Array.from(array, (byte) => byte.toString(36))
+      .join('')
+      .substring(0, 13);
+    return Date.now().toString(36) + randomPart;
   }
 }

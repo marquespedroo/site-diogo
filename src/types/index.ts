@@ -148,7 +148,13 @@ export interface ToastProps {
   title?: string;
   message: string;
   duration?: number; // milliseconds, 0 = no auto-dismiss
-  position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
+  position?:
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right';
   dismissible?: boolean;
   action?: ToastAction;
   onDismiss?: (id: string) => void;

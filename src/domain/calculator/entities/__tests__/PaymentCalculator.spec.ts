@@ -85,16 +85,19 @@ describe('PaymentCalculator', () => {
       const completionDate = new CompletionDate(12, 2026);
       const emptyPhase = PaymentPhase.empty('Empty');
 
-      expect(() => new PaymentCalculator({
-        userId: '',
-        propertyValue,
-        captationPercentage,
-        completionDate,
-        entryPayments: emptyPhase,
-        duringConstructionPayments: emptyPhase,
-        habiteSe: Money.zero(),
-        postConstructionPayments: emptyPhase,
-      })).toThrow('User ID is required');
+      expect(
+        () =>
+          new PaymentCalculator({
+            userId: '',
+            propertyValue,
+            captationPercentage,
+            completionDate,
+            entryPayments: emptyPhase,
+            duringConstructionPayments: emptyPhase,
+            habiteSe: Money.zero(),
+            postConstructionPayments: emptyPhase,
+          })
+      ).toThrow('User ID is required');
     });
 
     it('should throw error for whitespace-only userId', () => {
@@ -103,16 +106,19 @@ describe('PaymentCalculator', () => {
       const completionDate = new CompletionDate(12, 2026);
       const emptyPhase = PaymentPhase.empty('Empty');
 
-      expect(() => new PaymentCalculator({
-        userId: '   ',
-        propertyValue,
-        captationPercentage,
-        completionDate,
-        entryPayments: emptyPhase,
-        duringConstructionPayments: emptyPhase,
-        habiteSe: Money.zero(),
-        postConstructionPayments: emptyPhase,
-      })).toThrow('User ID is required');
+      expect(
+        () =>
+          new PaymentCalculator({
+            userId: '   ',
+            propertyValue,
+            captationPercentage,
+            completionDate,
+            entryPayments: emptyPhase,
+            duringConstructionPayments: emptyPhase,
+            habiteSe: Money.zero(),
+            postConstructionPayments: emptyPhase,
+          })
+      ).toThrow('User ID is required');
     });
 
     it('should throw error when total paid exceeds 150% of property value', () => {
@@ -131,16 +137,19 @@ describe('PaymentCalculator', () => {
       ];
       const postConstructionPayments = new PaymentPhase('Post', postInstallments);
 
-      expect(() => new PaymentCalculator({
-        userId: 'user-123',
-        propertyValue,
-        captationPercentage,
-        completionDate,
-        entryPayments,
-        duringConstructionPayments: PaymentPhase.empty('During'),
-        habiteSe: Money.zero(),
-        postConstructionPayments,
-      })).toThrow('exceeds 150% of property value');
+      expect(
+        () =>
+          new PaymentCalculator({
+            userId: 'user-123',
+            propertyValue,
+            captationPercentage,
+            completionDate,
+            entryPayments,
+            duringConstructionPayments: PaymentPhase.empty('During'),
+            habiteSe: Money.zero(),
+            postConstructionPayments,
+          })
+      ).toThrow('exceeds 150% of property value');
     });
 
     it('should accept total paid at exactly 150% of property value', () => {
@@ -680,8 +689,9 @@ describe('PaymentCalculator', () => {
 
     it('should throw error if short code not generated', () => {
       const calculator = createBasicCalculator();
-      expect(() => calculator.getShareableUrl('https://example.com'))
-        .toThrow('Short code not generated');
+      expect(() => calculator.getShareableUrl('https://example.com')).toThrow(
+        'Short code not generated'
+      );
     });
 
     it('should work with different base URLs', () => {
@@ -798,7 +808,9 @@ describe('PaymentCalculator', () => {
       expect(restored.getId()).toBe(original.getId());
       expect(restored.getUserId()).toBe(original.getUserId());
       expect(restored.getPropertyValue().equals(original.getPropertyValue())).toBe(true);
-      expect(restored.getCaptationPercentage().equals(original.getCaptationPercentage())).toBe(true);
+      expect(restored.getCaptationPercentage().equals(original.getCaptationPercentage())).toBe(
+        true
+      );
     });
 
     it('should round-trip through JSON', () => {

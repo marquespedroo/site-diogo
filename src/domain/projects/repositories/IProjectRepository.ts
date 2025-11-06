@@ -125,10 +125,7 @@ export interface IProjectRepository {
    * @param callback - Callback function for updates
    * @returns RealtimeChannel for managing subscription
    */
-  subscribeToProject(
-    projectId: string,
-    callback: (event: RealtimeEvent) => void
-  ): RealtimeChannel;
+  subscribeToProject(projectId: string, callback: (event: RealtimeEvent) => void): RealtimeChannel;
 
   /**
    * Subscribe to real-time updates for all user's projects

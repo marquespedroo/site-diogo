@@ -41,10 +41,7 @@ export interface IPaymentRepository {
    * @param limit - Maximum number of results (default: 50)
    * @returns Array of transactions
    */
-  findTransactionsByUserId(
-    userId: string,
-    limit?: number
-  ): Promise<Transaction[]>;
+  findTransactionsByUserId(userId: string, limit?: number): Promise<Transaction[]>;
 
   /**
    * Update existing transaction

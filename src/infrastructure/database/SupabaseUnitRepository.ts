@@ -8,6 +8,8 @@ import { UnitIdentifier } from '../../domain/projects/value-objects/UnitIdentifi
 import { PropertyArea } from '../../domain/calculator/value-objects/PropertyArea';
 import { Money } from '../../domain/calculator/value-objects/Money';
 import { NotFoundError, DatabaseError } from '../../lib/errors';
+import { isValidUUID } from '@/lib/utils/uuid';
+import { PAGINATION } from '@/lib/constants';
 
 /**
  * Database row type for units table
@@ -62,7 +64,7 @@ export class SupabaseUnitRepository implements IUnitRepository {
 
       // Ensure ID is a valid UUID
       let id = json.id;
-      if (!this.isValidUUID(id)) {
+      if (!isValidUUID(id)) {
         id = crypto.randomUUID();
       }
 
@@ -98,11 +100,7 @@ export class SupabaseUnitRepository implements IUnitRepository {
         .single();
 
       if (error) {
-        throw new DatabaseError(
-          `Failed to save unit: ${error.message}`,
-          'save',
-          error as Error
-        );
+        throw new DatabaseError(`Failed to save unit: ${error.message}`, 'save', error as Error);
       }
 
       if (!data) {
@@ -137,7 +135,7 @@ export class SupabaseUnitRepository implements IUnitRepository {
 
       const unitsToInsert = units.map((unit) => {
         const json = unit.toJSON();
-        const id = this.isValidUUID(json.id) ? json.id : crypto.randomUUID();
+        const id = isValidUUID(json.id) ? json.id : crypto.randomUUID();
 
         // Convert metadata
         const metadata: Record<string, any> = {};
@@ -167,10 +165,7 @@ export class SupabaseUnitRepository implements IUnitRepository {
         };
       });
 
-      const { data, error } = await this.supabase
-        .from('units')
-        .insert(unitsToInsert)
-        .select();
+      const { data, error } = await this.supabase.from('units').insert(unitsToInsert).select();
 
       if (error) {
         throw new DatabaseError(
@@ -206,11 +201,7 @@ export class SupabaseUnitRepository implements IUnitRepository {
    */
   async findById(id: string): Promise<Unit | null> {
     try {
-      const { data, error } = await this.supabase
-        .from('units')
-        .select('*')
-        .eq('id', id)
-        .single();
+      const { data, error } = await this.supabase.from('units').select('*').eq('id', id).single();
 
       if (error) {
         if (error.code === 'PGRST116') {
@@ -338,8 +329,8 @@ export class SupabaseUnitRepository implements IUnitRepository {
       }
 
       // Pagination
-      const limit = filters.limit || 100;
-      const offset = filters.offset || 0;
+      const limit = filters.limit || PAGINATION.MAX_LIMIT;
+      const offset = filters.offset || PAGINATION.DEFAULT_OFFSET;
       query = query.range(offset, offset + limit - 1);
 
       const { data, error } = await query;
@@ -542,9 +533,7 @@ export class SupabaseUnitRepository implements IUnitRepository {
    */
   async count(filters: UnitFilterOptions = {}): Promise<number> {
     try {
-      let query = this.supabase
-        .from('units')
-        .select('id', { count: 'exact', head: true });
+      let query = this.supabase.from('units').select('id', { count: 'exact', head: true });
 
       // Apply filters
       if (filters.projectId) {
@@ -562,11 +551,7 @@ export class SupabaseUnitRepository implements IUnitRepository {
       const { count, error } = await query;
 
       if (error) {
-        throw new DatabaseError(
-          `Failed to count units: ${error.message}`,
-          'count',
-          error as Error
-        );
+        throw new DatabaseError(`Failed to count units: ${error.message}`, 'count', error as Error);
       }
 
       return count ?? 0;
@@ -630,19 +615,11 @@ export class SupabaseUnitRepository implements IUnitRepository {
     if (row.metadata && typeof row.metadata === 'object') {
       Object.entries(row.metadata).forEach(([key, value]) => {
         // Reconstruct Money objects
-        if (
-          value &&
-          typeof value === 'object' &&
-          'amount' in value &&
-          'currency' in value
-        ) {
+        if (value && typeof value === 'object' && 'amount' in value && 'currency' in value) {
           metadata.set(key, Money.fromJSON(value as any));
         }
         // Reconstruct Date objects
-        else if (
-          typeof value === 'string' &&
-          /^\d{4}-\d{2}-\d{2}T/.test(value)
-        ) {
+        else if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
           metadata.set(key, new Date(value));
         }
         // Keep other values as-is
@@ -665,18 +642,5 @@ export class SupabaseUnitRepository implements IUnitRepository {
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
     });
-  }
-
-  /**
-   * Check if a string is a valid UUID
-   *
-   * @private
-   * @param str - String to check
-   * @returns true if valid UUID
-   */
-  private isValidUUID(str: string): boolean {
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(str);
   }
 }

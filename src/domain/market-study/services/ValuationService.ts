@@ -113,9 +113,7 @@ export class ValuationService {
     }
 
     // Extract homogenized price per m² values
-    const homogenizedValues = samples.map((s) =>
-      s.getHomogenizedPricePerSqM().getAmount()
-    );
+    const homogenizedValues = samples.map((s) => s.getHomogenizedPricePerSqM().getAmount());
 
     // 1. Calculate initial statistics
     const mean = this.calculateMean(homogenizedValues);
@@ -141,9 +139,7 @@ export class ValuationService {
 
     // 3. If we have enough normal samples, apply stricter filtering
     if (normalSamples.length >= 3) {
-      const normalValues = normalSamples.map((s) =>
-        s.getHomogenizedPricePerSqM().getAmount()
-      );
+      const normalValues = normalSamples.map((s) => s.getHomogenizedPricePerSqM().getAmount());
       const medianNormal = this.calculateMedian(normalValues);
 
       // 4. Identify samples outside normality range (80%-120% of new median)
@@ -260,8 +256,7 @@ export class ValuationService {
 
     standards.forEach((standard) => {
       // Apply standard multiplier and perception adjustment
-      const pricePerSqM =
-        basePricePerSqM * multipliers[standard] * adjustmentMultiplier;
+      const pricePerSqM = basePricePerSqM * multipliers[standard] * adjustmentMultiplier;
 
       // Calculate total value
       const totalValue = pricePerSqM * propertyArea.getSquareMeters();
@@ -269,11 +264,7 @@ export class ValuationService {
       // Create valuation entity
       valuations.set(
         standard,
-        new PropertyValuation(
-          standard,
-          new Money(pricePerSqM),
-          new Money(totalValue)
-        )
+        new PropertyValuation(standard, new Money(pricePerSqM), new Money(totalValue))
       );
     });
 
@@ -325,9 +316,7 @@ export class ValuationService {
     }
 
     // Calculate variance: average of squared differences from mean
-    const variance =
-      values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) /
-      values.length;
+    const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
 
     // Standard deviation is square root of variance
     return Math.sqrt(variance);

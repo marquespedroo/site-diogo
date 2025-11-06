@@ -186,7 +186,7 @@ describe('Percentage', () => {
 
     it('should add decimal percentages', () => {
       const p1 = new Percentage(33.33);
-      const p2 = new Percentage(25.50);
+      const p2 = new Percentage(25.5);
       const result = p1.add(p2);
       expect(result.getValue()).toBeCloseTo(58.83, 2);
     });
@@ -230,7 +230,7 @@ describe('Percentage', () => {
     });
 
     it('should subtract decimal percentages', () => {
-      const p1 = new Percentage(75.50);
+      const p1 = new Percentage(75.5);
       const p2 = new Percentage(25.25);
       const result = p1.subtract(p2);
       expect(result.getValue()).toBe(50.25);

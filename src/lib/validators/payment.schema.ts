@@ -14,19 +14,14 @@ import { z } from 'zod';
 /**
  * CPF validation schema
  */
-export const CPFSchema = z
-  .string()
-  .regex(/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/, 'Invalid CPF format');
+export const CPFSchema = z.string().regex(/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/, 'Invalid CPF format');
 
 /**
  * CNPJ validation schema
  */
 export const CNPJSchema = z
   .string()
-  .regex(
-    /^\d{2}\.?\d{3}\.?\d{3}\/?\d{4}-?\d{2}$/,
-    'Invalid CNPJ format'
-  );
+  .regex(/^\d{2}\.?\d{3}\.?\d{3}\/?\d{4}-?\d{2}$/, 'Invalid CNPJ format');
 
 /**
  * Tax Document schema (CPF or CNPJ)
@@ -45,7 +40,10 @@ export const TaxDocumentSchema = z.object({
  */
 export const CreditCardDetailsSchema = z.object({
   brand: z.string().min(1),
-  last4: z.string().length(4).regex(/^\d{4}$/),
+  last4: z
+    .string()
+    .length(4)
+    .regex(/^\d{4}$/),
   expiryMonth: z.number().int().min(1).max(12),
   expiryYear: z.number().int().min(2024).max(2099),
   holderName: z.string().optional(),
@@ -82,12 +80,7 @@ export const PaymentMethodTypeSchema = z.enum(['credit_card', 'pix', 'boleto']);
 /**
  * Subscription Plan Schema
  */
-export const SubscriptionPlanSchema = z.enum([
-  'FREE',
-  'BASIC',
-  'UNLIMITED',
-  'COMBO',
-]);
+export const SubscriptionPlanSchema = z.enum(['FREE', 'BASIC', 'UNLIMITED', 'COMBO']);
 
 /**
  * Subscription Status Schema

@@ -6,12 +6,7 @@ import { BusinessRuleError } from '@/lib/errors';
 /**
  * Subscription Status Type
  */
-export type SubscriptionStatus =
-  | 'active'
-  | 'cancelled'
-  | 'past_due'
-  | 'suspended'
-  | 'expired';
+export type SubscriptionStatus = 'active' | 'cancelled' | 'past_due' | 'suspended' | 'expired';
 
 /**
  * Subscription Plan Type
@@ -116,17 +111,11 @@ export class Subscription {
    */
   renew(periodEnd: Date): void {
     if (this.cancelAtPeriodEnd) {
-      throw new BusinessRuleError(
-        'Cannot renew subscription set to cancel',
-        'RENEWAL_CANCELLED'
-      );
+      throw new BusinessRuleError('Cannot renew subscription set to cancel', 'RENEWAL_CANCELLED');
     }
 
     if (this.status !== 'active') {
-      throw new BusinessRuleError(
-        'Can only renew active subscriptions',
-        'RENEWAL_NOT_ACTIVE'
-      );
+      throw new BusinessRuleError('Can only renew active subscriptions', 'RENEWAL_NOT_ACTIVE');
     }
 
     this.currentPeriodEnd = periodEnd;
@@ -153,10 +142,7 @@ export class Subscription {
       this.cancelAtPeriodEnd = false;
       this.cancelledAt = undefined;
     } else {
-      throw new BusinessRuleError(
-        'Cannot reactivate expired subscription',
-        'REACTIVATION_EXPIRED'
-      );
+      throw new BusinessRuleError('Cannot reactivate expired subscription', 'REACTIVATION_EXPIRED');
     }
   }
 
@@ -370,9 +356,7 @@ export class Subscription {
       externalSubscriptionId: json.externalSubscriptionId,
       paymentMethod: PaymentMethod.fromJSON(json.paymentMethod),
       amount: new Money(json.amount),
-      transactions: json.transactions?.map((t: any) =>
-        Transaction.fromJSON(t)
-      ),
+      transactions: json.transactions?.map((t: any) => Transaction.fromJSON(t)),
       createdAt: new Date(json.createdAt),
     });
   }
@@ -381,10 +365,11 @@ export class Subscription {
    * Generate unique ID
    */
   private generateId(): string {
-    return (
-      'sub_' +
-      Date.now().toString(36) +
-      Math.random().toString(36).substring(2, 15)
-    );
+    const array = new Uint8Array(8);
+    crypto.getRandomValues(array);
+    const randomPart = Array.from(array, (byte) => byte.toString(36))
+      .join('')
+      .substring(0, 13);
+    return 'sub_' + Date.now().toString(36) + randomPart;
   }
 }

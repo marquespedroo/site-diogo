@@ -18,36 +18,41 @@ describe('Installment', () => {
     it('should throw error for empty ID', () => {
       const amount = new Money(5000);
       const dueDate = new Date('2025-06-01');
-      expect(() => new Installment('', amount, dueDate, 'Description'))
-        .toThrow('Installment ID cannot be empty');
+      expect(() => new Installment('', amount, dueDate, 'Description')).toThrow(
+        'Installment ID cannot be empty'
+      );
     });
 
     it('should throw error for whitespace-only ID', () => {
       const amount = new Money(5000);
       const dueDate = new Date('2025-06-01');
-      expect(() => new Installment('   ', amount, dueDate, 'Description'))
-        .toThrow('Installment ID cannot be empty');
+      expect(() => new Installment('   ', amount, dueDate, 'Description')).toThrow(
+        'Installment ID cannot be empty'
+      );
     });
 
     it('should throw error for empty description', () => {
       const amount = new Money(5000);
       const dueDate = new Date('2025-06-01');
-      expect(() => new Installment('inst-1', amount, dueDate, ''))
-        .toThrow('Installment description cannot be empty');
+      expect(() => new Installment('inst-1', amount, dueDate, '')).toThrow(
+        'Installment description cannot be empty'
+      );
     });
 
     it('should throw error for whitespace-only description', () => {
       const amount = new Money(5000);
       const dueDate = new Date('2025-06-01');
-      expect(() => new Installment('inst-1', amount, dueDate, '   '))
-        .toThrow('Installment description cannot be empty');
+      expect(() => new Installment('inst-1', amount, dueDate, '   ')).toThrow(
+        'Installment description cannot be empty'
+      );
     });
 
     it('should throw error for invalid date', () => {
       const amount = new Money(5000);
       const invalidDate = new Date('invalid');
-      expect(() => new Installment('inst-1', amount, invalidDate, 'Description'))
-        .toThrow('Invalid due date');
+      expect(() => new Installment('inst-1', amount, invalidDate, 'Description')).toThrow(
+        'Invalid due date'
+      );
     });
 
     it('should trim description whitespace', () => {

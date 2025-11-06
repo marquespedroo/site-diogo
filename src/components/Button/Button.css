@@ -49,7 +49,7 @@
 }
 
 .btn:disabled,
-.btn[aria-disabled="true"] {
+.btn[aria-disabled='true'] {
   cursor: not-allowed;
   opacity: 0.6;
   pointer-events: none;
@@ -246,7 +246,9 @@
 }
 
 @keyframes btn-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Icon Button (Square, icon only) */
@@ -436,23 +438,152 @@
    ======================================================================== */
 
 /* .btn-primary → Use .btn.btn--primary instead */
+/* Legacy class - applies primary button styles with base size */
 .btn-primary {
-  composes: btn btn--primary btn--base;
+  /* Inherit from base button */
+  margin: 0;
+  border: none;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-none);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+
+  /* Primary variant */
+  background: var(--gradient-primary);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-sm);
+
+  /* Base size */
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-base);
+  height: var(--button-height-base);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: var(--shadow-primary);
+  transform: translateY(-2px);
 }
 
 /* .btn-add → Use .btn.btn--success.btn--sm instead */
+/* Legacy class - applies success button styles with small size */
 .btn-add {
-  composes: btn btn--success btn--sm;
+  /* Base styles */
+  margin: 0;
+  border: none;
+  padding: var(--space-2) var(--space-3);
+  background: var(--gradient-success);
+  cursor: pointer;
+  font-family: inherit;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-none);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+  user-select: none;
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-sm);
+  font-size: var(--text-sm);
+  height: var(--button-height-sm);
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+}
+
+.btn-add:hover:not(:disabled) {
+  box-shadow: var(--shadow-success);
+  transform: translateY(-2px);
 }
 
 /* .btn-remove → Use .btn.btn--danger.btn--sm instead */
+/* Legacy class - applies danger icon button styles with small size */
 .btn-remove {
-  composes: btn btn--danger btn--sm btn--icon;
+  /* Base styles */
+  margin: 0;
+  border: none;
+  padding: 0;
+  background: var(--color-danger-500);
+  cursor: pointer;
+  font-family: inherit;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-none);
+  text-align: center;
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+  user-select: none;
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-sm);
+  width: var(--button-height-sm);
+  height: var(--button-height-sm);
+  min-width: auto;
+}
+
+.btn-remove:hover:not(:disabled) {
+  background-color: var(--color-danger-600);
+  box-shadow: var(--shadow-danger);
+  transform: translateY(-2px);
 }
 
 /* .btn-product → Use .btn.btn--primary.btn--lg instead */
+/* Legacy class - applies primary button styles with large size */
 .btn-product {
-  composes: btn btn--primary btn--lg;
+  /* Base styles */
+  margin: 0;
+  border: none;
+  padding: var(--space-4) var(--space-6);
+  background: var(--gradient-primary);
+  cursor: pointer;
+  font-family: inherit;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-none);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+  user-select: none;
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-sm);
+  font-size: var(--text-lg);
+  height: var(--button-height-lg);
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+}
+
+.btn-product:hover:not(:disabled) {
+  box-shadow: var(--shadow-primary);
+  transform: translateY(-2px);
 }
 
 /* ========================================================================

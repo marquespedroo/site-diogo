@@ -34,12 +34,7 @@ export const UnitIdentifierSchema = z.object({
 /**
  * Unit Status Schema
  */
-export const UnitStatusSchema = z.enum([
-  'available',
-  'reserved',
-  'sold',
-  'unavailable',
-]);
+export const UnitStatusSchema = z.enum(['available', 'reserved', 'sold', 'unavailable']);
 
 /**
  * Unit Origin Schema
@@ -54,10 +49,7 @@ export const UnitSchema = z.object({
   projectId: z.string().min(1),
   identifier: UnitIdentifierSchema,
   area: z.number().positive().max(100000, 'Area cannot exceed 100,000 m²'),
-  price: z
-    .number()
-    .positive()
-    .max(1000000000, 'Price cannot exceed R$ 1 billion'),
+  price: z.number().positive().max(1000000000, 'Price cannot exceed R$ 1 billion'),
   parkingSpots: z.string().max(10),
   origin: UnitOriginSchema,
   status: UnitStatusSchema.optional(),
@@ -92,10 +84,7 @@ export const UpdateProjectSchema = z.object({
     .max(200, 'Project name cannot exceed 200 characters')
     .optional(),
   location: ProjectLocationSchema.optional(),
-  description: z
-    .string()
-    .max(2000, 'Description cannot exceed 2000 characters')
-    .optional(),
+  description: z.string().max(2000, 'Description cannot exceed 2000 characters').optional(),
 });
 
 /**
@@ -116,10 +105,7 @@ export const ListProjectsSchema = z.object({
   includeShared: z.boolean().optional().default(true),
   limit: z.number().int().positive().max(100).optional().default(50),
   offset: z.number().int().nonnegative().optional().default(0),
-  sortBy: z
-    .enum(['name', 'createdAt', 'updatedAt'])
-    .optional()
-    .default('createdAt'),
+  sortBy: z.enum(['name', 'createdAt', 'updatedAt']).optional().default('createdAt'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
 });
 
@@ -192,10 +178,7 @@ export const ListUnitsSchema = z.object({
   origin: UnitOriginSchema.optional(),
   limit: z.number().int().positive().max(1000).optional().default(100),
   offset: z.number().int().nonnegative().optional().default(0),
-  sortBy: z
-    .enum(['price', 'area', 'createdAt', 'identifier'])
-    .optional()
-    .default('identifier'),
+  sortBy: z.enum(['price', 'area', 'createdAt', 'identifier']).optional().default('identifier'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('asc'),
 });
 

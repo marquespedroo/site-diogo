@@ -19,11 +19,7 @@ export {
   type PaymentMethodDetails,
 } from './entities/PaymentMethod';
 
-export {
-  Transaction,
-  type TransactionStatus,
-  type PaymentGateway,
-} from './entities/Transaction';
+export { Transaction, type TransactionStatus, type PaymentGateway } from './entities/Transaction';
 
 export { Invoice, type InvoiceStatus } from './entities/Invoice';
 
