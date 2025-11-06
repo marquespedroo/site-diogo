@@ -116,32 +116,73 @@
             </div>
 
             <div class="header-right">
-                <div class="search-box">
-                    <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                        <path d="M11.7 10.3l3.6 3.6-1.4 1.4-3.6-3.6a6 6 0 111.4-1.4zM6 10a4 4 0 100-8 4 4 0 000 8z"/>
-                    </svg>
-                    <input type="text" placeholder="Digite aqui..." class="search-input" aria-label="Pesquisar">
+                <div class="header-actions-wrapper">
+                    <div class="search-box">
+                        <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                            <path d="M11.7 10.3l3.6 3.6-1.4 1.4-3.6-3.6a6 6 0 111.4-1.4zM6 10a4 4 0 100-8 4 4 0 000 8z"/>
+                        </svg>
+                        <input type="text" placeholder="Digite aqui..." class="search-input" aria-label="Pesquisar">
+                    </div>
+
+                    <div id="auth-container">
+                        <!-- Auth Button (shows when not logged in) -->
+                        <a href="/login.html" id="authButton" class="sign-in-link" role="button">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                <path d="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-3 0-6 1.5-6 3v1h12v-1c0-1.5-3-3-6-3z"/>
+                            </svg>
+                            <span>Entrar</span>
+                        </a>
+                        <!-- User Menu Button will be inserted here dynamically -->
+                        <button id="userMenuButton" class="user-menu-button" onclick="toggleUserMenu()" style="display: none;">
+                            <div class="user-avatar" id="userAvatar">U</div>
+                            <div class="user-info">
+                                <span class="user-name">Usuário</span>
+                                <span class="user-email">email@example.com</span>
+                            </div>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            </svg>
+
+                            <!-- Dropdown Menu -->
+                            <div id="userMenu" class="user-menu">
+                                <a href="/profile.html" class="user-menu-item">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                        <path d="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-2.67 0-8 1.34-8 4v1h16v-1c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                    Meu perfil
+                                </a>
+                                <a href="/subscriptions.html" class="user-menu-item">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                        <path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4z"/>
+                                    </svg>
+                                    Minhas assinaturas
+                                </a>
+                                <div class="user-menu-divider"></div>
+                                <button class="user-menu-item" onclick="handleLogout()">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                        <path d="M6 14H3a1 1 0 01-1-1V3a1 1 0 011-1h3M11 11l3-3-3-3M14 8H6"/>
+                                    </svg>
+                                    Sair
+                                </button>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="icon-buttons-group">
+                        <button class="icon-btn" aria-label="Configurações">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                <path d="M8 10a2 2 0 100-4 2 2 0 000 4z"/>
+                                <path d="M13.5 8c0-.3 0-.6-.1-.9l1.3-1-1-1.7-1.5.6c-.4-.3-.8-.6-1.3-.8L10.5 2h-2l-.4 1.6c-.5.2-.9.5-1.3.8l-1.5-.6-1 1.7 1.3 1c-.1.3-.1.6-.1.9s0 .6.1.9l-1.3 1 1 1.7 1.5-.6c.4.3.8.6 1.3.8l.4 1.6h2l.4-1.6c.5-.2.9-.5 1.3-.8l1.5.6 1-1.7-1.3-1c.1-.3.1-.6.1-.9z"/>
+                            </svg>
+                        </button>
+
+                        <button class="icon-btn" aria-label="Notificações">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                                <path d="M8 2a4 4 0 00-4 4v3l-1 2h10l-1-2V6a4 4 0 00-4-4zm0 12a2 2 0 01-2-2h4a2 2 0 01-2 2z"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-
-                <a href="javascript:void(0)" class="sign-in-link" role="button">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                        <path d="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-3 0-6 1.5-6 3v1h12v-1c0-1.5-3-3-6-3z"/>
-                    </svg>
-                    <span>Entrar</span>
-                </a>
-
-                <button class="icon-btn" aria-label="Configurações">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                        <path d="M8 10a2 2 0 100-4 2 2 0 000 4z"/>
-                        <path d="M13.5 8c0-.3 0-.6-.1-.9l1.3-1-1-1.7-1.5.6c-.4-.3-.8-.6-1.3-.8L10.5 2h-2l-.4 1.6c-.5.2-.9.5-1.3.8l-1.5-.6-1 1.7 1.3 1c-.1.3-.1.6-.1.9s0 .6.1.9l-1.3 1 1 1.7 1.5-.6c.4.3.8.6 1.3.8l.4 1.6h2l.4-1.6c.5-.2.9-.5 1.3-.8l1.5.6 1-1.7-1.3-1c.1-.3.1-.6.1-.9z"/>
-                    </svg>
-                </button>
-
-                <button class="icon-btn" aria-label="Notificações">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                        <path d="M8 2a4 4 0 00-4 4v3l-1 2h10l-1-2V6a4 4 0 00-4-4zm0 12a2 2 0 01-2-2h4a2 2 0 01-2 2z"/>
-                    </svg>
-                </button>
             </div>
         </header>
 
@@ -306,5 +347,36 @@
         <script src="/src/scripts/shared-utils.js"></script>
         <script src="/src/scripts/dashboard.js"></script>
     </main>
+
+    <!-- Authentication Script -->
+    <script type="module">
+        import { auth } from '/src/scripts/auth.js';
+
+        // Initialize auth
+        auth.initAuth();
+
+        // Toggle user menu
+        window.toggleUserMenu = function() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('show');
+        };
+
+        // Handle logout
+        window.handleLogout = async function() {
+            if (!confirm('Tem certeza que deseja sair?')) return;
+            await auth.signOut();
+            window.location.reload();
+        };
+
+        // Close user menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const userMenuButton = document.getElementById('userMenuButton');
+            const userMenu = document.getElementById('userMenu');
+
+            if (userMenuButton && !userMenuButton.contains(e.target)) {
+                userMenu?.classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>

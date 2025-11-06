@@ -9,7 +9,7 @@
 const { formatCurrency, showToast, COLORS, logger } = window.ImobiUtils;
 
 // Import Projects API
-import { projectsAPI, APIError } from './projects-api.js';
+import { projectsAPI, APIError } from './projects-api';
 
 const ProjectsTableModule = {
   units: [],

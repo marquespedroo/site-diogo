@@ -19,7 +19,10 @@ function initUtils() {
 }
 
 // Import Calculator API client
-import { calculatorAPI, APIError } from './calculator-api.js';
+import { calculatorAPI, APIError } from './calculator-api';
+
+// Import Auth functions
+import { auth } from './auth.js';
 
 // ===== UTILITY FUNCTIONS =====
 function toggleSubmenu(buttonId, submenuId) {
@@ -574,14 +577,41 @@ const CalculatorModule = {
 
   async handleFormSubmit() {
     try {
-      const formData = this.collectFormData();
+      // Check feature access before processing
+      const user = auth.getCurrentUser();
+      const userId = user?.id || null;
 
-      // Use temporary guest ID for demo (auth will be added later)
-      let userId = sessionStorage.getItem('userId');
-      if (!userId) {
-        userId = 'guest-' + Date.now();
-        sessionStorage.setItem('userId', userId);
+      // Check if user can access calculator feature
+      const accessCheck = await auth.canAccessFeature('calculadora-imoveis');
+
+      if (!accessCheck.canAccess) {
+        this.showLoadingState(false);
+
+        // Handle different denial reasons
+        if (accessCheck.requiresLogin) {
+          this.showQuotaExceededMessage(
+            'Limite de uso atingido!',
+            `Você atingiu o limite de ${accessCheck.remainingUses || 0} cálculos gratuitos. Faça login para continuar.`,
+            'login'
+          );
+          return;
+        }
+
+        if (accessCheck.requiresSubscription) {
+          this.showQuotaExceededMessage(
+            'Limite de uso atingido!',
+            `Você atingiu o limite de ${accessCheck.remainingUses || 0} cálculos. Faça upgrade para continuar usando.`,
+            'upgrade'
+          );
+          return;
+        }
+
+        this.showErrorMessage('Você não tem acesso a esta funcionalidade.');
+        return;
       }
+
+      // Collect form data
+      const formData = this.collectFormData();
 
       const requestData = {
         userId,
@@ -591,8 +621,15 @@ const CalculatorModule = {
       // Show loading state
       this.showLoadingState(true);
 
-      // Make API call (simulated for now - will integrate with real API)
+      // Make API call
       const result = await this.saveCalculation(requestData);
+
+      // Record feature usage after successful calculation
+      await auth.recordFeatureUsage('calculadora-imoveis', 'calculate', {
+        propertyValue: formData.propertyValue,
+        captationPercentage: formData.captationPercentage,
+        calculationId: result.id
+      });
 
       // Update UI
       this.updateApprovalStatus(result);
@@ -601,8 +638,14 @@ const CalculatorModule = {
       this.updateStatistics();
       this.updateCalculationsTable();
 
-      // Show success message
-      this.showSuccessMessage('Cálculo salvo com sucesso!');
+      // Show success message with remaining uses
+      const remainingUses = accessCheck.remainingUses - 1;
+      let successMessage = 'Cálculo salvo com sucesso!';
+      if (remainingUses >= 0) {
+        successMessage += ` (${remainingUses} cálculos restantes)`;
+      }
+      this.showSuccessMessage(successMessage);
+
     } catch (error) {
       logger.error('Error submitting calculation', error);
       this.showErrorMessage('Falha ao salvar cálculo. Por favor, tente novamente.');
@@ -1093,6 +1136,33 @@ const CalculatorModule = {
 
   showErrorMessage(message) {
     showToast(message, 'error');
+  },
+
+  showQuotaExceededMessage(title, message, action) {
+    // Create modal HTML
+    const modalHTML = `
+      <div class="quota-modal-overlay" id="quotaModal">
+        <div class="quota-modal">
+          <div class="quota-modal-header">
+            <h3>${title}</h3>
+            <button class="quota-modal-close" onclick="document.getElementById('quotaModal').remove()">&times;</button>
+          </div>
+          <div class="quota-modal-body">
+            <p>${message}</p>
+          </div>
+          <div class="quota-modal-footer">
+            ${action === 'login' ?
+              '<button class="btn-primary" onclick="window.location.href=\'/login.html\'">Fazer Login</button>' :
+              '<button class="btn-primary" onclick="alert(\'Upgrades em breve!\')">Fazer Upgrade</button>'
+            }
+            <button class="btn-secondary" onclick="document.getElementById('quotaModal').remove()">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Append to body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
   },
 
   viewCalculation(id) {

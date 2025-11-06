@@ -9,7 +9,7 @@
 const { formatCurrency, showToast, logger, COLORS } = window.ImobiUtils;
 
 // Import Market Study API client
-import { marketStudyAPI, APIError } from './market-study-api.js';
+import { marketStudyAPI, APIError } from './market-study-api';
 
 const MarketStudyModule = {
   sampleCounter: 0,

@@ -1,0 +1,596 @@
+<!-- Authentication Modal Component -->
+<style>
+/* Auth Modal Styles */
+.auth-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.auth-modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+.auth-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.auth-modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2D3748;
+  margin: 0;
+}
+
+.auth-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #718096;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.auth-modal-close:hover {
+  color: #2D3748;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4A5568;
+}
+
+.form-input {
+  padding: 0.75rem 1rem;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  transition: all 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-input.error {
+  border-color: #FC8181;
+}
+
+.form-error {
+  color: #F56565;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: none;
+}
+
+.form-error.show {
+  display: block;
+}
+
+.form-button {
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 0.5rem;
+}
+
+.form-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.form-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-button-secondary {
+  background: white;
+  color: #667eea;
+  border: 1px solid #E2E8F0;
+}
+
+.form-button-secondary:hover:not(:disabled) {
+  background: #F7FAFC;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+  color: #A0AEC0;
+  font-size: 0.875rem;
+}
+
+.form-divider::before,
+.form-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #E2E8F0;
+}
+
+.form-link {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.form-link a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.form-link a:hover {
+  text-decoration: underline;
+}
+
+.auth-success-message,
+.auth-error-message {
+  padding: 0.875rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  display: none;
+}
+
+.auth-success-message {
+  background: #C6F6D5;
+  color: #22543D;
+  border: 1px solid #9AE6B4;
+}
+
+.auth-error-message {
+  background: #FED7D7;
+  color: #742A2A;
+  border: 1px solid #FC8181;
+}
+
+.auth-success-message.show,
+.auth-error-message.show {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* User Menu Button */
+.user-menu-button {
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.user-menu-button:hover {
+  border-color: #CBD5E0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #2D3748;
+}
+
+.user-email {
+  font-size: 0.75rem;
+  color: #718096;
+}
+
+/* User Dropdown Menu */
+.user-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+  display: none;
+  z-index: 10000;
+}
+
+.user-menu.show {
+  display: block;
+}
+
+.user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: #4A5568;
+  text-decoration: none;
+  transition: background 0.2s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.user-menu-item:hover {
+  background: #F7FAFC;
+}
+
+.user-menu-item:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.user-menu-item:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+.user-menu-divider {
+  height: 1px;
+  background: #E2E8F0;
+  margin: 0.25rem 0;
+}
+</style>
+
+<!-- Authentication Modal -->
+<div id="authModal" class="auth-modal">
+  <div class="auth-modal-content">
+    <div class="auth-modal-header">
+      <h2 class="auth-modal-title" id="authModalTitle">Entrar</h2>
+      <button class="auth-modal-close" onclick="window.imobiAuth.hideAuthModal()">&times;</button>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="authSuccessMessage" class="auth-success-message"></div>
+    <div id="authErrorMessage" class="auth-error-message"></div>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="auth-form login-form">
+      <div class="form-group">
+        <label class="form-label" for="loginEmail">E-mail</label>
+        <input
+          type="email"
+          id="loginEmail"
+          class="form-input"
+          placeholder="seu@email.com"
+          required
+        />
+        <span class="form-error" id="loginEmailError"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="loginPassword">Senha</label>
+        <input
+          type="password"
+          id="loginPassword"
+          class="form-input"
+          placeholder="••••••••"
+          required
+        />
+        <span class="form-error" id="loginPasswordError"></span>
+      </div>
+
+      <button type="submit" class="form-button" id="loginButton">
+        Entrar
+      </button>
+
+      <div class="form-link">
+        <a href="#" onclick="showForgotPassword(); return false;">Esqueceu a senha?</a>
+      </div>
+
+      <div class="form-divider">ou</div>
+
+      <button
+        type="button"
+        class="form-button form-button-secondary"
+        onclick="showSignupForm()"
+      >
+        Criar nova conta
+      </button>
+    </form>
+
+    <!-- Signup Form -->
+    <form id="signupForm" class="auth-form signup-form" style="display: none;">
+      <div class="form-group">
+        <label class="form-label" for="signupName">Nome completo</label>
+        <input
+          type="text"
+          id="signupName"
+          class="form-input"
+          placeholder="Seu nome"
+          required
+        />
+        <span class="form-error" id="signupNameError"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="signupEmail">E-mail</label>
+        <input
+          type="email"
+          id="signupEmail"
+          class="form-input"
+          placeholder="seu@email.com"
+          required
+        />
+        <span class="form-error" id="signupEmailError"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="signupPassword">Senha</label>
+        <input
+          type="password"
+          id="signupPassword"
+          class="form-input"
+          placeholder="••••••••"
+          minlength="6"
+          required
+        />
+        <span class="form-error" id="signupPasswordError">Mínimo 6 caracteres</span>
+      </div>
+
+      <button type="submit" class="form-button" id="signupButton">
+        Criar conta
+      </button>
+
+      <div class="form-divider">ou</div>
+
+      <button
+        type="button"
+        class="form-button form-button-secondary"
+        onclick="showLoginForm()"
+      >
+        Já tenho uma conta
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- User Menu Button (shows when logged in) -->
+<button id="userMenuButton" class="user-menu-button" onclick="toggleUserMenu()">
+  <div class="user-avatar" id="userAvatar">U</div>
+  <div class="user-info">
+    <span class="user-name">Usuário</span>
+    <span class="user-email">email@example.com</span>
+  </div>
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+
+  <!-- Dropdown Menu -->
+  <div id="userMenu" class="user-menu">
+    <a href="/profile.html" class="user-menu-item">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-2.67 0-8 1.34-8 4v1h16v-1c0-2.66-5.33-4-8-4z"/>
+      </svg>
+      Meu perfil
+    </a>
+    <a href="/subscriptions.html" class="user-menu-item">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4z"/>
+      </svg>
+      Minhas assinaturas
+    </a>
+    <div class="user-menu-divider"></div>
+    <button class="user-menu-item" onclick="handleLogout()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M6 14H3a1 1 0 01-1-1V3a1 1 0 011-1h3M11 11l3-3-3-3M14 8H6"/>
+      </svg>
+      Sair
+    </button>
+  </div>
+</button>
+
+<script type="module">
+import { auth } from '/src/scripts/auth.js';
+
+// Initialize auth on page load
+auth.initAuth();
+
+// Form handlers
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  const button = document.getElementById('loginButton');
+
+  button.disabled = true;
+  button.textContent = 'Entrando...';
+
+  const { data, error } = await auth.signIn(email, password);
+
+  if (error) {
+    showAuthError(error.message);
+    button.disabled = false;
+    button.textContent = 'Entrar';
+  } else {
+    showAuthSuccess('Login realizado com sucesso!');
+    setTimeout(() => {
+      auth.hideAuthModal();
+      window.location.reload();
+    }, 1000);
+  }
+});
+
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById('signupName').value;
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
+  const button = document.getElementById('signupButton');
+
+  button.disabled = true;
+  button.textContent = 'Criando conta...';
+
+  const { data, error } = await auth.signUp(email, password, name);
+
+  if (error) {
+    showAuthError(error.message);
+    button.disabled = false;
+    button.textContent = 'Criar conta';
+  } else {
+    showAuthSuccess('Conta criada! Verifique seu e-mail para confirmar.');
+    setTimeout(() => {
+      showLoginForm();
+    }, 3000);
+  }
+});
+
+// UI Helper Functions
+window.showLoginForm = function() {
+  document.getElementById('authModalTitle').textContent = 'Entrar';
+  document.getElementById('loginForm').style.display = 'flex';
+  document.getElementById('signupForm').style.display = 'none';
+  clearAuthMessages();
+};
+
+window.showSignupForm = function() {
+  document.getElementById('authModalTitle').textContent = 'Criar conta';
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('signupForm').style.display = 'flex';
+  clearAuthMessages();
+};
+
+window.showForgotPassword = async function() {
+  const email = prompt('Digite seu e-mail para recuperar a senha:');
+  if (!email) return;
+
+  const { error } = await auth.resetPassword(email);
+
+  if (error) {
+    alert('Erro ao enviar e-mail de recuperação. Tente novamente.');
+  } else {
+    alert('E-mail de recuperação enviado! Verifique sua caixa de entrada.');
+  }
+};
+
+window.toggleUserMenu = function() {
+  const menu = document.getElementById('userMenu');
+  menu.classList.toggle('show');
+};
+
+window.handleLogout = async function() {
+  if (!confirm('Tem certeza que deseja sair?')) return;
+
+  await auth.signOut();
+  window.location.reload();
+};
+
+function showAuthSuccess(message) {
+  const element = document.getElementById('authSuccessMessage');
+  element.textContent = message;
+  element.classList.add('show');
+  setTimeout(() => element.classList.remove('show'), 5000);
+}
+
+function showAuthError(message) {
+  const element = document.getElementById('authErrorMessage');
+  element.textContent = message;
+  element.classList.add('show');
+  setTimeout(() => element.classList.remove('show'), 5000);
+}
+
+function clearAuthMessages() {
+  document.getElementById('authSuccessMessage').classList.remove('show');
+  document.getElementById('authErrorMessage').classList.remove('show');
+}
+
+// Close user menu when clicking outside
+document.addEventListener('click', (e) => {
+  const userMenuButton = document.getElementById('userMenuButton');
+  const userMenu = document.getElementById('userMenu');
+
+  if (userMenuButton && !userMenuButton.contains(e.target)) {
+    userMenu?.classList.remove('show');
+  }
+});
+
+// Close auth modal when clicking outside
+document.getElementById('authModal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'authModal') {
+    auth.hideAuthModal();
+  }
+});
+</script>
