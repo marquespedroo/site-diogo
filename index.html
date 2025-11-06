@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Imóveis - ImobiTools</title>
+    <title>ImobiTools - Ferramentas Inteligentes para Corretores Imobiliários</title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Calculadora profissional de financiamento imobiliário. Simule aprovações, calcule captação necessária e planeje pagamentos de entrada, durante obra e pós-obra.">
-    <link rel="canonical" href="https://imobitools.vercel.app/index.html">
+    <meta name="description" content="Ferramentas profissionais para corretores imobiliários. Calculadoras, simuladores e análises para otimizar suas vendas. Experimente grátis!">
+    <link rel="canonical" href="https://imobitools.vercel.app/">
 
     <!-- Open Graph Tags -->
-    <meta property="og:title" content="Calculadora de Imóveis - ImobiTools">
-    <meta property="og:description" content="Calculadora profissional de financiamento imobiliário. Simule aprovações e planeje pagamentos.">
+    <meta property="og:title" content="ImobiTools - Ferramentas Inteligentes para Corretores">
+    <meta property="og:description" content="Calculadoras e simuladores profissionais para corretores imobiliários. Experimente grátis!">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://imobitools.vercel.app/index.html">
+    <meta property="og:url" content="https://imobitools.vercel.app/">
     <meta property="og:image" content="https://imobitools.vercel.app/assets/og-image.png">
 
     <!-- Favicon -->
@@ -28,19 +28,466 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="/src/styles/dashboard.css">
+
+    <style>
+        /* Landing Page Specific Styles */
+        body {
+            background: var(--gray-100);
+            padding: 0;
+        }
+
+        /* Navbar */
+        .landing-navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: var(--font-secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+            margin: 0;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+            transition: color 0.3s;
+            font-family: var(--font-primary);
+        }
+
+        .nav-links a:hover {
+            color: var(--gradient-primary);
+        }
+
+        .btn-login {
+            background: transparent;
+            color: var(--gradient-primary);
+            padding: 0.6rem 1.5rem;
+            border: 2px solid var(--gradient-primary);
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+            font-family: var(--font-primary);
+        }
+
+        .btn-login:hover {
+            background: var(--gradient-primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            background: linear-gradient(135deg, #677AE5 0%, #764ba2 100%);
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 900;
+            font-family: var(--font-secondary);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero {
+            padding: 1.2rem 2.5rem;
+            border-radius: var(--radius-xl);
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            border: none;
+            font-size: 1.1rem;
+            font-family: var(--font-primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-hero-primary {
+            background: white;
+            color: var(--gradient-primary);
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-hero-outline {
+            background: transparent;
+            color: white;
+            border: 3px solid white;
+        }
+
+        .btn-hero-outline:hover {
+            background: white;
+            color: var(--gradient-primary);
+            transform: translateY(-3px);
+        }
+
+        /* Free Calculator Section */
+        .free-calculator-section {
+            max-width: 1400px;
+            margin: -100px auto 4rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .usage-tracker {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .usage-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .usage-count {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--gradient-primary);
+            font-family: var(--font-secondary);
+        }
+
+        .usage-text {
+            font-size: 0.95rem;
+            color: var(--gray-700);
+            line-height: 1.4;
+        }
+
+        .usage-limit-warning {
+            background: linear-gradient(135deg, #fb6340 0%, #fbb140 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* Usage Limit Modal */
+        .usage-limit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .usage-limit-modal.show {
+            display: flex;
+        }
+
+        .modal-content-limit {
+            background: white;
+            border-radius: var(--radius-xl);
+            max-width: 500px;
+            width: 100%;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-content-limit h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-family: var(--font-secondary);
+        }
+
+        .modal-content-limit p {
+            color: var(--gray-700);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* Products Section */
+        .products-section {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-family: var(--font-secondary);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--gray-600);
+            margin-bottom: 3rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .product-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .product-card h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            font-family: var(--font-secondary);
+        }
+
+        .product-card p {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .product-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .product-features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--gray-700);
+        }
+
+        .product-features li::before {
+            content: "✓";
+            color: var(--success);
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+
+        .btn-product {
+            width: 100%;
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            color: white;
+            background: linear-gradient(135deg, var(--gradient-primary), var(--secondary));
+            font-family: var(--font-primary);
+        }
+
+        .btn-product:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary);
+            color: white;
+            padding: 3rem 2rem 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-family: var(--font-secondary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .free-calculator-section {
+                margin-top: 2rem;
+            }
+
+            .usage-tracker {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Skip to content link for accessibility -->
-    <a href="#main-content" class="skip-link" style="position: absolute; left: -9999px; z-index: 9999; padding: 1rem; background: #667eea; color: white; text-decoration: none; border-radius: 4px;">Pular para o conteúdo principal</a>
-
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-container">
-                <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-label="Logo ImobiTools">
-                    <!-- Background circle -->
+    <!-- Navbar -->
+    <nav class="landing-navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <svg class="logo-icon" width="40" height="40" viewBox="0 0 32 32" fill="none">
                     <circle cx="16" cy="16" r="15" fill="url(#argon-gradient)"/>
-                    <!-- Dashboard bars -->
                     <rect x="7" y="8" width="4" height="12" rx="1" fill="white" opacity="0.9"/>
                     <rect x="13" y="10" width="4" height="10" rx="1" fill="white" opacity="0.8"/>
                     <rect x="19" y="6" width="4" height="14" rx="1" fill="white"/>
@@ -51,159 +498,54 @@
                         </linearGradient>
                     </defs>
                 </svg>
-                <h1 class="logo-text">ImobiTools</h1>
-            </div>
-            <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" aria-label="Toggle sidebar">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M13 6L8 10L13 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
+                <span class="logo-text">ImobiTools</span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="#calculadora">Calculadora Grátis</a></li>
+                <li><a href="#ferramentas">Ferramentas</a></li>
+                <li><a href="#planos">Planos</a></li>
+            </ul>
+
+            <a href="/login.html" class="btn-login">Entrar</a>
         </div>
+    </nav>
 
-        <!-- Main Navigation -->
-        <nav class="sidebar-nav">
-            <div class="nav-header">FERRAMENTAS</div>
-
-            <div class="nav-section">
-                <a href="/index.html" class="nav-btn-secondary active">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                        <path d="M2 2h5v5H2V2zm0 7h5v5H2V9zm7-7h5v5H9V2zm0 7h5v5H9V9z"/>
-                    </svg>
-                    <span>Calculadora de Imóveis</span>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Ferramentas Profissionais para Corretores de Imóveis</h1>
+            <p>Automatize cálculos, simule financiamentos e impressione seus clientes com análises precisas em segundos.</p>
+            <div class="hero-buttons">
+                <a href="#calculadora" class="btn-hero btn-hero-primary">
+                    <span>🧮</span>
+                    Experimentar Grátis
                 </a>
-
-                
-                <a href="/cash-flow-calculator.html" class="nav-btn-secondary">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                        <path d="M2 2h12v2H2V2zm0 4h12v2H2V6zm0 4h12v2H2v-2zm0 4h12v2H2v-2z"/>
-                    </svg>
-                    <span>Calculadora de Fluxo</span>
-                </a>
-
-                <a href="/financing-simulator.html" class="nav-btn-secondary">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                        <path d="M1 4h14v8H1V4zm2 2v4h10V6H3z"/>
-                    </svg>
-                    <span>Simulador de Financiamento</span>
-                </a>
-<a href="/market-study.html" class="nav-btn-secondary">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                        <path d="M3 3h10a1 1 0 011 1v8a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1z"/>
-                    </svg>
-                    <span>Estudo de Mercado</span>
-                </a>
-
-                <a href="/projects-table.html" class="nav-btn-secondary">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                        <path d="M2 3h12a1 1 0 011 1v8a1 1 0 01-1 1H2a1 1 0 01-1-1V4a1 1 0 011-1z"/>
-                    </svg>
-                    <span>Tabela de Empreendimentos</span>
+                <a href="/login.html" class="btn-hero btn-hero-outline">
+                    Criar Conta
                 </a>
             </div>
-        </nav>
-    </aside>
+        </div>
+    </section>
 
-    <!-- Main Content Area -->
-    <main class="main-content" id="main-content">
-        <!-- Top Header -->
-        <header class="top-header">
-            <div class="header-left">
-                <nav class="breadcrumb" aria-label="Navegação estrutural">
-                    <a href="index.html" class="breadcrumb-link breadcrumb-home" aria-label="Início">
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
-                            <path d="M7 1L1 7h2v5h3V9h2v3h3V7h2L7 1z"/>
-                        </svg>
-                    </a>
-                    <span class="breadcrumb-separator">/</span>
-                    <a href="#ferramentas" class="breadcrumb-link">Ferramentas</a>
-                    <span class="breadcrumb-separator">/</span>
-                    <span class="breadcrumb-current">Calculadora de Imóveis</span>
-                </nav>
-                <h2 class="page-title">Calculadora de Imóveis</h2>
-                <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu de navegação">
-                    <svg width="21" height="16" viewBox="0 0 21 16" fill="currentColor" aria-hidden="true">
-                        <rect width="21" height="2" rx="1"/>
-                        <rect y="7" width="21" height="2" rx="1"/>
-                        <rect y="14" width="21" height="2" rx="1"/>
-                    </svg>
-                </button>
-            </div>
-
-            <div class="header-right">
-                <div class="header-actions-wrapper">
-                    <div class="search-box">
-                        <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                            <path d="M11.7 10.3l3.6 3.6-1.4 1.4-3.6-3.6a6 6 0 111.4-1.4zM6 10a4 4 0 100-8 4 4 0 000 8z"/>
-                        </svg>
-                        <input type="text" placeholder="Digite aqui..." class="search-input" aria-label="Pesquisar">
-                    </div>
-
-                    <div id="auth-container">
-                        <!-- Auth Button (shows when not logged in) -->
-                        <a href="/login.html" id="authButton" class="sign-in-link" role="button">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                                <path d="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-3 0-6 1.5-6 3v1h12v-1c0-1.5-3-3-6-3z"/>
-                            </svg>
-                            <span>Entrar</span>
-                        </a>
-                        <!-- User Menu Button will be inserted here dynamically -->
-                        <button id="userMenuButton" class="user-menu-button" onclick="toggleUserMenu()" style="display: none;">
-                            <div class="user-avatar" id="userAvatar">U</div>
-                            <div class="user-info">
-                                <span class="user-name">Usuário</span>
-                                <span class="user-email">email@example.com</span>
-                            </div>
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                            </svg>
-
-                            <!-- Dropdown Menu -->
-                            <div id="userMenu" class="user-menu">
-                                <a href="/profile.html" class="user-menu-item">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                                        <path d="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-2.67 0-8 1.34-8 4v1h16v-1c0-2.66-5.33-4-8-4z"/>
-                                    </svg>
-                                    Meu perfil
-                                </a>
-                                <a href="/subscriptions.html" class="user-menu-item">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                                        <path d="M2 4a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V4z"/>
-                                    </svg>
-                                    Minhas assinaturas
-                                </a>
-                                <div class="user-menu-divider"></div>
-                                <button class="user-menu-item" onclick="handleLogout()">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                                        <path d="M6 14H3a1 1 0 01-1-1V3a1 1 0 011-1h3M11 11l3-3-3-3M14 8H6"/>
-                                    </svg>
-                                    Sair
-                                </button>
-                            </div>
-                        </button>
-                    </div>
-
-                    <div class="icon-buttons-group">
-                        <button class="icon-btn" aria-label="Configurações">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                                <path d="M8 10a2 2 0 100-4 2 2 0 000 4z"/>
-                                <path d="M13.5 8c0-.3 0-.6-.1-.9l1.3-1-1-1.7-1.5.6c-.4-.3-.8-.6-1.3-.8L10.5 2h-2l-.4 1.6c-.5.2-.9.5-1.3.8l-1.5-.6-1 1.7 1.3 1c-.1.3-.1.6-.1.9s0 .6.1.9l-1.3 1 1 1.7 1.5-.6c.4.3.8.6 1.3.8l.4 1.6h2l.4-1.6c.5-.2.9-.5 1.3-.8l1.5.6 1-1.7-1.3-1c.1-.3.1-.6.1-.9z"/>
-                            </svg>
-                        </button>
-
-                        <button class="icon-btn" aria-label="Notificações">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                                <path d="M8 2a4 4 0 00-4 4v3l-1 2h10l-1-2V6a4 4 0 00-4-4zm0 12a2 2 0 01-2-2h4a2 2 0 01-2 2z"/>
-                            </svg>
-                        </button>
-                    </div>
+    <!-- Free Calculator Section -->
+    <section class="free-calculator-section" id="calculadora">
+        <!-- Usage Tracker -->
+        <div class="usage-tracker" id="usageTracker">
+            <div class="usage-info">
+                <div class="usage-count" id="usageCount">3</div>
+                <div class="usage-text">
+                    <strong>usos restantes</strong><br>
+                    Próxima renovação em <span id="resetDate">15 dias</span>
                 </div>
             </div>
-        </header>
+            <div class="usage-limit-warning" style="display: none;" id="limitWarning">
+                ⚠️ Última utilização gratuita!
+            </div>
+        </div>
 
-        <!-- Content Grid -->
-        <div class="content-grid">
-            <!-- Calculator Form -->
-            <div class="card chart-card">
+        <!-- Calculator Card -->
+        <div class="card chart-card">
                 <div class="card-header">
                     <h3>Novo Cálculo de Imóvel</h3>
                     <p class="chart-subtitle">
@@ -319,77 +661,260 @@
                     <button class="btn-share hidden" id="btnShare">Gerar Link Compartilhável</button>
                 </div>
             </div>
-        </div>
+    </section>
 
-        <!-- Calculator Tables Section -->
-        <div class="tables-section">
-            <!-- Recent Calculations Table -->
-            <div class="card table-card">
-                <div class="card-header">
-                    <h3>Cálculos Recentes</h3>
-                </div>
-                <div class="table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Valor do Imóvel</th>
-                                <th>Captação</th>
-                                <th>Status</th>
-                                <th>Aprovação %</th>
-                                <th>Data</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="calculationsTableBody">
-                            <tr>
-                                <td colspan="6" class="empty-state">
-                                    <div class="empty-state-content">
-                                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                                            <circle cx="24" cy="24" r="20" stroke="#8392AB" stroke-width="2" opacity="0.3"/>
-                                            <path d="M16 24h16M24 16v16" stroke="#8392AB" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
-                                        </svg>
-                                        <p>Ainda não há cálculos. Crie seu primeiro cálculo usando o formulário acima.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+    <!-- Products Section -->
+    <section class="products-section" id="ferramentas">
+        <h2 class="section-title">Todas as Ferramentas Profissionais</h2>
+        <p class="section-subtitle">Acesse ferramentas exclusivas e otimize seu trabalho com assinatura premium</p>
+
+        <div class="products-grid">
+            <!-- Cash Flow Calculator -->
+            <div class="product-card">
+                <div class="product-icon" style="background: linear-gradient(135deg, #10b981, #059669);">💰</div>
+                <h3>Calculadora de Fluxo</h3>
+                <p>Planeje pagamentos de entrada, durante obra e pós-obra com precisão total.</p>
+                <ul class="product-features">
+                    <li>4 fases de pagamento</li>
+                    <li>Simulação PRICE e SAC</li>
+                    <li>Análise de aprovação</li>
+                    <li>Relatórios detalhados</li>
+                </ul>
+                <button class="btn-product" onclick="location.href='/login.html'">Assinar para Acessar</button>
+            </div>
+
+            <!-- Financing Simulator -->
+            <div class="product-card">
+                <div class="product-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">🏦</div>
+                <h3>Simulador de Financiamento</h3>
+                <p>Calcule capacidade de compra e simule financiamentos residenciais, comerciais e rurais.</p>
+                <ul class="product-features">
+                    <li>3 tipos de imóveis</li>
+                    <li>Tabelas PRICE e SAC</li>
+                    <li>Validação de idade</li>
+                    <li>Limite de prazo automático</li>
+                </ul>
+                <button class="btn-product" onclick="location.href='/login.html'">Assinar para Acessar</button>
+            </div>
+
+            <!-- Market Study -->
+            <div class="product-card">
+                <div class="product-icon" style="background: linear-gradient(135deg, #f97316, #ea580c);">📊</div>
+                <h3>Estudo de Mercado</h3>
+                <p>Avalie imóveis comparando com amostras similares conforme NBR 14653-2.</p>
+                <ul class="product-features">
+                    <li>Análise comparativa</li>
+                    <li>Conformidade NBR 14653-2</li>
+                    <li>Relatórios profissionais</li>
+                    <li>Múltiplas amostras</li>
+                </ul>
+                <button class="btn-product" onclick="location.href='/login.html'">Assinar para Acessar</button>
+            </div>
+
+            <!-- Projects Table -->
+            <div class="product-card">
+                <div class="product-icon" style="background: linear-gradient(135deg, #a855f7, #9333ea);">📋</div>
+                <h3>Tabela de Empreendimentos</h3>
+                <p>Gerencie e compare múltiplos empreendimentos em uma única visualização.</p>
+                <ul class="product-features">
+                    <li>Gestão centralizada</li>
+                    <li>Comparação de projetos</li>
+                    <li>Filtros avançados</li>
+                    <li>Exportação de dados</li>
+                </ul>
+                <button class="btn-product" onclick="location.href='/login.html'">Assinar para Acessar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>ImobiTools</h4>
+                <p style="color: rgba(255,255,255,0.8); line-height: 1.6;">
+                    Ferramentas profissionais para corretores imobiliários que buscam excelência e eficiência.
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Ferramentas</h4>
+                <ul class="footer-links">
+                    <li><a href="#calculadora">Calculadora de Imóveis</a></li>
+                    <li><a href="/login.html">Calculadora de Fluxo</a></li>
+                    <li><a href="/login.html">Simulador de Financiamento</a></li>
+                    <li><a href="/login.html">Estudo de Mercado</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Empresa</h4>
+                <ul class="footer-links">
+                    <li><a href="#ferramentas">Sobre</a></li>
+                    <li><a href="#planos">Planos</a></li>
+                    <li><a href="/login.html">Entrar</a></li>
+                </ul>
             </div>
         </div>
 
-        <script src="/src/scripts/shared-utils.js"></script>
-        <script src="/src/scripts/dashboard.js"></script>
-    </main>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ImobiTools. Todos os direitos reservados.</p>
+        </div>
+    </footer>
 
-    <!-- Authentication Script -->
-    <script type="module">
-        import { auth } from '/src/scripts/auth.js';
+    <!-- Usage Limit Modal -->
+    <div class="usage-limit-modal" id="usageLimitModal">
+        <div class="modal-content-limit">
+            <div class="modal-icon">🚫</div>
+            <h2>Limite Atingido!</h2>
+            <p>Você utilizou suas 3 calculadoras gratuitas deste período.</p>
+            <p><strong>Crie uma conta para acesso ilimitado!</strong></p>
+            <a href="/login.html" class="btn-hero btn-hero-primary" style="display: inline-flex;">
+                Criar Conta Grátis
+            </a>
+        </div>
+    </div>
 
-        // Initialize auth
-        auth.initAuth();
+    <!-- Scripts -->
+    <script src="/src/scripts/shared-utils.js"></script>
+    <script src="/src/scripts/dashboard.js"></script>
 
-        // Toggle user menu
-        window.toggleUserMenu = function() {
-            const menu = document.getElementById('userMenu');
-            menu.classList.toggle('show');
-        };
+    <script>
+        // Usage Tracking Logic (3 uses per 15 days)
+        const STORAGE_KEY = 'imobitools_usage';
+        const MAX_USES = 3;
+        const RESET_DAYS = 15;
 
-        // Handle logout
-        window.handleLogout = async function() {
-            if (!confirm('Tem certeza que deseja sair?')) return;
-            await auth.signOut();
-            window.location.reload();
-        };
+        function initUsageTracking() {
+            let usage = getUsageData();
 
-        // Close user menu when clicking outside
-        document.addEventListener('click', (e) => {
-            const userMenuButton = document.getElementById('userMenuButton');
-            const userMenu = document.getElementById('userMenu');
+            // Check if needs reset
+            const now = new Date();
+            const resetDate = new Date(usage.resetDate);
 
-            if (userMenuButton && !userMenuButton.contains(e.target)) {
-                userMenu?.classList.remove('show');
+            if (now >= resetDate) {
+                // Reset usage
+                usage = {
+                    count: MAX_USES,
+                    firstUse: now.toISOString(),
+                    resetDate: new Date(now.getTime() + RESET_DAYS * 24 * 60 * 60 * 1000).toISOString()
+                };
+                saveUsageData(usage);
             }
+
+            updateUsageUI(usage);
+        }
+
+        function getUsageData() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                return JSON.parse(stored);
+            }
+
+            // Initialize new user
+            const now = new Date();
+            return {
+                count: MAX_USES,
+                firstUse: now.toISOString(),
+                resetDate: new Date(now.getTime() + RESET_DAYS * 24 * 60 * 60 * 1000).toISOString()
+            };
+        }
+
+        function saveUsageData(usage) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(usage));
+        }
+
+        function updateUsageUI(usage) {
+            const countEl = document.getElementById('usageCount');
+            const resetEl = document.getElementById('resetDate');
+            const warningEl = document.getElementById('limitWarning');
+
+            if (countEl) countEl.textContent = usage.count;
+
+            if (resetEl) {
+                const resetDate = new Date(usage.resetDate);
+                const daysLeft = Math.ceil((resetDate - new Date()) / (1000 * 60 * 60 * 24));
+                resetEl.textContent = daysLeft > 1 ? `${daysLeft} dias` : 'amanhã';
+            }
+
+            if (warningEl) {
+                warningEl.style.display = usage.count === 1 ? 'block' : 'none';
+            }
+        }
+
+        function decrementUsage() {
+            let usage = getUsageData();
+
+            if (usage.count <= 0) {
+                showUsageLimitModal();
+                return false;
+            }
+
+            usage.count--;
+            saveUsageData(usage);
+            updateUsageUI(usage);
+
+            if (usage.count === 0) {
+                setTimeout(() => showUsageLimitModal(), 500);
+            }
+
+            return true;
+        }
+
+        function showUsageLimitModal() {
+            const modal = document.getElementById('usageLimitModal');
+            if (modal) {
+                modal.classList.add('show');
+
+                // Disable calculator
+                const form = document.getElementById('calculatorForm');
+                if (form) {
+                    const inputs = form.querySelectorAll('input, select, button');
+                    inputs.forEach(input => input.disabled = true);
+                }
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initUsageTracking();
+
+            // Intercept calculator form submission
+            const form = document.getElementById('calculatorForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const usage = getUsageData();
+                    if (usage.count <= 0) {
+                        e.preventDefault();
+                        showUsageLimitModal();
+                        return false;
+                    }
+
+                    // Decrement on successful calculation
+                    decrementUsage();
+                });
+            }
+
+            // Close modal on click outside
+            const modal = document.getElementById('usageLimitModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.classList.remove('show');
+                    }
+                });
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
         });
     </script>
 </body>
